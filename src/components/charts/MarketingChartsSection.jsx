@@ -95,49 +95,39 @@ export const MarketingChartsSection = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-4 p-5 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100/50 dark:from-gray-800/50 dark:to-gray-800/30 border-2 border-gray-200 dark:border-gray-700 shadow-sm">
+      <div className="flex flex-wrap items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
         {/* Company filter */}
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-            <Building2 className="w-4 h-4 text-[#E60012]" />
-          </div>
-          <div className="flex flex-col">
-            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
-              Company
-            </label>
-            <select
-              value={companyId}
-              onChange={(e) => setCompanyId(e.target.value)}
-              className="px-3 py-1.5 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm font-medium text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[180px] cursor-pointer hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
-            >
-              <option value="all">All companies</option>
-              {companies.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="flex items-center gap-2">
+          <Building2 className="w-4 h-4 text-[#E60012]" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
         </div>
+        <select
+          value={companyId}
+          onChange={(e) => setCompanyId(e.target.value)}
+          className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[180px] cursor-pointer"
+        >
+          <option value="all">All companies</option>
+          {companies.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
 
         {/* Period filter */}
-        <div className="flex items-center gap-3 border-l-2 border-gray-300 dark:border-gray-600 pl-4">
-          <div className="p-2 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-            <Calendar className="w-4 h-4 text-[#E60012]" />
-          </div>
-          <div className="flex flex-col">
-            <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
-              Period
-            </label>
-            <div className="flex items-center gap-3">
-          <div className="flex items-center gap-3">
-        <div className="flex rounded-lg border-2 border-gray-300 dark:border-gray-600 overflow-hidden bg-white dark:bg-gray-900 shadow-sm">
+        <div className="flex items-center gap-2 border-l border-gray-300 dark:border-gray-600 pl-4">
+          <Calendar className="w-4 h-4 text-[#E60012]" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Period</span>
+        </div>
+        
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex rounded-lg border border-gray-200 dark:border-gray-600 overflow-hidden bg-white dark:bg-gray-900">
             <button
               type="button"
               onClick={() => setPeriodType('month')}
-              className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
                 periodType === 'month'
-                  ? 'bg-[#E60012] text-white shadow-md'
+                  ? 'bg-[#E60012] text-white'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
@@ -146,27 +136,28 @@ export const MarketingChartsSection = () => {
             <button
               type="button"
               onClick={() => setPeriodType('term')}
-              className={`px-4 py-2 text-sm font-medium transition-all duration-200 ${
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
                 periodType === 'term'
-                  ? 'bg-[#E60012] text-white shadow-md'
+                  ? 'bg-[#E60012] text-white'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
               By term
             </button>
           </div>
+          
           {periodType === 'month' ? (
             <input
               type="month"
               value={month}
               onChange={(e) => setMonth(e.target.value)}
-              className="px-3 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm font-medium text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] cursor-pointer hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
+              className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] cursor-pointer"
             />
           ) : (
             <select
               value={termId}
               onChange={(e) => setTermId(e.target.value)}
-              className="px-3 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm font-medium text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[180px] cursor-pointer hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
+              className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[180px] cursor-pointer"
             >
               <option value="">Select term</option>
               {terms.map((t) => (
@@ -177,8 +168,7 @@ export const MarketingChartsSection = () => {
             </select>
           )}
         </div>
-          </div>
-        </div>
+      </div>
 
       {/* Content */}
       {isLoading && <MarketingChartsSkeleton />}
@@ -203,8 +193,6 @@ export const MarketingChartsSection = () => {
           <MarketingChartsSeriesChart series={data.series} />
         </div>
       )}
-    </div>
-    </div>
     </div>
   );
 };
