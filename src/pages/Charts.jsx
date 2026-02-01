@@ -8,7 +8,7 @@ import { PerformanceChartEmpty } from '@/components/dashboard/PerformanceChartEm
 import { ReportingTable } from '@/components/dashboard/ReportingTable';
 import { ReportingTableSkeleton } from '@/components/dashboard/ReportingTableSkeleton';
 import { ReportingTableEmpty } from '@/components/dashboard/ReportingTableEmpty';
-import { MarketingChartsSection } from '@/components/charts';
+import { MarketingChartsSection, YearlyExpenseChart } from '@/components/charts';
 
 const Charts = () => {
   const [efficiencyChartsState, setEfficiencyChartsState] = useState('loading'); // 'loading' | 'empty' | 'data'
@@ -111,6 +111,11 @@ const Charts = () => {
       {/* Marketing API Charts - month or term_id */}
       <div className="mb-12">
         <MarketingChartsSection />
+      </div>
+
+      {/* Yearly Expense Chart - by year */}
+      <div className="mb-12">
+        <YearlyExpenseChart />
       </div>
 
       {/* First Section - Two Charts Side by Side */}
