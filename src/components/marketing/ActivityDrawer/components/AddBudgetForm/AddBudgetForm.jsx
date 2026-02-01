@@ -39,6 +39,7 @@ export function AddBudgetForm({
     monthsBreakdown,
     showMonthsBreakdown,
     setShowMonthsBreakdown,
+    breakdownErrors,
     termMonths,
     breakdownTotal,
     breakdownValidation,
@@ -63,11 +64,7 @@ export function AddBudgetForm({
   });
 
   const isSubmitDisabled =
-    createBudgetMutation.isPending ||
-    !value ||
-    !description ||
-    !!validationError ||
-    !breakdownValidation.isValid;
+    createBudgetMutation.isPending || !value || !description;
 
   return (
     <form onSubmit={handleSubmit} className={FORM_CLASS}>
@@ -111,6 +108,7 @@ export function AddBudgetForm({
           breakdownTotal={breakdownTotal}
           totalValue={value}
           breakdownValidation={breakdownValidation}
+          breakdownErrors={breakdownErrors}
         />
       )}
 

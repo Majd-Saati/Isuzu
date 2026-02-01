@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useCreateActivityBudget } from '@/hooks/api/useActivities';
 import { getAvailableBudgetTypes, canAddBudgetType } from '../../utils/budgetValidation';
 import { getTermMonths } from './utils';
+import { getAddBudgetSchema } from './addBudgetSchema';
 
 export function useAddBudgetForm({
   activityId,
@@ -21,6 +22,7 @@ export function useAddBudgetForm({
   const [validationError, setValidationError] = useState('');
   const [monthsBreakdown, setMonthsBreakdown] = useState({});
   const [showMonthsBreakdown, setShowMonthsBreakdown] = useState(false);
+  const [breakdownErrors, setBreakdownErrors] = useState({});
 
   const createBudgetMutation = useCreateActivityBudget();
 
@@ -46,6 +48,25 @@ export function useAddBudgetForm({
       return sum + numVal;
     }, 0);
   }, [monthsBreakdown]);
+
+  // Clear breakdown errors when user has filled all months and sum matches budget value
+  useEffect(() => {
+    if (termMonths.length === 0) return;
+    const totalValue = parseFloat(value) || 0;
+    if (totalValue <= 0) return;
+    const allFilled = termMonths.every((m) => {
+      const v = monthsBreakdown[m.key];
+      const num = Number(v);
+      return v !== '' && v != null && !Number.isNaN(num) && num >= 0;
+    });
+    const sum = termMonths.reduce(
+      (s, m) => s + (parseFloat(monthsBreakdown[m.key]) || 0),
+      0
+    );
+    if (allFilled && Math.abs(sum - totalValue) < 0.01) {
+      setBreakdownErrors({});
+    }
+  }, [termMonths, value, monthsBreakdown]);
 
   const breakdownValidation = useMemo(() => {
     const totalValue = parseFloat(value) || 0;
@@ -98,23 +119,66 @@ export function useAddBudgetForm({
 
   const handleMonthValueChange = (monthKey, monthValue) => {
     setMonthsBreakdown((prev) => ({ ...prev, [monthKey]: monthValue }));
+    setBreakdownErrors((prev) => {
+      const next = { ...prev };
+      delete next[monthKey];
+      return next;
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!value || !description) return;
 
     const validation = canAddBudgetType(type, existingBudgets);
     if (!validation.canAdd) {
       setValidationError(validation.reason);
+      setBreakdownErrors({});
       return;
     }
-    if (!breakdownValidation.isValid) {
-      setValidationError(breakdownValidation.message);
+
+    const totalValue = parseFloat(value) || 0;
+    const needsBreakdown = termMonths.length > 0 && totalValue > 0;
+    if (needsBreakdown) {
+      setShowMonthsBreakdown(true);
+    }
+
+    const schema = getAddBudgetSchema(termMonths);
+    try {
+      await schema.validate(
+        {
+          value,
+          description,
+          monthsBreakdown: needsBreakdown ? monthsBreakdown : {},
+        },
+        { abortEarly: false, context: { budgetValue: totalValue } }
+      );
+    } catch (err) {
+      if (err.name === 'ValidationError' && err.inner) {
+        const byPath = {};
+        err.inner.forEach((e) => {
+          if (e.path?.startsWith('monthsBreakdown.')) {
+            const monthKey = e.path.replace('monthsBreakdown.', '');
+            byPath[monthKey] = e.message;
+          } else if (e.path === 'monthsBreakdown') {
+            termMonths.forEach((m) => {
+              if (!byPath[m.key]) byPath[m.key] = e.message;
+            });
+          }
+        });
+        const topError = err.inner.find(
+          (e) => e.path === 'value' || e.path === 'description'
+        );
+        setValidationError(topError ? topError.message : '');
+        setBreakdownErrors(byPath);
+      } else {
+        setValidationError(err.message ?? 'Validation failed');
+        setBreakdownErrors({});
+      }
       return;
     }
 
     setValidationError('');
+    setBreakdownErrors({});
 
     const hasBreakdownValues = Object.values(monthsBreakdown).some(
       (v) => parseFloat(v) > 0
@@ -148,6 +212,7 @@ export function useAddBudgetForm({
           setValidationError('');
           setMonthsBreakdown({});
           setShowMonthsBreakdown(false);
+          setBreakdownErrors({});
           onSuccess?.();
         },
       }
@@ -177,6 +242,7 @@ export function useAddBudgetForm({
     monthsBreakdown,
     showMonthsBreakdown,
     setShowMonthsBreakdown,
+    breakdownErrors,
     // Derived
     termMonths,
     breakdownTotal,
