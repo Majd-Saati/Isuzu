@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { DollarSign, Clock, User, FileText, Check, Trash2 } from 'lucide-react';
+import { DollarSign, Clock, User, FileText, Check, Trash2, Calendar } from 'lucide-react';
 import { StatusBadge } from './StatusBadge';
-import { formatCurrency, formatDate } from '../utils/formatters';
+import { formatCurrency, formatDate, formatMonthLabel } from '../utils/formatters';
 import { isAdminUser } from '@/lib/permissions';
 
 export const BudgetCard = ({ item, showCreator = true, onAccept, onDelete }) => {
@@ -67,7 +67,29 @@ export const BudgetCard = ({ item, showCreator = true, onAccept, onDelete }) => 
           <p className="text-sm text-gray-600 dark:text-gray-300">{item.description}</p>
         </div>
       )}
-      
+
+      {item.months_breakdown && Object.keys(item.months_breakdown).length > 0 && (
+        <div className="mb-3 p-2 bg-white/60 dark:bg-gray-800/60 rounded-lg">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+            <Calendar className="w-3.5 h-3.5" />
+            Monthly breakdown
+          </div>
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
+            {Object.entries(item.months_breakdown)
+              .sort(([a], [b]) => a.localeCompare(b))
+              .map(([monthKey, amount]) => (
+                <div
+                  key={monthKey}
+                  className="flex justify-between text-gray-700 dark:text-gray-300"
+                >
+                  <span>{formatMonthLabel(monthKey)}</span>
+                  <span className="font-medium">{formatCurrency(amount)}</span>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-200/50 dark:border-gray-700/50">
         {showCreator && item.created_by_name ? (
           <div className="flex items-center gap-1.5">
