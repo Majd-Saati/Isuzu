@@ -62,25 +62,7 @@ export const YearlyExpenseChart = () => {
           </div>
         </div>
         
-        {hasData && (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => refetch()}
-              disabled={isFetching}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all disabled:opacity-50"
-            >
-              <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
-              Refresh
-            </button>
-            <button
-              onClick={handleExport}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-all"
-            >
-              <Download className="w-4 h-4" />
-              Export
-            </button>
-          </div>
-        )}
+ 
       </div>
 
       {/* Filters */}

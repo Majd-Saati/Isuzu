@@ -85,16 +85,24 @@ export const CommentCard = ({ item, onDelete, icon: Icon = MessageSquare }) => {
             <div className="mt-2">
               {isImage ? (
                 <div className="space-y-1">
-                  <img 
-                    src={mediaUrl} 
-                    alt="Attachment" 
-                    className="max-w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700 max-h-48 object-contain"
-                    onError={(e) => {
-                      // If image fails to load, show as link instead
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'inline-flex';
-                    }}
-                  />
+                  <a 
+                    href={mediaUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="block cursor-pointer group"
+                    title="Click to open in new tab"
+                  >
+                    <img 
+                      src={mediaUrl} 
+                      alt="Attachment" 
+                      className="max-w-full h-auto rounded-lg border-2 border-gray-200 dark:border-gray-700 max-h-48 object-contain transition-all group-hover:border-[#E60012] group-hover:shadow-md"
+                      onError={(e) => {
+                        // If image fails to load, hide image container
+                        e.target.parentElement.style.display = 'none';
+                        e.target.parentElement.nextSibling.style.display = 'inline-flex';
+                      }}
+                    />
+                  </a>
                   <a 
                     href={mediaUrl} 
                     target="_blank" 

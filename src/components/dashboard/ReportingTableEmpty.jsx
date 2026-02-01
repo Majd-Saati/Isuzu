@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, FolderX } from 'lucide-react';
+import { FileText, FolderX, Calendar } from 'lucide-react';
 
 export const ReportingTableEmpty = () => {
   return (
@@ -15,16 +15,21 @@ export const ReportingTableEmpty = () => {
         </div>
         
         <div className="space-y-2">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">No Reporting Data</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">No Report Data Available</h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md">
-            There are no activities or reports to display at the moment. Reports will appear here once activities are tracked and documented.
+            There are no activities or reports for the selected term. Reports will appear here once activities are tracked and costs are documented.
           </p>
         </div>
 
-        <div className="pt-4">
+        <div className="pt-4 flex flex-col items-center gap-3">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            <span className="text-xs text-gray-600 dark:text-gray-300 font-medium">Try selecting a different term</span>
+          </div>
+          
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
             <div className="w-2 h-2 bg-[#E60012] rounded-full animate-pulse"></div>
-            <span className="text-xs text-gray-600 dark:text-gray-300 font-medium">Ready to track activities</span>
+            <span className="text-xs text-gray-600 dark:text-gray-300 font-medium">Ready to track new activities</span>
           </div>
         </div>
       </div>

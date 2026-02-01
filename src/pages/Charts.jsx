@@ -43,8 +43,8 @@ const Charts = () => {
       case 'data':
         return (
           <>
-            <DealerEfficiencyChart data={expenseData} />
-            <DealerEfficiencyChart data={budgetData} />
+            {/* <DealerEfficiencyChart data={expenseData} />
+            <DealerEfficiencyChart data={budgetData} /> */}
           </>
         );
       default:
@@ -124,9 +124,9 @@ const Charts = () => {
       </div>
 
       {/* Second Section - Bar Chart */}
-      <div className="mb-8">
+      {/* <div className="mb-8">
         {renderPerformanceChart()}
-      </div>
+      </div> */}
 
       {/* Third Section - Reporting Table */}
       <div className="mb-8">

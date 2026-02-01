@@ -14,3 +14,17 @@ export const chartsService = {
     return apiClient.get('/charts', { params: queryParams });
   },
 };
+
+/**
+ * Fetch report data by term
+ * @param {{ term_id: string|number }} params
+ */
+export const reportService = {
+  getReport: async (params = {}) => {
+    const { term_id } = params;
+    if (!term_id) {
+      throw new Error('term_id is required');
+    }
+    return apiClient.get('/report', { params: { term_id } });
+  },
+};
