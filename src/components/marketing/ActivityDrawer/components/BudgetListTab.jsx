@@ -16,8 +16,8 @@ export const BudgetListTab = ({
   filterType,
   filterStatus,
   onClearFilter,
-  termStartDate,
-  termEndDate,
+  activityStartDate,
+  activityEndDate,
 }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [isBudgetItemsExpanded, setIsBudgetItemsExpanded] = useState(true);
@@ -80,8 +80,8 @@ export const BudgetListTab = ({
           existingBudgets={budget}
           onSuccess={() => setShowAddForm(false)}
           onCancel={() => setShowAddForm(false)}
-          termStartDate={termStartDate}
-          termEndDate={termEndDate}
+          activityStartDate={activityStartDate}
+          activityEndDate={activityEndDate}
         />
       )}
 

@@ -24,8 +24,8 @@ export function AddBudgetForm({
   existingBudgets = [],
   onSuccess,
   onCancel,
-  termStartDate,
-  termEndDate,
+  activityStartDate,
+  activityEndDate,
 }) {
   const {
     value,
@@ -58,8 +58,8 @@ export function AddBudgetForm({
     existingBudgets,
     onSuccess,
     onCancel,
-    termStartDate,
-    termEndDate,
+    activityStartDate,
+    activityEndDate,
   });
 
   const isSubmitDisabled =

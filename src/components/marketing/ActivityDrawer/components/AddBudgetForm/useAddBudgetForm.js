@@ -10,8 +10,8 @@ export function useAddBudgetForm({
   existingBudgets = [],
   onSuccess,
   onCancel,
-  termStartDate,
-  termEndDate,
+  activityStartDate,
+  activityEndDate,
 }) {
   const [type, setType] = useState('estimated cost');
   const [value, setValue] = useState('');
@@ -24,9 +24,10 @@ export function useAddBudgetForm({
 
   const createBudgetMutation = useCreateActivityBudget();
 
+  // Monthly breakdown is based on activity period, not term period
   const termMonths = useMemo(
-    () => getTermMonths(termStartDate, termEndDate),
-    [termStartDate, termEndDate]
+    () => getTermMonths(activityStartDate, activityEndDate),
+    [activityStartDate, activityEndDate]
   );
 
   useEffect(() => {

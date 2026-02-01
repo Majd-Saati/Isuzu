@@ -247,9 +247,9 @@ export const ActivityDrawer = ({
               onClearMetaFilter={handleClearMetaFilter}
             />
           ) : (
-            <BudgetListTab 
-              data={budgetListData} 
-              isLoading={isLoadingBudget} 
+            <BudgetListTab
+              data={budgetListData}
+              isLoading={isLoadingBudget}
               isError={isErrorBudget}
               activityId={activity?.id}
               planId={planId}
@@ -259,8 +259,8 @@ export const ActivityDrawer = ({
               filterType={budgetFilterType}
               filterStatus={budgetFilterStatus}
               onClearFilter={handleClearBudgetFilter}
-              termStartDate={termStartDate}
-              termEndDate={termEndDate}
+              activityStartDate={activity?.starts_at ?? activity?.duration?.start}
+              activityEndDate={activity?.ends_at ?? activity?.duration?.end}
             />
           )}
         </div>

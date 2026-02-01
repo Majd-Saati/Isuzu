@@ -48,7 +48,7 @@ export function MonthlyBreakdownSection({
       {showMonthsBreakdown && (
         <div className="bg-white dark:bg-gray-900 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-3 space-y-3">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Allocate the budget across each month of the term. Total must not
+            Allocate the budget across each month of the activity period. Total must not
             exceed {valueNum.toLocaleString()}.
           </p>
 
