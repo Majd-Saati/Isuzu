@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { List, Plus, ChevronDown, Loader2, AlertCircle, X } from 'lucide-react';
 import { formatCurrency } from '../utils/formatters';
 import { BudgetCard } from './BudgetCard';
-import { AddBudgetForm } from './AddBudgetForm';
+import { AddBudgetForm } from './AddBudgetForm/index.js';
 
 export const BudgetListTab = ({
   data,

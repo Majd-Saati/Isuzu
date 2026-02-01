@@ -5,7 +5,7 @@ export { BudgetCard } from './BudgetCard';
 export { CommentCard } from './CommentCard';
 export { AcceptBudgetModal } from './AcceptBudgetModal';
 export { EmojiPicker } from './EmojiPicker';
-export { AddBudgetForm } from './AddBudgetForm';
+export { AddBudgetForm } from './AddBudgetForm/index.js';
 export { AddCommentForm } from './AddCommentForm';
 export { AddEvidenceForm } from './AddEvidenceForm';
 export { OverviewTab } from './OverviewTab';
