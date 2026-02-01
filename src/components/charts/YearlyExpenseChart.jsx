@@ -163,7 +163,11 @@ export const YearlyExpenseChart = () => {
       {!isLoading && !isError && hasData && (
         <div className="space-y-6">
           <MarketingChartsTotals totals={data.totals} />
-          <MarketingChartsSeriesChart series={data.series} />
+          <MarketingChartsSeriesChart 
+            series={data.series} 
+            totals={data.totals}
+            filename={`yearly-expense-${year}-${companyId}`}
+          />
         </div>
       )}
     </div>

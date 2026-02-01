@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   BarChart,
   Bar,
@@ -10,7 +10,22 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, Download, FileSpreadsheet, FileText, Image, ChevronDown } from 'lucide-react';
+import { toast } from 'sonner';
+
+// Dynamic import of export utils to avoid breaking the app during hot reload
+let exportUtils = null;
+const loadExportUtils = async () => {
+  if (!exportUtils) {
+    try {
+      exportUtils = await import('./chartExportUtils');
+    } catch (error) {
+      console.warn('Export utilities not available yet. Please restart the dev server.');
+      return null;
+    }
+  }
+  return exportUtils;
+};
 
 const formatCurrency = (value) =>
   new Intl.NumberFormat('en-US', {
@@ -41,9 +56,12 @@ const METRICS = [
   { key: 'incentive', name: 'Incentive', color: COLORS.incentive },
 ];
 
-export const MarketingChartsSeriesChart = ({ series }) => {
+export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketing-chart' }) => {
   const [activeMetric, setActiveMetric] = useState(null);
   const [hoveredBar, setHoveredBar] = useState(null);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const chartRef = useRef(null);
 
   if (!series || !Array.isArray(series) || series.length === 0) return null;
 
@@ -64,6 +82,79 @@ export const MarketingChartsSeriesChart = ({ series }) => {
     const avg = total / values.length;
     return { key, name, color, total, max, min, avg };
   });
+
+  // Export handlers
+  const handleExportExcel = async () => {
+    setIsExporting(true);
+    try {
+      const utils = await loadExportUtils();
+      if (!utils) {
+        toast.error('Export feature unavailable. Please restart the dev server.');
+        return;
+      }
+      const success = utils.exportToExcel(series, filename, 'Marketing Data');
+      if (success) {
+        toast.success('Excel file exported successfully');
+      } else {
+        toast.error('Failed to export Excel file');
+      }
+    } catch (error) {
+      toast.error('Error exporting to Excel. Please restart the dev server.');
+    } finally {
+      setIsExporting(false);
+      setShowExportMenu(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    setIsExporting(true);
+    try {
+      const utils = await loadExportUtils();
+      if (!utils) {
+        toast.error('Export feature unavailable. Please restart the dev server.');
+        return;
+      }
+      const success = await utils.exportChartWithDataToPDF(
+        chartRef.current,
+        series,
+        totals,
+        filename,
+        'Marketing Cost & Incentive Report'
+      );
+      if (success) {
+        toast.success('PDF exported successfully');
+      } else {
+        toast.error('Failed to export PDF');
+      }
+    } catch (error) {
+      toast.error('Error exporting to PDF. Please restart the dev server.');
+    } finally {
+      setIsExporting(false);
+      setShowExportMenu(false);
+    }
+  };
+
+  const handleExportPNG = async () => {
+    setIsExporting(true);
+    try {
+      const utils = await loadExportUtils();
+      if (!utils) {
+        toast.error('Export feature unavailable. Please restart the dev server.');
+        return;
+      }
+      const success = await utils.exportToPNG(chartRef.current, filename);
+      if (success) {
+        toast.success('Image exported successfully');
+      } else {
+        toast.error('Failed to export image');
+      }
+    } catch (error) {
+      toast.error('Error exporting to PNG. Please restart the dev server.');
+    } finally {
+      setIsExporting(false);
+      setShowExportMenu(false);
+    }
+  };
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (!active || !payload?.length) return null;
@@ -171,15 +262,75 @@ export const MarketingChartsSeriesChart = ({ series }) => {
   };
 
   return (
-    <div className="rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5 md:p-7 shadow-sm hover:shadow-lg transition-shadow duration-300">
+    <div 
+      ref={chartRef}
+      className="rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5 md:p-7 shadow-sm hover:shadow-lg transition-shadow duration-300"
+    >
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-base md:text-lg font-bold text-gray-900 dark:text-gray-100">
           Cost & incentive breakdown
         </h3>
-        <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-          <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-xs text-gray-500 dark:text-gray-400">
             <TrendingUp className="w-3 h-3" />
             <span className="font-medium">{chartData.length} periods</span>
+          </div>
+          
+          {/* Export dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setShowExportMenu(!showExportMenu)}
+              disabled={isExporting}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+            >
+              <Download className={`w-3.5 h-3.5 ${isExporting ? 'animate-pulse' : ''}`} />
+              Export
+              <ChevronDown className={`w-3 h-3 transition-transform ${showExportMenu ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {showExportMenu && (
+              <>
+                <div 
+                  className="fixed inset-0 z-10" 
+                  onClick={() => setShowExportMenu(false)}
+                />
+                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 shadow-xl z-20 py-1 animate-fade-in">
+                  <button
+                    onClick={handleExportExcel}
+                    disabled={isExporting}
+                    className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                  >
+                    <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                    <div>
+                      <div className="font-medium">Excel (.xlsx)</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Spreadsheet format</div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={handleExportPDF}
+                    disabled={isExporting}
+                    className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                  >
+                    <FileText className="w-4 h-4 text-red-600" />
+                    <div>
+                      <div className="font-medium">PDF (.pdf)</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Chart with data table</div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={handleExportPNG}
+                    disabled={isExporting}
+                    className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                  >
+                    <Image className="w-4 h-4 text-blue-600" />
+                    <div>
+                      <div className="font-medium">Image (.png)</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">High-resolution image</div>
+                    </div>
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
