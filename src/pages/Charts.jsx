@@ -9,6 +9,61 @@ import { ReportingTable } from '@/components/dashboard/ReportingTable';
 import { ReportingTableSkeleton } from '@/components/dashboard/ReportingTableSkeleton';
 import { ReportingTableEmpty } from '@/components/dashboard/ReportingTableEmpty';
 import { MarketingChartsSection, YearlyExpenseChart } from '@/components/charts';
+import { useCharts } from '@/hooks/api/useCharts';
+import { format, parseISO } from 'date-fns';
+
+const MONTH_API = '2026-04';
+
+const buildDealerChartData = (totals, title) => {
+  if (!totals) return null;
+  const actual = Number(totals.actual_cost) || 0;
+  const support = Number(totals.support_cost) || 0;
+  const percentage = actual > 0 ? Math.min(100, (support / actual) * 100) : 0;
+  return {
+    title,
+    startValue: 0,
+    endValue: actual || 1,
+    amount: actual || 1,
+    percentage,
+    support_cost: support,
+  };
+};
+
+const monthLabel = (monthStr) => {
+  try {
+    const d = parseISO(`${monthStr}-01`);
+    return format(d, 'MMM yyyy');
+  } catch {
+    return monthStr;
+  }
+};
+
+const DealerEfficiencyChartByMonth = () => {
+  const { data, isLoading, isError } = useCharts({ company_id: 'all', month: MONTH_API });
+  const chartData = buildDealerChartData(data?.totals, `By Month (${monthLabel(MONTH_API)})`);
+
+  if (isLoading) {
+    return (
+      <div className="mb-12">
+        <DealerEfficiencyChartSkeleton />
+      </div>
+    );
+  }
+
+  if (isError || !chartData) {
+    return (
+      <div className="mb-12">
+        <DealerEfficiencyChartEmpty title={`Dealer Expense vs Support (${monthLabel(MONTH_API)})`} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-12 max-w-lg">
+      <DealerEfficiencyChart chartId="charts-month-api" data={chartData} />
+    </div>
+  );
+};
 
 const Charts = () => {
   const [efficiencyChartsState, setEfficiencyChartsState] = useState('loading'); // 'loading' | 'empty' | 'data'
@@ -107,6 +162,9 @@ const Charts = () => {
           Charts
         </h1>
       </div>
+
+      {/* Dealer Efficiency - data from API company_id=all&month=2026-04 */}
+      <DealerEfficiencyChartByMonth />
 
       {/* Marketing API Charts - month or term_id */}
       <div className="mb-12">
