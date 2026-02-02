@@ -270,11 +270,11 @@ const Index = () => {
 
           </div>
 
-          {/* <div className="flex-[0_0_calc(30%-10px)] max-md:flex-auto max-md:w-full flex justify-center max-md:mt-3.5">
+          <div className="flex-[0_0_calc(30%-10px)] max-md:flex-auto max-md:w-full flex justify-center max-md:mt-3.5">
 
             <DealerEfficiencyChart />
 
-          </div> */}
+          </div>
 
         </div>
 

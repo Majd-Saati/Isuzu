@@ -8,8 +8,8 @@ export const DealerEfficiencyChart = ({ data }) => {
   const defaultData = {
     budget: {
       title: 'Budget Vs Support Amount',
-      amount: 5950,
-      percentage: 70,
+      amount: 2000,
+      percentage: 20,
       color: '#EF5A6F',
       legendLabel: 'Budget'
     },
@@ -31,14 +31,38 @@ export const DealerEfficiencyChart = ({ data }) => {
       setActiveView(activeView === 'budget' ? 'expense' : 'budget');
     }
   };
-  
-  // Calculate the circle progress
-  const radius = 70;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (currentData.percentage / 100) * circumference;
+
+  // Half horizontal circle: top semicircle arc (left 0% → right 100%) — enlarged
+  const radius = 100;
+  const size = 320;
+  const cx = size / 2;
+  const cy = size / 2;
+  const semicircleLength = Math.PI * radius;
+  const progressOffset = semicircleLength - (currentData.percentage / 100) * semicircleLength;
+  const strokeWidth = 28;
+
+  const polarToCartesian = (angleDeg) => {
+    const rad = ((angleDeg - 90) * Math.PI) / 180;
+    return { x: cx + radius * Math.cos(rad), y: cy + radius * Math.sin(rad) };
+  };
+  // Arc on TOP (rainbow / inverted U): flat at bottom, curved at top. Sweep 1 = clockwise = top arc.
+  const start = polarToCartesian(270);
+  const end = polarToCartesian(90);
+  const topArcPath = `M ${start.x} ${start.y} A ${radius} ${radius} 0 1 1 ${end.x} ${end.y}`;
+
+  // Scale: start 0 → end amount. Value at fill boundary = percentage of amount.
+  const startValue = 0;
+  const endValue = currentData.amount;
+  const valueAtEnd = Math.round((currentData.percentage / 100) * currentData.amount);
+  // End of red (filled) area: angle and point on arc where fill meets gray
+  const fillBoundaryAngle = 270 - (currentData.percentage / 100) * 180;
+  const fillBoundary = polarToCartesian(fillBoundaryAngle);
+  const formatVal = (v) => v.toLocaleString();
+  const labelOffset = 32;
+  const valueAboveArcOffset = 36;
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-[28px] p-6 md:p-7 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)] w-full border border-gray-100 dark:border-gray-800 animate-fade-in hover:shadow-[0px_8px_32px_rgba(0,0,0,0.12)] dark:hover:shadow-[0px_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 backdrop-blur-sm bg-white/98 dark:bg-gray-900">
+    <div className="bg-white dark:bg-gray-900 rounded-none p-6 md:p-7 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)] w-full border border-gray-100 dark:border-gray-800 animate-fade-in hover:shadow-[0px_8px_32px_rgba(0,0,0,0.12)] dark:hover:shadow-[0px_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 backdrop-blur-sm bg-white/98 dark:bg-gray-900">
       {/* Header */}
       {isToggleMode ? (
         <>
@@ -56,7 +80,7 @@ export const DealerEfficiencyChart = ({ data }) => {
               {currentData.title}
             </span>
             <svg width="8" height="13" viewBox="0 0 8 13" fill="none" className="group-hover:translate-x-1 transition-transform duration-300">
-              <path d="M1 1L6.5 6.5L1 12" stroke={currentData.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M1 1L6.5 6.5L1 12" stroke={currentData.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         </>
@@ -66,62 +90,71 @@ export const DealerEfficiencyChart = ({ data }) => {
         </div>
       )}
 
-      {/* Circular Progress Chart */}
+      {/* Half horizontal circle (semicircle) progress chart — enlarged */}
       <div className="flex items-center justify-center mb-8">
-        <div className="relative animate-scale-in" style={{ width: '220px', height: '220px' }}>
-          {/* Glow Effect */}
-          <div 
-            className="absolute inset-0 rounded-full blur-2xl opacity-20 animate-pulse"
-            style={{ backgroundColor: currentData.color }}
-          ></div>
-          
-          <svg className="transform -rotate-90 relative z-10" width="220" height="220">
-            {/* Background Circle */}
-            <circle
-              cx="110"
-              cy="110"
-              r={radius}
-              stroke="#D1D5DB"
-              strokeWidth="22"
-              fill="none"
-            />
-            {/* Progress Circle with gradient */}
+        <div className="relative animate-scale-in" style={{ width: size, height: size }}>
+          <svg className="relative z-10 w-full h-full" width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
             <defs>
               <linearGradient id={`gradient-${activeView}`} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor={currentData.color} />
                 <stop offset="100%" stopColor={activeView === 'budget' ? '#f5999c' : '#6bb4f7'} />
               </linearGradient>
             </defs>
-            <circle
-              cx="110"
-              cy="110"
-              r={radius}
-              stroke={isToggleMode ? `url(#gradient-${activeView})` : currentData.color}
-              strokeWidth="22"
+            {/* Background semicircle (gray) — straight edges */}
+            <path
+              d={topArcPath}
               fill="none"
-              strokeDasharray={circumference}
-              strokeDashoffset={offset}
-              strokeLinecap="round"
-              style={{ 
+              stroke="#D1D5DB"
+              strokeWidth={strokeWidth}
+              strokeLinecap="butt"
+              className="dark:stroke-gray-600"
+            />
+            {/* Progress semicircle (filled left → right) — straight edges */}
+            <path
+              d={topArcPath}
+              fill="none"
+              stroke={isToggleMode ? `url(#gradient-${activeView})` : currentData.color}
+              strokeWidth={strokeWidth}
+              strokeLinecap="butt"
+              strokeDasharray={semicircleLength}
+              strokeDashoffset={progressOffset}
+              style={{
                 transition: 'stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
                 filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))'
               }}
             />
+            {/* Starting value (left end) — position from arc start */}
+            <text
+              x={start.x}
+              y={start.y + labelOffset}
+              textAnchor="middle"
+              className="text-sm font-medium fill-gray-600 dark:fill-gray-400"
+            >
+              {formatVal(startValue)}
+            </text>
+            {/* Ending value (right end) — position from arc end */}
+            <text
+              x={end.x}
+              y={end.y + labelOffset}
+              textAnchor="middle"
+              className="text-sm font-medium fill-gray-600 dark:fill-gray-400"
+            >
+              {formatVal(endValue)}
+            </text>
+            {/* Current value above the arc (just above the fill boundary point on the arc) */}
+            <text
+              x={fillBoundary.x}
+              y={fillBoundary.y - 190}
+              textAnchor="middle"
+              className="text-sm font-semibold fill-gray-900 dark:fill-gray-100"
+            >
+              {formatVal(valueAtEnd)}
+            </text>
           </svg>
 
-          {/* Center Content */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-[#1F2937] dark:text-gray-100 text-3xl font-extrabold animate-scale-in">
-              ${currentData.amount.toLocaleString()}
-            </div>
-            <div 
-              className="mt-3 px-4 py-2 rounded-full text-white text-sm font-bold shadow-lg animate-fade-in"
-              style={{ 
-                background: isToggleMode 
-                  ? `linear-gradient(135deg, ${currentData.color}, ${activeView === 'budget' ? '#f5999c' : '#6bb4f7'})`
-                  : currentData.color
-              }}
-            >
+          {/* Percentage in the middle of the semicircle */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-[#1F2937] dark:text-gray-100 text-3xl md:text-4xl font-extrabold animate-scale-in tabular-nums">
               {currentData.percentage}%
             </div>
           </div>
@@ -129,15 +162,15 @@ export const DealerEfficiencyChart = ({ data }) => {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-6 bg-gray-50/90 dark:bg-gray-800 p-4 rounded-2xl border border-gray-100/50 dark:border-gray-700/50 shadow-sm">
+      <div className="flex items-center justify-center gap-6 bg-gray-50/90 dark:bg-gray-800 p-4 rounded-none border border-gray-100/50 dark:border-gray-700/50 shadow-sm">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-3.5 rounded-full bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500 shadow-sm"></div>
           <span className="text-[#4A5568] dark:text-gray-300 text-xs font-semibold">Support Amt</span>
         </div>
         <div className="flex items-center gap-2.5">
-          <div 
+          <div
             className="w-7 h-3.5 rounded-full shadow-sm"
-            style={{ 
+            style={{
               background: isToggleMode
                 ? `linear-gradient(135deg, ${currentData.color}, ${activeView === 'budget' ? '#f5999c' : '#6bb4f7'})`
                 : currentData.color
