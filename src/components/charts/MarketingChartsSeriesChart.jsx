@@ -62,6 +62,7 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const chartRef = useRef(null);
+  const chartExportRef = useRef(null);
 
   if (!series || !Array.isArray(series) || series.length === 0) return null;
 
@@ -115,7 +116,7 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
         return;
       }
       const success = await utils.exportChartWithDataToPDF(
-        chartRef.current,
+        chartExportRef.current,
         series,
         totals,
         filename,
@@ -142,7 +143,7 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
         toast.error('Export feature unavailable. Please restart the dev server.');
         return;
       }
-      const success = await utils.exportToPNG(chartRef.current, filename);
+      const success = await utils.exportToPNG(chartExportRef.current, filename);
       if (success) {
         toast.success('Image exported successfully');
       } else {
@@ -335,7 +336,8 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
         </div>
       </div>
 
-      <div className="h-96">
+      {/* Export-only area: chart only (no dropdowns, no Avg) */}
+      <div ref={chartExportRef} className="h-96">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
@@ -390,7 +392,7 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
         </ResponsiveContainer>
       </div>
 
-      {/* Quick stats below chart */}
+      {/* Quick stats below chart (excluded from PDF/PNG export) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
         {stats.map(({ key, name, color, avg }) => (
           <div key={key} className="text-center">
