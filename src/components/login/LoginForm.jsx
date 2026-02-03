@@ -30,7 +30,7 @@ export const LoginForm = () => {
           Email Address
         </label>
         <div className="relative">
-          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400" />
+          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400 pointer-events-none" />
           <input
             type="email"
             name="email"
@@ -38,11 +38,11 @@ export const LoginForm = () => {
             value={formik.values.email}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className={`w-full pl-12 pr-4 py-3.5 rounded-lg bg-slate-100 dark:bg-gray-800 border-0 transition-all duration-200 ${
+            className={`w-full pl-12 pr-4 py-3.5 rounded-xl bg-slate-50 dark:bg-gray-800 border border-transparent transition-all duration-200 ${
               formik.touched.email && formik.errors.email
-                ? 'ring-2 ring-red-500'
-                : 'focus:ring-2 focus:ring-[#D22827]'
-            } outline-none text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400`}
+                ? 'ring-2 ring-red-500 border-red-200 dark:border-red-800'
+                : 'focus:ring-2 focus:ring-[#D22827]/30 focus:border-[#D22827]/50'
+            } outline-none text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500`}
           />
         </div>
         {formik.touched.email && formik.errors.email && (
@@ -64,10 +64,10 @@ export const LoginForm = () => {
             value={formik.values.password}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className={`w-full pl-12 pr-12 py-3.5 rounded-lg bg-slate-100 dark:bg-gray-800 border-0 transition-all duration-200 ${
+            className={`w-full pl-12 pr-12 py-3.5 rounded-xl bg-slate-50 dark:bg-gray-800 border border-transparent transition-all duration-200 ${
               formik.touched.password && formik.errors.password
-                ? 'ring-2 ring-red-500'
-                : 'focus:ring-2 focus:ring-[#D22827]'
+                ? 'ring-2 ring-red-500 border-red-200 dark:border-red-800'
+                : 'focus:ring-2 focus:ring-[#D22827]/30 focus:border-[#D22827]/50'
             } outline-none text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500`}
           />
           <button
@@ -106,7 +106,7 @@ export const LoginForm = () => {
       <button
         type="submit"
         disabled={loginMutation.isPending}
-        className="w-full bg-[#D22827] hover:bg-[#B91C1C] disabled:bg-[#D22827]/70 disabled:cursor-not-allowed text-white py-3.5 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 group"
+        className="w-full bg-[#D22827] hover:bg-[#B91C1C] disabled:bg-[#D22827]/70 disabled:cursor-not-allowed text-white py-3.5 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 group shadow-lg shadow-[#D22827]/25 hover:shadow-xl hover:shadow-[#D22827]/30 hover:-translate-y-0.5"
       >
         {loginMutation.isPending ? (
           <>

@@ -5,21 +5,21 @@ import { SocialLoginButtons } from './SocialLoginButtons';
 const Divider = ({ text }) => (
   <div className="relative my-6">
     <div className="absolute inset-0 flex items-center">
-      <div className="w-full border-t border-gray-300 dark:border-gray-700" />
+      <div className="w-full border-t border-gray-200 dark:border-gray-700" />
     </div>
     <div className="relative flex justify-center text-sm">
-      <span className="px-4 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400">{text}</span>
+      <span className="px-4 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 font-medium">{text}</span>
     </div>
   </div>
 );
 
 export const LoginCard = () => {
   return (
-    <div className="flex-1 flex items-center justify-center px-6 py-12 bg-slate-50 dark:bg-gray-950">
-      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8">
+    <div className="flex-1 flex items-center justify-center px-6 py-12">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-800 p-8 md:p-10">
         {/* Header */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2 tracking-tight">
             Sign In to <span className="text-[#D22827]">ISUZU</span>
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -45,7 +45,7 @@ export const LoginCard = () => {
         </p>
 
         {/* Footer */}
-        <p className="mt-8 text-center text-xs text-gray-500 dark:text-gray-500">
+        <p className="mt-8 text-center text-xs text-gray-400 dark:text-gray-500">
           2025 © ISUZU MARKETING CMS by 5V
         </p>
       </div>

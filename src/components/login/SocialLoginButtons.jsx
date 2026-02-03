@@ -27,10 +27,10 @@ export const SocialLoginButtons = () => {
         <button
           key={label}
           type="button"
-          className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all"
+          className="flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all duration-200"
         >
           <Icon />
-          <span className="text-sm font-medium text-gray-700">{label}</span>
+          <span className="text-sm font-medium">{label}</span>
         </button>
       ))}
     </div>
