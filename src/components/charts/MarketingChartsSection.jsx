@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Calendar, AlertCircle, Building2, Download, RefreshCw } from 'lucide-react';
+import { Calendar, AlertCircle, Building2 } from 'lucide-react';
 import { useCharts } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
 import { useCompanies } from '@/hooks/api/useCompanies';
@@ -8,7 +8,6 @@ import { MarketingChartsSeriesChart } from './MarketingChartsSeriesChart';
 import { MarketingChartsSkeleton } from './MarketingChartsSkeleton';
 import { MarketingChartsEmpty } from './MarketingChartsEmpty';
 import { format } from 'date-fns';
-import { toast } from 'sonner';
 
 const getDefaultMonth = () => format(new Date(), 'yyyy-MM');
 
@@ -31,25 +30,10 @@ export const MarketingChartsSection = () => {
     return base;
   }, [periodType, month, termId, companyId]);
 
-  const { data, isLoading, isError, error, refetch, isFetching } = useCharts(params);
+  const { data, isLoading, isError, error } = useCharts(params);
 
   const hasData = data?.totals != null || (data?.series?.length ?? 0) > 0;
   const showEmpty = !isLoading && !isError && !hasData;
-
-  const handleExport = () => {
-    if (!data) return;
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `marketing-charts-${companyId}-${periodType === 'month' ? month : `term-${termId}`}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast.success('Chart data exported successfully');
-  };
 
   const selectedCompany = companies.find((c) => c.id === companyId)?.name || 'All companies';
   const selectedTerm = terms.find((t) => t.id === termId)?.name || '';
@@ -72,26 +56,6 @@ export const MarketingChartsSection = () => {
             )}
           </div>
         </div>
-        
-        {hasData && (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => refetch()}
-              disabled={isFetching}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all disabled:opacity-50"
-            >
-              <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
-              Refresh
-            </button>
-            <button
-              onClick={handleExport}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-white bg-[#E60012] hover:bg-[#cc0010] transition-all"
-            >
-              <Download className="w-4 h-4" />
-              Export
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Filters */}

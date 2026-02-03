@@ -26,7 +26,7 @@ const CHART = {
 
 const formatVal = (v) => Number(v).toLocaleString();
 
-export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading }) => {
+export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTitle = true }) => {
   const uniqueId = chartId ?? React.useId().replace(/:/g, '-');
   const d = { ...DEFAULT_DATA, ...data };
   const { color, gradientEnd, legendLabel } = BUDGET_STYLE;
@@ -63,14 +63,16 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading }) => {
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-none p-4 md:p-5 w-full border border-gray-100 dark:border-gray-800 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)] hover:shadow-[0px_8px_32px_rgba(0,0,0,0.12)] dark:hover:shadow-[0px_8px_32px_rgba(0,0,0,0.4)] transition-shadow duration-300">
-      <div className="flex items-center gap-3 mb-3">
-        <div className="h-7 w-1 bg-gradient-to-b from-[#EF5A6F] to-rose-400 rounded-full" />
-        <h3 className="text-[#1F2937] dark:text-gray-100 text-lg md:text-xl font-bold">
-          Dealer Efficiency
-        </h3>
-      </div>
-      {filter && <div className="mb-3">{filter}</div>}
-      <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-4">{title}</p>
+      {showTitle && (
+        <div className="flex items-center gap-3 mb-3">
+          <div className="h-7 w-1 bg-gradient-to-b from-[#EF5A6F] to-rose-400 rounded-full" />
+          <h3 className="text-[#1F2937] dark:text-gray-100 text-lg md:text-xl font-bold">
+            Dealer Efficiency
+          </h3>
+        </div>
+      )}
+      <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">{title}</p>
+      {filter && <div className="mb-4">{filter}</div>}
 
       <div className="flex justify-center mb-4">
         <div className="relative" style={{ width: CHART.size, height: CHART.size }}>

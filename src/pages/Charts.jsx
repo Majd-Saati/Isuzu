@@ -56,10 +56,12 @@ const DealerEfficiencyChartByMonth = () => {
   const chartData = buildDealerChartData(data?.totals, `By Month (${monthLabel(month)})`);
 
   const monthFilter = (
-    <div className="flex flex-col gap-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
-      <div className="flex items-center gap-2">
-        <Building2 className="w-4 h-4 text-[#E60012]" />
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
+    <div className="flex flex-row flex-wrap gap-6">
+      <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <Building2 className="w-4 h-4 text-[#E60012]" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
+        </div>
         <select
           value={companyId}
           onChange={(e) => setCompanyId(e.target.value)}
@@ -73,9 +75,11 @@ const DealerEfficiencyChartByMonth = () => {
           ))}
         </select>
       </div>
-      <div className="flex items-center gap-2">
-        <Calendar className="w-4 h-4 text-[#E60012]" />
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Month</span>
+      <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-[#E60012]" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Month</span>
+        </div>
         <input
           type="month"
           value={month}
@@ -89,13 +93,9 @@ const DealerEfficiencyChartByMonth = () => {
   if (isError || (!isLoading && !chartData)) {
     return (
       <div className={`${chartCardClass} max-w-lg`}>
-        <div className="flex items-center gap-3 mb-5">
-          <div className="h-7 w-1 bg-gradient-to-b from-[#EF5A6F] to-rose-400 rounded-full" />
-          <h3 className="text-[#1F2937] dark:text-gray-100 text-lg md:text-xl font-bold">Dealer Efficiency</h3>
-        </div>
+        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month ({monthLabel(month)})</p>
         {monthFilter}
-        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold my-6">By Month ({monthLabel(month)})</p>
-        <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="flex flex-col items-center justify-center py-12 text-center mt-4">
           <p className="text-sm font-medium text-gray-600 dark:text-gray-400">No data available for this month.</p>
         </div>
       </div>
@@ -109,6 +109,7 @@ const DealerEfficiencyChartByMonth = () => {
         data={chartData ?? { title: `By Month (${monthLabel(month)})` }}
         filter={monthFilter}
         isLoading={isLoading}
+        showTitle={false}
       />
     </div>
   );
@@ -137,10 +138,12 @@ const DealerEfficiencyChartByTerm = () => {
   const chartData = buildDealerChartData(data?.totals, `By Term (${termLabel})`);
 
   const termFilter = (
-    <div className="flex flex-col gap-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
-      <div className="flex items-center gap-2">
-        <Building2 className="w-4 h-4 text-[#E60012]" />
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
+    <div className="flex flex-row flex-wrap gap-6">
+      <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <Building2 className="w-4 h-4 text-[#E60012]" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
+        </div>
         <select
           value={companyId}
           onChange={(e) => setCompanyId(e.target.value)}
@@ -154,9 +157,11 @@ const DealerEfficiencyChartByTerm = () => {
           ))}
         </select>
       </div>
-      <div className="flex items-center gap-2">
-        <ClipboardList className="w-4 h-4 text-[#E60012]" />
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Term</span>
+      <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <ClipboardList className="w-4 h-4 text-[#E60012]" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Term</span>
+        </div>
         <select
           value={termId}
           onChange={(e) => setTermId(e.target.value)}
@@ -175,14 +180,10 @@ const DealerEfficiencyChartByTerm = () => {
 
   const cardContent = (
     <>
-      <div className="flex items-center gap-3 mb-5">
-        <div className="h-7 w-1 bg-gradient-to-b from-[#EF5A6F] to-rose-400 rounded-full" />
-        <h3 className="text-[#1F2937] dark:text-gray-100 text-lg md:text-xl font-bold">Dealer Efficiency</h3>
-      </div>
-      {termFilter}
-      <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold my-6">
+      <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">
         By Term ({termId ? termLabel : '—'})
       </p>
+      {termFilter}
     </>
   );
 
@@ -215,6 +216,7 @@ const DealerEfficiencyChartByTerm = () => {
         data={chartData ?? { title: `By Term (${termLabel})` }}
         filter={termFilter}
         isLoading={isLoading}
+        showTitle={false}
       />
     </div>
   );
@@ -319,9 +321,17 @@ const Charts = () => {
       </div>
 
       {/* Dealer Efficiency - by month and by term, side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-        <DealerEfficiencyChartByMonth />
-        <DealerEfficiencyChartByTerm />
+      <div className="mb-12">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="h-7 w-1 shrink-0 rounded-full bg-gradient-to-b from-[#EF5A6F] to-rose-400" />
+          <h2 className="text-[#1F2937] dark:text-gray-100 text-xl font-bold tracking-tight">
+            Dealer Efficiency
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <DealerEfficiencyChartByMonth />
+          <DealerEfficiencyChartByTerm />
+        </div>
       </div>
 
       {/* Marketing API Charts - month or term_id */}
