@@ -4,7 +4,7 @@ const BUDGET_STYLE = {
   title: 'Budget Vs Support Amount',
   color: '#EF5A6F',
   gradientEnd: '#f5999c',
-  legendLabel: 'Budget',
+  legendLabel: 'Support Cost',
 };
 
 const DEFAULT_DATA = {
@@ -26,7 +26,7 @@ const CHART = {
 
 const formatVal = (v) => Number(v).toLocaleString();
 
-export const DealerEfficiencyChart = ({ data, chartId }) => {
+export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading }) => {
   const uniqueId = chartId ?? React.useId().replace(/:/g, '-');
   const d = { ...DEFAULT_DATA, ...data };
   const { color, gradientEnd, legendLabel } = BUDGET_STYLE;
@@ -62,17 +62,24 @@ export const DealerEfficiencyChart = ({ data, chartId }) => {
   const startVal = startValue ?? 0;
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-none p-6 md:p-7 w-full border border-gray-100 dark:border-gray-800 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)] hover:shadow-[0px_8px_32px_rgba(0,0,0,0.12)] dark:hover:shadow-[0px_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 animate-fade-in">
-      <div className="flex items-center gap-3 mb-5">
+    <div className="bg-white dark:bg-gray-900 rounded-none p-4 md:p-5 w-full border border-gray-100 dark:border-gray-800 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)] hover:shadow-[0px_8px_32px_rgba(0,0,0,0.12)] dark:hover:shadow-[0px_8px_32px_rgba(0,0,0,0.4)] transition-shadow duration-300">
+      <div className="flex items-center gap-3 mb-3">
         <div className="h-7 w-1 bg-gradient-to-b from-[#EF5A6F] to-rose-400 rounded-full" />
         <h3 className="text-[#1F2937] dark:text-gray-100 text-lg md:text-xl font-bold">
           Dealer Efficiency
         </h3>
       </div>
-      <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-8">{title}</p>
+      {filter && <div className="mb-3">{filter}</div>}
+      <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-4">{title}</p>
 
-      <div className="flex justify-center mb-8">
-        <div className="relative animate-scale-in" style={{ width: CHART.size, height: CHART.size }}>
+      <div className="flex justify-center mb-4">
+        <div className="relative" style={{ width: CHART.size, height: CHART.size }}>
+          {isLoading ? (
+            <div
+              className="w-full h-full rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"
+              style={{ width: CHART.size, height: CHART.size }}
+            />
+          ) : (
           <svg
             className="relative z-10 w-full h-full"
             width={CHART.size}
@@ -125,9 +132,10 @@ export const DealerEfficiencyChart = ({ data, chartId }) => {
               {formatVal(endVal)}
             </text>
             <text
-              x={fillBoundary.x + 80}
-              y={fillBoundary.y - CHART.percentAboveArc}
+              x={cx}
+              y={cy}
               textAnchor="middle"
+              dominantBaseline="middle"
               className="fill-gray-900 dark:fill-gray-100 font-extrabold tabular-nums"
               style={{ fontSize: 28 }}
             >
@@ -142,20 +150,25 @@ export const DealerEfficiencyChart = ({ data, chartId }) => {
               {formatVal(valueAtEnd)}
             </text> */}
           </svg>
+          )}
         </div>
       </div>
 
       <div className="flex justify-center gap-6 bg-gray-50/90 dark:bg-gray-800 p-4 rounded-none border border-gray-100/50 dark:border-gray-700/50">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-3.5 rounded-full bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500" />
-          <span className="text-[#4A5568] dark:text-gray-300 text-xs font-semibold">Support Amt</span>
+          <span className="text-[#4A5568] dark:text-gray-300 text-xs font-semibold">
+            Actual Cost: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatVal(amount)}</span>
+          </span>
         </div>
         <div className="flex items-center gap-2.5">
           <div
             className="w-7 h-3.5 rounded-full"
             style={{ background: `linear-gradient(135deg, ${color}, ${gradientEnd})` }}
           />
-          <span className="text-[#4A5568] dark:text-gray-300 text-xs font-semibold">{legendLabel}</span>
+          <span className="text-[#4A5568] dark:text-gray-300 text-xs font-semibold">
+            {legendLabel}: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatVal(valueAtEnd)}</span>
+          </span>
         </div>
       </div>
     </div>
