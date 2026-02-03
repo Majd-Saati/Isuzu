@@ -16,8 +16,6 @@ import { DealerCardSkeleton } from '@/components/dashboard/DealerCardSkeleton';
 
 import { DealerCardsEmpty } from '@/components/dashboard/DealerCardsEmpty';
 
-import { DealerEfficiencyChart } from '@/components/dashboard/DealerEfficiencyChart';
-
 import { SectionTitle } from '@/components/dashboard/SectionTitle';
 
 import { useOverview } from '@/hooks/api/useOverview';
@@ -255,32 +253,6 @@ const Index = () => {
   return (
 
     <div className="flex w-full flex-col items-stretch mt-[19px] px-5 max-w-full">
-
-      <div className="w-full max-w-full overflow-x-hidden">
-
-        <div className="gap-5 flex max-md:flex-col max-md:items-stretch">
-
-          <div className="flex-[0_0_calc(70%-10px)] max-md:flex-auto max-md:w-full">
-
-            {/* <div className="mt-[5px] max-md:mt-[19px]">
-
-              <PerformanceChart />
-
-            </div> */}
-
-          </div>
-
-          <div className="flex-[0_0_calc(30%-10px)] max-md:flex-auto max-md:w-full flex justify-center max-md:mt-3.5">
-
-            <DealerEfficiencyChart />
-
-          </div>
-
-        </div>
-
-      </div>
-
-
 
       <div className="mt-[38px] max-md:mt-8">
 
