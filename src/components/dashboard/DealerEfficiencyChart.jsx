@@ -16,10 +16,10 @@ const DEFAULT_DATA = {
 };
 
 const CHART = {
-  radius: 100,
-  size: 320,
-  strokeWidth: 28,
-  labelOffset: 32,
+  radius: 130,
+  size: 420,
+  strokeWidth: 36,
+  labelOffset: 40,
   percentAboveArc: 56,
   valueBelowArc: 28,
 };
@@ -62,7 +62,7 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
   const startVal = startValue ?? 0;
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xla p-4 md:p-5 w-full border  border-gray-100 dark:border-gray-800 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)] hover:shadow-[0px_8px_32px_rgba(0,0,0,0.12)] dark:hover:shadow-[0px_8px_32px_rgba(0,0,0,0.4)] transition-shadow duration-300">
+    <div className="bg-white dark:bg-gray-900 rounded-lg p-4 md:p-5 w-full border border-gray-200/80 dark:border-gray-700/80 shadow-sm hover:shadow-md dark:shadow-none dark:hover:shadow-none transition-all duration-300">
       {showTitle && (
         <div className="flex items-center gap-3 mb-3">
           <div className="h-7 w-1 bg-gradient-to-b from-[#EF5A6F] to-rose-400 rounded-full" />
@@ -74,19 +74,18 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
       <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">{title}</p>
       {filter && <div className="mb-4">{filter}</div>}
 
-      <div className="flex justify-center mb-4">
-        <div className="relative" style={{ width: CHART.size, height: CHART.size }}>
+      <div className="flex justify-center mb-5 w-full">
+        <div
+          className="relative drop-shadow-sm w-full max-w-full"
+          style={{ width: CHART.size, maxWidth: '100%', aspectRatio: '1' }}
+        >
           {isLoading ? (
-            <div
-              className="w-full h-full rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"
-              style={{ width: CHART.size, height: CHART.size }}
-            />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 animate-pulse" />
           ) : (
           <svg
-            className="relative z-10 w-full h-full"
-            width={CHART.size}
-            height={CHART.size}
+            className="relative z-10 w-full h-full min-w-0"
             viewBox={`0 0 ${CHART.size} ${CHART.size}`}
+            preserveAspectRatio="xMidYMid meet"
           >
             <defs>
               <linearGradient id={`gradient-dealer-eff-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -95,14 +94,17 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
               </linearGradient>
             </defs>
 
+            {/* Track */}
             <path
               d={topArcPath}
               fill="none"
-              stroke="#D1D5DB"
+              stroke="currentColor"
               strokeWidth={CHART.strokeWidth}
               strokeLinecap="butt"
-              className="dark:stroke-gray-600"
+              className="text-gray-200 dark:text-gray-600"
             />
+
+            {/* Progress arc with gradient and soft glow */}
             <path
               d={topArcPath}
               fill="none"
@@ -113,7 +115,7 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
               strokeDashoffset={progressOffset}
               style={{
                 transition: 'stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))',
+                filter: 'drop-shadow(0 2px 8px rgba(239, 90, 111, 0.35))',
               }}
             />
 
@@ -121,7 +123,7 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
               x={start.x}
               y={start.y + CHART.labelOffset}
               textAnchor="middle"
-              className="text-sm font-medium fill-gray-600 dark:fill-gray-400"
+              className="text-sm font-semibold fill-gray-500 dark:fill-gray-400 tabular-nums"
             >
               {formatVal(startVal)}
             </text>
@@ -129,17 +131,20 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
               x={end.x}
               y={end.y + CHART.labelOffset}
               textAnchor="middle"
-              className="text-sm font-medium fill-gray-600 dark:fill-gray-400"
+              className="text-sm font-semibold fill-gray-500 dark:fill-gray-400 tabular-nums"
             >
               {formatVal(endVal)}
             </text>
+
+            {/* Center: soft circle + percentage */}
+            <circle cx={cx} cy={cy} r={52} className="fill-gray-100/90 dark:fill-gray-800/90" />
             <text
               x={cx}
               y={cy}
               textAnchor="middle"
               dominantBaseline="middle"
               className="fill-gray-900 dark:fill-gray-100 font-extrabold tabular-nums"
-              style={{ fontSize: 28 }}
+              style={{ fontSize: 38, letterSpacing: '-0.02em' }}
             >
               {percentage}%
             </text>
@@ -156,19 +161,19 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
         </div>
       </div>
 
-      <div className="flex justify-center gap-6 bg-gray-50/90 dark:bg-gray-800 p-4 rounded-none border border-gray-100/50 dark:border-gray-700/50">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-3.5 rounded-full bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500" />
-          <span className="text-[#4A5568] dark:text-gray-300 text-xs font-semibold">
+      <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 bg-gray-50 dark:bg-gray-800/80 px-5 py-4 rounded-lg border border-gray-100 dark:border-gray-700/60">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-4 rounded-md bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-500 shrink-0" />
+          <span className="text-[#4A5568] dark:text-gray-300 text-sm font-medium">
             Actual Cost: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatVal(amount)}</span>
           </span>
         </div>
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <div
-            className="w-7 h-3.5 rounded-full"
+            className="w-8 h-4 rounded-md shrink-0"
             style={{ background: `linear-gradient(135deg, ${color}, ${gradientEnd})` }}
           />
-          <span className="text-[#4A5568] dark:text-gray-300 text-xs font-semibold">
+          <span className="text-[#4A5568] dark:text-gray-300 text-sm font-medium">
             {legendLabel}: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatVal(valueAtEnd)}</span>
           </span>
         </div>

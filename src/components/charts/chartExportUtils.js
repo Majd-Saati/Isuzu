@@ -105,6 +105,58 @@ export const exportToExcelWithTotals = (series, totals, filename = 'chart-data')
 };
 
 /**
+ * Export report table data (months with rows) to Excel
+ * @param {{ months: Array<{ period: string, label: string, rows: Array }>, term?: { name: string } }} reportData
+ * @param {string} filename - Name of the file (without extension)
+ */
+export const exportReportToExcel = (reportData, filename = 'report') => {
+  if (!reportData?.months || !Array.isArray(reportData.months) || reportData.months.length === 0) {
+    console.warn('No report data to export');
+    return false;
+  }
+
+  try {
+    const formatNum = (value) =>
+      new Intl.NumberFormat('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(
+        Number(value) || 0
+      );
+
+    const rows = [];
+    for (const monthGroup of reportData.months) {
+      for (const row of monthGroup.rows || []) {
+        rows.push({
+          Month: monthGroup.label || monthGroup.period,
+          Company: row.company_name || '',
+          Plan: row.plan_name || '',
+          Activity: row.activity_name || '',
+          'Actual Cost': formatNum(row.actual_cost),
+          'Support Cost': formatNum(row.support_cost),
+          'Evidences': row.evidences?.length ?? 0,
+        });
+      }
+    }
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    worksheet['!cols'] = [
+      { wch: 14 },
+      { wch: 22 },
+      { wch: 22 },
+      { wch: 28 },
+      { wch: 14 },
+      { wch: 14 },
+      { wch: 10 },
+    ];
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+    XLSX.writeFile(workbook, `${filename}.xlsx`);
+    return true;
+  } catch (error) {
+    console.error('Error exporting report to Excel:', error);
+    return false;
+  }
+};
+
+/**
  * Export a DOM element (chart) to PDF
  * @param {HTMLElement} element - The DOM element to capture
  * @param {string} filename - Name of the file (without extension)

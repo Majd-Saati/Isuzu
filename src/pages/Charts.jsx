@@ -321,7 +321,7 @@ const Charts = () => {
       </div>
 
       {/* Dealer Efficiency - by month and by term, side by side */}
-      <div className="mb-12">
+      <section className="pb-12 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-7 w-1 shrink-0 rounded-full bg-gradient-to-b from-[#EF5A6F] to-rose-400" />
           <h2 className="text-[#1F2937] dark:text-gray-100 text-xl font-bold tracking-tight">
@@ -332,22 +332,24 @@ const Charts = () => {
           <DealerEfficiencyChartByMonth />
           <DealerEfficiencyChartByTerm />
         </div>
-      </div>
+      </section>
 
       {/* Marketing API Charts - month or term_id */}
-      <div className="mb-12">
+      <section className="py-12 border-b border-gray-200 dark:border-gray-700">
         <MarketingChartsSection />
-      </div>
+      </section>
 
       {/* Yearly Expense Chart - by year */}
-      <div className="mb-12">
+      <section className="py-12 border-b border-gray-200 dark:border-gray-700">
         <YearlyExpenseChart />
-      </div>
+      </section>
 
       {/* First Section - Two Charts Side by Side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {renderEfficiencyCharts()}
-      </div>
+      <section className="py-12 border-b border-gray-200 dark:border-gray-700">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {renderEfficiencyCharts()}
+        </div>
+      </section>
 
       {/* Second Section - Bar Chart */}
       {/* <div className="mb-8">
@@ -355,9 +357,9 @@ const Charts = () => {
       </div> */}
 
       {/* Third Section - Reporting Table */}
-      <div className="mb-8">
+      <section className="pt-12">
         {renderReportingSection()}
-      </div>
+      </section>
     </>
   );
 };

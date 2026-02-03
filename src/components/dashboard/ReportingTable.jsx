@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { FileText, AlertCircle, Calendar, X, Image, Download, ExternalLink, Eye, Clock, Paperclip, ZoomIn, Loader2 } from 'lucide-react';
+import { FileText, AlertCircle, Calendar, X, Image, Download, ExternalLink, Eye, Clock, Paperclip, ZoomIn, Loader2, FileSpreadsheet } from 'lucide-react';
 import { SectionTitle } from './SectionTitle';
 import { useReport } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
 import { ReportingTableSkeleton } from './ReportingTableSkeleton';
 import { ReportingTableEmpty } from './ReportingTableEmpty';
+import { exportReportToExcel } from '@/components/charts/chartExportUtils';
 import { toast } from 'sonner';
 
 const API_BASE_URL = 'https://marketing.5v.ae';
@@ -349,6 +350,18 @@ export const ReportingTable = () => {
     setEvidenceModal({ open: false, evidences: [], activityName: '' });
   };
 
+  const handleExportExcel = () => {
+    if (!reportData) return;
+    const termName = terms.find((t) => String(t.id) === String(selectedTermId))?.name || selectedTermId;
+    const filename = `report-${termName || 'term'}-${new Date().toISOString().slice(0, 10)}`.replace(/\s+/g, '-');
+    const success = exportReportToExcel(reportData, filename);
+    if (success) {
+      toast.success('Report exported to Excel');
+    } else {
+      toast.error('Failed to export report');
+    }
+  };
+
   if (isLoading) {
     return <ReportingTableSkeleton />;
   }
@@ -383,20 +396,30 @@ export const ReportingTable = () => {
           <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
             <SectionTitle title="Reporting" />
             
-            {/* Term Filter */}
-            <div className="flex items-center gap-3">
-              <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              <select
-                value={selectedTermId}
-                onChange={(e) => setSelectedTermId(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[200px] cursor-pointer"
+            {/* Term Filter + Export */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-center gap-3">
+                <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                <select
+                  value={selectedTermId}
+                  onChange={(e) => setSelectedTermId(e.target.value)}
+                  className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[200px] cursor-pointer"
+                >
+                  {terms.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name || `Term ${t.id}`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button
+                type="button"
+                onClick={handleExportExcel}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-white bg-[#217346] hover:bg-[#185C37] transition-colors"
               >
-                {terms.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name || `Term ${t.id}`}
-                  </option>
-                ))}
-              </select>
+                <FileSpreadsheet className="w-4 h-4" />
+                Export Excel
+              </button>
             </div>
           </div>
 
