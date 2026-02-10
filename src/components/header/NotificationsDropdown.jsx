@@ -52,7 +52,7 @@ export const NotificationsDropdown = ({
     } else if (page === 1) {
       setAllNotifications([]);
     }
-  }, [notifications, page]);
+  }, [notifications]);
 
   // Infinite scroll handler
   const handleScroll = useCallback(() => {

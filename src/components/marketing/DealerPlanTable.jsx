@@ -34,7 +34,7 @@ const getAmountColorByStatus = (status) => {
   return 'text-gray-900';
 };
 
-export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPlanDeleted, showBudgetColumns = false, showMediaUploadColumns = false }) => {
+export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPlanDeleted, showBudgetColumns = false, showMediaUploadColumns = false, autoOpenActivityId = null }) => {
   // Plans with no activities should be closed by default
   const [isExpanded, setIsExpanded] = useState(plan.activities && plan.activities.length > 0);
   const [selectedActivities, setSelectedActivities] = useState([]);
@@ -55,6 +55,32 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
   // Get user from Redux store
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
+
+  const handleOpenDrawer = (activity, budgetType = null, budgetStatus = null, metaType = null) => {
+    setSelectedActivity(activity);
+    if (budgetType) {
+      setDrawerBudgetFilter({ type: budgetType, status: budgetStatus || null });
+      setDrawerMetaType(null);
+    } else if (metaType) {
+      setDrawerMetaType(metaType);
+      setDrawerBudgetFilter(null);
+    } else {
+      setDrawerBudgetFilter(null);
+      setDrawerMetaType(null);
+    }
+    setShowActivityDrawer(true);
+  };
+
+  // Auto-open drawer for activity_id from URL
+  useEffect(() => {
+    if (autoOpenActivityId && plan.activities && !showActivityDrawer) {
+      const activity = plan.activities.find(a => parseInt(a.id) === parseInt(autoOpenActivityId));
+      if (activity) {
+        handleOpenDrawer(activity);
+        setIsExpanded(true);
+      }
+    }
+  }, [autoOpenActivityId, plan.activities, showActivityDrawer, handleOpenDrawer]);
 
   // Close dropdown on scroll, resize, or click outside
   useEffect(() => {
@@ -99,21 +125,6 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
       };
     }
   }, [openStatusMenu]);
-
-  const handleOpenDrawer = (activity, budgetType = null, budgetStatus = null, metaType = null) => {
-    setSelectedActivity(activity);
-    if (budgetType) {
-      setDrawerBudgetFilter({ type: budgetType, status: budgetStatus || null });
-      setDrawerMetaType(null);
-    } else if (metaType) {
-      setDrawerMetaType(metaType);
-      setDrawerBudgetFilter(null);
-    } else {
-      setDrawerBudgetFilter(null);
-      setDrawerMetaType(null);
-    }
-    setShowActivityDrawer(true);
-  };
 
   const createActivityMutation = useCreateActivity();
   const updateStatusMutation = useUpdateActivityStatus();

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FileText, AlertCircle, Calendar, X, Image, Download, ExternalLink, Eye, Clock, Paperclip, ZoomIn, Loader2, FileSpreadsheet } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { SectionTitle } from './SectionTitle';
 import { useReport } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
@@ -66,9 +67,10 @@ const downloadFile = async (url, fileName) => {
 };
 
 // Evidence Modal Component
-const EvidenceModal = ({ evidences, activityName, onClose }) => {
+const EvidenceModal = ({ evidences, activityName, activityId, onClose }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [downloadingId, setDownloadingId] = useState(null);
+  const navigate = useNavigate();
 
   if (!evidences || evidences.length === 0) return null;
 
@@ -78,6 +80,11 @@ const EvidenceModal = ({ evidences, activityName, onClose }) => {
     setDownloadingId(id);
     await downloadFile(url, fileName);
     setDownloadingId(null);
+  };
+
+  const handleViewActivity = () => {
+    navigate(`/marketing-plans?activity_id=${activityId}`);
+    onClose();
   };
 
   return (
@@ -104,12 +111,21 @@ const EvidenceModal = ({ evidences, activityName, onClose }) => {
                 {activityName}
               </p>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleViewActivity}
+                className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 transition-colors"
+                title="View activity in Marketing Plans"
+              >
+                <Eye className="w-5 h-5" />
+              </button>
+              <button
+                onClick={onClose}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              </button>
+            </div>
           </div>
           
           {/* Stats */}
@@ -342,12 +358,12 @@ export const ReportingTable = () => {
 
   const hasData = reportData?.months && reportData.months.length > 0;
 
-  const handleOpenEvidences = (evidences, activityName) => {
-    setEvidenceModal({ open: true, evidences, activityName });
+  const handleOpenEvidences = (evidences, activityName, activityId) => {
+    setEvidenceModal({ open: true, evidences, activityName, activityId });
   };
 
   const handleCloseEvidences = () => {
-    setEvidenceModal({ open: false, evidences: [], activityName: '' });
+    setEvidenceModal({ open: false, evidences: [], activityName: '', activityId: null });
   };
 
   const handleExportExcel = () => {
@@ -547,7 +563,7 @@ export const ReportingTable = () => {
                         <div className="flex justify-center">
                           {row.evidences && row.evidences.length > 0 ? (
                             <button 
-                              onClick={() => handleOpenEvidences(row.evidences, row.activity_name)}
+                              onClick={() => handleOpenEvidences(row.evidences, row.activity_name, row.activity_id)}
                               className="flex items-center gap-1 px-2 py-1 rounded-md bg-blue-50 dark:bg-blue-900/20 text-[#3B82F6] dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors duration-200"
                             >
                               <FileText className="w-4 h-4" />
@@ -572,6 +588,7 @@ export const ReportingTable = () => {
         <EvidenceModal
           evidences={evidenceModal.evidences}
           activityName={evidenceModal.activityName}
+          activityId={evidenceModal.activityId}
           onClose={handleCloseEvidences}
         />
       )}

@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { MarketingPlansTable } from '@/components/marketing/MarketingPlansTable';
 import { MarketingPlansTableSkeleton } from '@/components/marketing/MarketingPlansTableSkeleton';
 import { MarketingPlansTableEmpty } from '@/components/marketing/MarketingPlansTableEmpty';
@@ -16,6 +17,10 @@ const MarketingPlans = () => {
   
   // Search state
   const [searchTerm, setSearchTerm] = useState('');
+
+  // URL params for activity_id
+  const [searchParams] = useSearchParams();
+  const activityIdFromUrl = searchParams.get('activity_id');
 
   // Filters and pagination from custom hook
   const {
@@ -100,6 +105,7 @@ const MarketingPlans = () => {
         showBudgetColumns
         showMediaUploadColumns
         onEditPlan={openEditModal}
+        autoOpenActivityId={activityIdFromUrl}
       />
     );
   };
