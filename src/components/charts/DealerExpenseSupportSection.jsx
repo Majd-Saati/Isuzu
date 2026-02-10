@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Building2 } from 'lucide-react';
 import { useCharts } from '@/hooks/api/useCharts';
 import { useCompanies } from '@/hooks/api/useCompanies';
@@ -34,14 +35,21 @@ const monthLabel = (monthStr) => {
 };
 
 export const DealerExpenseSupportSection = () => {
-  const [companyId, setCompanyId] = useState('all');
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
+
+  const [companyId, setCompanyId] = useState(isAdmin ? 'all' : String(user?.id|| ''));
   const [month] = useState(DEFAULT_MONTH);
 
-  const { data: companiesData } = useCompanies({ perPage: 100 });
+  const { data: companiesData } = useCompanies({ perPage: 100 }, { enabled: isAdmin });
   const companies = companiesData?.companies ?? [];
 
-  const paramsByTerm = { company_id: companyId, term_id: DEFAULT_TERM_ID };
-  const paramsByMonth = { company_id: companyId, month };
+  useEffect(() => {
+    if (!isAdmin && user?.id) setCompanyId(String(user.id));
+  }, [isAdmin, user]);
+
+  const paramsByTerm = { company_id: isAdmin ? companyId : user?.company_id, term_id: DEFAULT_TERM_ID };
+  const paramsByMonth = { company_id: isAdmin ? companyId : user?.company_id, month };
 
   const { data: dataByTerm, isLoading: loadingTerm } = useCharts(paramsByTerm);
   const { data: dataByMonth, isLoading: loadingMonth } = useCharts(paramsByMonth);
@@ -66,22 +74,24 @@ export const DealerExpenseSupportSection = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-[#E60012]" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
-          <select
-            value={companyId}
-            onChange={(e) => setCompanyId(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[180px] cursor-pointer"
-          >
-            <option value="all">All companies</option>
-            {companies.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        {isAdmin && (
+          <div className="flex items-center gap-2">
+            <Building2 className="w-4 h-4 text-[#E60012]" />
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
+            <select
+              value={companyId}
+              onChange={(e) => setCompanyId(e.target.value)}
+              className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[180px] cursor-pointer"
+            >
+              <option value="all">All companies</option>
+              {companies.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

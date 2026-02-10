@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Calendar, AlertCircle, Building2 } from 'lucide-react';
 import { useCharts } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
@@ -12,16 +13,23 @@ import { format } from 'date-fns';
 const getDefaultMonth = () => format(new Date(), 'yyyy-MM');
 
 export const MarketingChartsSection = () => {
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
+
   const [periodType, setPeriodType] = useState('month');
   const [month, setMonth] = useState(getDefaultMonth);
   const [termId, setTermId] = useState('');
-  const [companyId, setCompanyId] = useState('all');
+  const [companyId, setCompanyId] = useState(isAdmin ? 'all' : String(user?.id || ''));
 
   const { data: termsData } = useTerms({ perPage: 100 });
   const terms = termsData?.terms ?? [];
 
-  const { data: companiesData } = useCompanies({ perPage: 100 });
+  const { data: companiesData } = useCompanies({ perPage: 100 }, { enabled: isAdmin });
   const companies = companiesData?.companies ?? [];
+
+  useEffect(() => {
+    if (!isAdmin && user?.id) setCompanyId(String(user.id));
+  }, [isAdmin, user]);
 
   const params = useMemo(() => {
     const base = { company_id: companyId };
@@ -60,23 +68,27 @@ export const MarketingChartsSection = () => {
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
-        {/* Company filter */}
-        <div className="flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-[#E60012]" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
-        </div>
-        <select
-          value={companyId}
-          onChange={(e) => setCompanyId(e.target.value)}
-          className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[180px] cursor-pointer"
-        >
-          <option value="all">All companies</option>
-          {companies.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+          {/* Company filter (admin only) */}
+          {isAdmin && (
+            <>
+              <div className="flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-[#E60012]" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
+              </div>
+              <select
+                value={companyId}
+                onChange={(e) => setCompanyId(e.target.value)}
+                className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[180px] cursor-pointer"
+              >
+                <option value="all">All companies</option>
+                {companies.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
 
         {/* Period filter */}
         <div className="flex items-center gap-2 border-l border-gray-300 dark:border-gray-600 pl-4">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { DealerEfficiencyChart } from '@/components/dashboard/DealerEfficiencyChart';
 import { DealerEfficiencyChartSkeleton } from '@/components/dashboard/DealerEfficiencyChartSkeleton';
 import { DealerEfficiencyChartEmpty } from '@/components/dashboard/DealerEfficiencyChartEmpty';
@@ -48,36 +49,46 @@ const selectClass =
   'px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[160px] cursor-pointer';
 
 const DealerEfficiencyChartByMonth = () => {
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
+
   const [month, setMonth] = useState('');
-  const [companyId, setCompanyId] = useState('');
-  const { data: companiesData } = useCompanies({ perPage: 100 });
+  const [companyId, setCompanyId] = useState(isAdmin ? '' : String(user?.id || ''));
+  const { data: companiesData } = useCompanies({ perPage: 100 }, { enabled: isAdmin });
   const companies = companiesData?.companies ?? [];
+
+  useEffect(() => {
+    if (!isAdmin && user?.id) setCompanyId(String(user.id));
+  }, [isAdmin, user]);
+
   const { data, isLoading, isError } = useCharts(
-    { company_id: companyId || undefined, month: month || undefined },
+    { company_id: isAdmin ? (companyId || undefined) : user?.id, month: month || undefined },
     { enabled: !!month }
   );
   const chartData = buildDealerChartData(data?.totals, `By Month (${monthLabel(month)})`);
 
   const monthFilter = (
     <div className="flex flex-row flex-wrap gap-6">
-      <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-[#E60012]" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
+      {isAdmin && (
+        <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <Building2 className="w-4 h-4 text-[#E60012]" />
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
+          </div>
+          <select
+            value={companyId}
+            onChange={(e) => setCompanyId(e.target.value)}
+            className={selectClass}
+          >
+            <option value="">Select company</option>
+            {companies.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
         </div>
-        <select
-          value={companyId}
-          onChange={(e) => setCompanyId(e.target.value)}
-          className={selectClass}
-        >
-          <option value="">Select company</option>
-          {companies.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      )}
       <div className="flex flex-col gap-1.5 min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4 text-[#E60012]" />
@@ -131,15 +142,23 @@ const DealerEfficiencyChartByMonth = () => {
 };
 
 const DealerEfficiencyChartByTerm = () => {
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
+  console.log('user',user?.id);
+  
   const { data: termsData } = useTerms({ perPage: 100 });
-  const { data: companiesData } = useCompanies({ perPage: 100 });
+  const { data: companiesData } = useCompanies({ perPage: 100 }, { enabled: isAdmin });
   const terms = termsData?.terms ?? [];
   const companies = companiesData?.companies ?? [];
   const [termId, setTermId] = useState('');
-  const [companyId, setCompanyId] = useState('');
+  const [companyId, setCompanyId] = useState(isAdmin ? '' : String(user?.id || ''));
+
+  useEffect(() => {
+    if (!isAdmin && user?.id) setCompanyId(String(user.id));
+  }, [isAdmin, user]);
 
   const { data, isLoading, isError } = useCharts(
-    { company_id: companyId || undefined, term_id: termId || undefined },
+    { company_id: isAdmin ? (companyId || undefined) : user?.id, term_id: termId || undefined },
     { enabled: !!termId }
   );
   const selectedTerm = terms.find((t) => String(t.id) === String(termId));
