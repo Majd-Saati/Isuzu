@@ -75,7 +75,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
       {/* Sidebar */}
       <aside
         className={`
-          fixed left-0 top-0 bottom-0 h-screen flex flex-col items-stretch bg-white dark:bg-gray-900 z-30
+          fixed left-0 top-0 bottom-0 h-screen flex flex-col items-stretch bg-white dark:bg-gray-900 z-40
           transition-all duration-300 ease-in-out border-r-2 border-gray-200 dark:border-gray-800 shadow-2xl
           ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
           ${isCollapsed ? 'w-[80px]' : 'w-[306px] max-w-[85vw]'}
@@ -109,7 +109,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
         {/* Toggle Button - Only visible on desktop */}
         <button
           onClick={onToggleCollapse}
-          className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full items-center justify-center hover:bg-[#E60012] hover:border-[#E60012] hover:text-white text-gray-600 dark:text-gray-300 transition-all duration-300 shadow-md hover:shadow-lg z-10 group"
+          className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full items-center justify-center hover:bg-[#E60012] hover:border-[#E60012] hover:text-white text-gray-600 dark:text-gray-300 transition-all duration-300 shadow-md hover:shadow-lg z-20 group"
           title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {isCollapsed ? (
@@ -276,7 +276,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
         </nav>
 
         {/* PDF Download Section - Hidden when collapsed */}
-        {!isCollapsed && (
+        {/* {!isCollapsed && (
           <div className="w-full mt-6 sm:mt-8 mb-6 px-4 sm:px-8">
             <div className="bg-red-50 dark:bg-red-900/20 rounded-2xl p-4 sm:p-5 border-2 border-red-100 dark:border-red-900/30 shadow-sm">
               <div className="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm mb-4">
@@ -306,7 +306,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
               </button>
             </div>
           </div>
-        )}
+        )} */}
         {/* Bottom spacer */}
         <div className="bg-transparent flex shrink-0 h-[20px]" />
       </div>

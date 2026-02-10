@@ -48,8 +48,8 @@ export const DealerExpenseSupportSection = () => {
     if (!isAdmin && user?.id) setCompanyId(String(user.id));
   }, [isAdmin, user]);
 
-  const paramsByTerm = { company_id: isAdmin ? companyId : user?.company_id, term_id: DEFAULT_TERM_ID };
-  const paramsByMonth = { company_id: isAdmin ? companyId : user?.company_id, month };
+  const paramsByTerm = { company_id: isAdmin ? companyId : user?.id, term_id: DEFAULT_TERM_ID };
+  const paramsByMonth = { company_id: isAdmin ? companyId : user?.id, month };
 
   const { data: dataByTerm, isLoading: loadingTerm } = useCharts(paramsByTerm);
   const { data: dataByMonth, isLoading: loadingMonth } = useCharts(paramsByMonth);

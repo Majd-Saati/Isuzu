@@ -29,12 +29,12 @@ export const LoginCard = () => {
 
         <LoginForm />
         
-        <Divider text="Or continue with" />
+        {/* <Divider text="Or continue with" /> */}
         
-        <SocialLoginButtons />
+        {/* <SocialLoginButtons /> */}
 
         {/* Contact Link */}
-        <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+        {/* <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
           Need access?{' '}
           <button
             type="button"
@@ -42,11 +42,11 @@ export const LoginCard = () => {
           >
             Contact administrator
           </button>
-        </p>
+        </p> */}
 
         {/* Footer */}
         <p className="mt-8 text-center text-xs text-gray-400 dark:text-gray-500">
-          2025 © ISUZU MARKETING CMS by 5V
+          2026 © ISUZU MARKETING CMS by 5V
         </p>
       </div>
     </div>

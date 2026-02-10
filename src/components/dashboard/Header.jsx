@@ -40,13 +40,14 @@ export const Header = ({ onMenuClick, sidebarCollapsed = false }) => {
         <Menu className="w-6 h-6 text-[#344251] dark:text-gray-300" />
       </button>
       
-      <div className="flex w-full items-center gap-3 md:gap-6 lg:gap-[40px] text-sm text-[#848E9A] dark:text-gray-400 justify-between flex-wrap">
-        <SearchBar />
+      <div className="flex w-full items-center gap-3 md:gap-6 lg:gap-[40px] text-sm text-[#848E9A] dark:text-gray-400 justify-end flex-wrap">
+    <></>
+        {/* <SearchBar /> */}
         <div className="flex items-center gap-2 md:gap-4 leading-6">
-          <button className="hidden lg:flex group bg-white dark:bg-gray-800 shadow-md hover:shadow-xl items-center gap-3 justify-center px-6 py-3 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-[#E60012]/30 transition-all duration-300 hover:scale-105">
+          {/* <button className="hidden lg:flex group bg-white dark:bg-gray-800 shadow-md hover:shadow-xl items-center gap-3 justify-center px-6 py-3 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-[#E60012]/30 transition-all duration-300 hover:scale-105">
             <Grid3x3 className="w-5 h-5 text-[#848E9A] dark:text-gray-400 group-hover:text-[#E60012] transition-colors duration-300" />
             <div className="text-[#6B7280] dark:text-gray-300 font-semibold group-hover:text-[#344251] dark:group-hover:text-white transition-colors duration-300">Change View</div>
-          </button>
+          </button> */}
           <DarkModeToggle />
           <NotificationsDropdown showNotifications={showNotifications} setShowNotifications={setShowNotifications} notificationsRef={notificationsRef} />
           <UserMenuDropdown showUserMenu={showUserMenu} setShowUserMenu={setShowUserMenu} userMenuRef={userMenuRef} onLogoutClick={() => setShowLogoutModal(true)} />

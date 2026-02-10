@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { DealerEfficiencyChart } from '@/components/dashboard/DealerEfficiencyChart';
 import { DealerEfficiencyChartSkeleton } from '@/components/dashboard/DealerEfficiencyChartSkeleton';
@@ -61,6 +61,9 @@ const DealerEfficiencyChartByMonth = () => {
     if (!isAdmin && user?.id) setCompanyId(String(user.id));
   }, [isAdmin, user]);
 
+  // ref for month input so clicking the container can open the picker
+  const monthInputRef = useRef(null);
+
   const { data, isLoading, isError } = useCharts(
     { company_id: isAdmin ? (companyId || undefined) : user?.id, month: month || undefined },
     { enabled: !!month }
@@ -91,15 +94,27 @@ const DealerEfficiencyChartByMonth = () => {
       )}
       <div className="flex flex-col gap-1.5 min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-[#E60012]" />
+          <Calendar className="w-4 h-4 text-white" />
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Month</span>
         </div>
-        <input
-          type="month"
-          value={month}
-          onChange={(e) => setMonth(e.target.value)}
-          className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] cursor-pointer"
-        />
+        <div
+          className="w-full"
+          onClick={() => {
+            if (monthInputRef?.current) {
+              const el = monthInputRef.current;
+              if (typeof el.showPicker === 'function') el.showPicker();
+              else el.focus();
+            }
+          }}
+        >
+          <input
+            ref={monthInputRef}
+            type="month"
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+            className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] cursor-pointer w-full"
+          />
+        </div>
       </div>
     </div>
   );
@@ -167,7 +182,8 @@ const DealerEfficiencyChartByTerm = () => {
 
   const termFilter = (
     <div className="flex flex-row flex-wrap gap-6">
-      <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+      {isAdmin && (
+        <div className="flex flex-col gap-1.5 min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <Building2 className="w-4 h-4 text-[#E60012]" />
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
@@ -184,7 +200,8 @@ const DealerEfficiencyChartByTerm = () => {
             </option>
           ))}
         </select>
-      </div>
+        </div>
+      )}
       <div className="flex flex-col gap-1.5 min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <ClipboardList className="w-4 h-4 text-[#E60012]" />

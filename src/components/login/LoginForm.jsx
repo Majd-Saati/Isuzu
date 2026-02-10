@@ -84,7 +84,7 @@ export const LoginForm = () => {
       </div>
 
       {/* Remember Me & Forgot Password */}
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <label className="flex items-center gap-2 cursor-pointer group">
           <input
             type="checkbox"
@@ -95,7 +95,7 @@ export const LoginForm = () => {
         <a href="#" className="text-sm text-[#D22827] hover:text-[#B91C1C] font-medium transition-colors">
           Forgot password?
         </a>
-      </div>
+      </div> */}
 
       {/* API Error */}
       {loginMutation.isError && (
