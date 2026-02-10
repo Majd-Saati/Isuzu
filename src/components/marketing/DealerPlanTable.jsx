@@ -782,7 +782,7 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
                           onClick={() => handleOpenDrawer(activity, 'estimated cost', activity.estimatedStatus)}
                           className={`text-sm font-medium ${getAmountColorByStatus(
                             activity.estimatedStatus
-                          )} hover:underline`}
+                          )} ${activity.estimatedCost === 0 ? 'dark:text-white' : ''} hover:underline`}
                         >
                           ${activity.estimatedCost.toLocaleString()}
                         </button>
@@ -793,7 +793,7 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
                           onClick={() => handleOpenDrawer(activity, 'actual cost', activity.actualStatus)}
                           className={`text-sm font-medium ${getAmountColorByStatus(
                             activity.actualStatus
-                          )} hover:underline`}
+                          )} ${activity.actualCost === 0 ? 'dark:text-white' : ''} hover:underline`}
                         >
                           ${activity.actualCost.toLocaleString()}
                         </button>
@@ -804,7 +804,7 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
                           onClick={() => handleOpenDrawer(activity, 'support cost', activity.supportStatus)}
                           className={`text-sm font-medium ${getAmountColorByStatus(
                             activity.supportStatus
-                          )} hover:underline`}
+                          )} ${activity.supportCost === 0 ? 'dark:text-white' : ''} hover:underline`}
                         >
                           ${activity.supportCost.toLocaleString()}
                         </button>
@@ -815,7 +815,7 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
                           onClick={() => handleOpenDrawer(activity, 'invoice', activity.invoiceStatus)}
                           className={`text-sm font-medium ${getAmountColorByStatus(
                             activity.invoiceStatus
-                          )} hover:underline`}
+                          )} ${activity.invoiceCost === 0 ? 'dark:text-white' : ''} hover:underline`}
                         >
                           ${activity.invoiceCost.toLocaleString()}
                         </button>
@@ -933,8 +933,8 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
                               type="button"
                               onClick={() => handleOpenDrawer(activity, 'estimated cost', activity.estimatedStatus)}
                               className={`${getAmountColorByStatus(
-                                activity.estimatedStatus
-                              )} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
+                                  activity.estimatedStatus
+                                )} ${activity.estimatedCost === 0 ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
                             >
                               ${activity.estimatedCost.toLocaleString()}
                             </button>
@@ -948,7 +948,7 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
                               onClick={() => handleOpenDrawer(activity, 'actual cost', activity.actualStatus)}
                               className={`${getAmountColorByStatus(
                                 activity.actualStatus
-                              )} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
+                              )} ${activity.actualCost === 0 ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
                             >
                               ${activity.actualCost.toLocaleString()}
                             </button>
@@ -962,7 +962,7 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
                               onClick={() => handleOpenDrawer(activity, 'support cost', activity.supportStatus)}
                               className={`${getAmountColorByStatus(
                                 activity.supportStatus
-                              )} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
+                              )} ${activity.supportCost === 0 ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
                             >
                               ${activity.supportCost.toLocaleString()}
                             </button>
@@ -976,7 +976,7 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
                               onClick={() => handleOpenDrawer(activity, 'invoice', activity.invoiceStatus)}
                               className={`${getAmountColorByStatus(
                                 activity.invoiceStatus
-                              )} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
+                              )} ${activity.invoiceCost === 0 ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
                             >
                               ${activity.invoiceCost.toLocaleString()}
                             </button>
@@ -1003,28 +1003,28 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm">
                   <div className="flex items-center gap-1">
                     <span className="text-gray-600 dark:text-gray-400">Estimated:</span>
-                    <span className="font-semibold text-blue-600 dark:text-blue-400">
+                    <span className={`font-semibold text-blue-600 ${plan.activities.reduce((sum, a) => sum + a.estimatedCost, 0) === 0 ? 'dark:text-white' : 'dark:text-blue-400'}`}>
                       ${plan.activities.reduce((sum, a) => sum + a.estimatedCost, 0).toLocaleString()}
                     </span>
                   </div>
                   <span className="hidden sm:inline text-gray-400 dark:text-gray-600">|</span>
                   <div className="flex items-center gap-1">
                     <span className="text-gray-600 dark:text-gray-400">Actual:</span>
-                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span className={`font-semibold text-emerald-600 ${plan.activities.reduce((sum, a) => sum + a.actualCost, 0) === 0 ? 'dark:text-white' : 'dark:text-emerald-400'}`}>
                       ${plan.activities.reduce((sum, a) => sum + a.actualCost, 0).toLocaleString()}
                     </span>
                   </div>
                   <span className="hidden sm:inline text-gray-400 dark:text-gray-600">|</span>
                   <div className="flex items-center gap-1">
                     <span className="text-gray-600 dark:text-gray-400">Support:</span>
-                    <span className="font-semibold text-purple-600 dark:text-purple-400">
+                    <span className={`font-semibold text-purple-600 ${plan.activities.reduce((sum, a) => sum + a.supportCost, 0) === 0 ? 'dark:text-white' : 'dark:text-purple-400'}`}>
                       ${plan.activities.reduce((sum, a) => sum + a.supportCost, 0).toLocaleString()}
                     </span>
                   </div>
                   <span className="hidden sm:inline text-gray-400 dark:text-gray-600">|</span>
                   <div className="flex items-center gap-1">
                     <span className="text-gray-600 dark:text-gray-400">Invoice:</span>
-                    <span className="font-semibold text-amber-600 dark:text-amber-400">
+                    <span className={`font-semibold text-amber-600 ${plan.activities.reduce((sum, a) => sum + a.invoiceCost, 0) === 0 ? 'dark:text-white' : 'dark:text-amber-400'}`}>
                       ${plan.activities.reduce((sum, a) => sum + a.invoiceCost, 0).toLocaleString()}
                     </span>
                   </div>
