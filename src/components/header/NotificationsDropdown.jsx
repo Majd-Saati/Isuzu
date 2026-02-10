@@ -41,18 +41,24 @@ export const NotificationsDropdown = ({
   useEffect(() => {
     if (notifications.length > 0) {
       if (page === 1) {
-        setAllNotifications(notifications);
+        setAllNotifications(prev => {
+          const prevIds = (prev || []).map(n => n.id).join(',');
+          const newIds = notifications.map(n => n.id).join(',');
+          if (prevIds === newIds) return prev;
+          return notifications;
+        });
       } else {
         setAllNotifications(prev => {
-          const existingIds = new Set(prev.map(n => n.id));
+          const existingIds = new Set((prev || []).map(n => n.id));
           const newNotifications = notifications.filter(n => !existingIds.has(n.id));
-          return [...prev, ...newNotifications];
+          if (newNotifications.length === 0) return prev;
+          return [...(prev || []), ...newNotifications];
         });
       }
     } else if (page === 1) {
-      setAllNotifications([]);
+      setAllNotifications(prev => (prev && prev.length ? [] : prev));
     }
-  }, [notifications]);
+  }, [notifications, page]);
 
   // Infinite scroll handler
   const handleScroll = useCallback(() => {

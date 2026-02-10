@@ -71,16 +71,27 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
     setShowActivityDrawer(true);
   };
 
+  // Track whether we've auto-opened the drawer for a given activity id
+  const [autoOpened, setAutoOpened] = useState(false);
+
   // Auto-open drawer for activity_id from URL
   useEffect(() => {
-    if (autoOpenActivityId && plan.activities && !showActivityDrawer) {
+    if (!autoOpenActivityId) return;
+    // reset autoOpened when param changes
+    setAutoOpened(false);
+  }, [autoOpenActivityId]);
+
+  useEffect(() => {
+    if (!autoOpenActivityId || autoOpened) return;
+    if (plan.activities && !showActivityDrawer) {
       const activity = plan.activities.find(a => parseInt(a.id) === parseInt(autoOpenActivityId));
       if (activity) {
         handleOpenDrawer(activity);
         setIsExpanded(true);
+        setAutoOpened(true);
       }
     }
-  }, [autoOpenActivityId, plan.activities, showActivityDrawer, handleOpenDrawer]);
+  }, [autoOpenActivityId, plan.activities, showActivityDrawer, autoOpened]);
 
   // Close dropdown on scroll, resize, or click outside
   useEffect(() => {
