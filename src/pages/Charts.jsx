@@ -48,11 +48,14 @@ const selectClass =
   'px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[160px] cursor-pointer';
 
 const DealerEfficiencyChartByMonth = () => {
-  const [month, setMonth] = useState(getDefaultMonth);
-  const [companyId, setCompanyId] = useState('all');
+  const [month, setMonth] = useState('');
+  const [companyId, setCompanyId] = useState('');
   const { data: companiesData } = useCompanies({ perPage: 100 });
   const companies = companiesData?.companies ?? [];
-  const { data, isLoading, isError } = useCharts({ company_id: companyId, month });
+  const { data, isLoading, isError } = useCharts(
+    { company_id: companyId || undefined, month: month || undefined },
+    { enabled: !!month }
+  );
   const chartData = buildDealerChartData(data?.totals, `By Month (${monthLabel(month)})`);
 
   const monthFilter = (
@@ -67,7 +70,7 @@ const DealerEfficiencyChartByMonth = () => {
           onChange={(e) => setCompanyId(e.target.value)}
           className={selectClass}
         >
-          <option value="all">All companies</option>
+          <option value="">Select company</option>
           {companies.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
@@ -89,6 +92,18 @@ const DealerEfficiencyChartByMonth = () => {
       </div>
     </div>
   );
+
+  if (!month) {
+    return (
+      <div className={`${chartCardClass} max-w-lg`}>
+        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month (—)</p>
+        {monthFilter}
+        <div className="flex flex-col items-center justify-center py-12 text-center mt-4">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Select a month to view data.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isError || (!isLoading && !chartData)) {
     return (
@@ -121,16 +136,10 @@ const DealerEfficiencyChartByTerm = () => {
   const terms = termsData?.terms ?? [];
   const companies = companiesData?.companies ?? [];
   const [termId, setTermId] = useState('');
-  const [companyId, setCompanyId] = useState('all');
-
-  useEffect(() => {
-    if (terms.length > 0 && !termId) {
-      setTermId(String(terms[0].id));
-    }
-  }, [terms, termId]);
+  const [companyId, setCompanyId] = useState('');
 
   const { data, isLoading, isError } = useCharts(
-    { company_id: companyId, term_id: termId || undefined },
+    { company_id: companyId || undefined, term_id: termId || undefined },
     { enabled: !!termId }
   );
   const selectedTerm = terms.find((t) => String(t.id) === String(termId));
@@ -149,7 +158,7 @@ const DealerEfficiencyChartByTerm = () => {
           onChange={(e) => setCompanyId(e.target.value)}
           className={selectClass}
         >
-          <option value="all">All companies</option>
+          <option value="">Select company</option>
           {companies.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
