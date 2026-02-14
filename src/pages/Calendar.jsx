@@ -190,9 +190,8 @@ const Calendar = () => {
 
       {/* Summary Cards */}
       <SummaryCards
-        totalBudget={summaryStats.totalActualCost + summaryStats.totalSupportCost}
-        totalExpenditure={summaryStats.totalCost}
-        totalIncentive={summaryStats.totalIncentive}
+        totalActualCost={summaryStats.totalActualCost}
+        totalSupportCost={summaryStats.totalSupportCost}
       />
 
       {/* Term and Company Info Cards */}
@@ -293,12 +292,15 @@ const Calendar = () => {
                       </div>
                     </th>
                   ))}
+                  {/* Total Cost and Total Incentive columns commented out per request */}
+                  {/**
                   <th className="px-5 py-4 text-center text-xs font-bold text-gray-700 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700 uppercase tracking-wide min-w-[120px]">
                     Total Cost
                   </th>
                   <th className="px-5 py-4 text-center text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide min-w-[120px]">
                     Total Incentive
                   </th>
+                  */}
                 </tr>
               </thead>
               <tbody>
@@ -360,6 +362,7 @@ const Calendar = () => {
                                     Support: {formatCurrency(supportCost, currency)}
                                   </div>
                                 )}
+                                {/* Total and Incentive values commented out per request
                                 {totalCost > 0 && (
                                   <div className="text-xs font-bold text-[#D22827] dark:text-red-400 px-2 py-1 bg-red-50 dark:bg-red-900/20 rounded">
                                     Total: {formatCurrency(totalCost, currency)}
@@ -370,6 +373,7 @@ const Calendar = () => {
                                     Incentive: {formatCurrency(incentive, currency)}
                                   </div>
                                 )}
+                                */}
                               </div>
                             ) : (
                               <span className="text-xs text-gray-400 dark:text-gray-600">—</span>
@@ -378,6 +382,7 @@ const Calendar = () => {
                         );
                       })}
                       
+                      {/* Row totals commented out per request
                       <td className="px-5 py-4 text-center border-r border-gray-200 dark:border-gray-700">
                         <span className="text-sm font-bold text-[#3B82F6] dark:text-blue-400">
                           {formatCurrency(parseFloat(activity.total_cost) || 0, currency)}
@@ -388,6 +393,7 @@ const Calendar = () => {
                           {formatCurrency(parseFloat(activity.incentive) || 0, currency)}
                         </span>
                       </td>
+                      */}
                     </tr>
                   ));
                 })}

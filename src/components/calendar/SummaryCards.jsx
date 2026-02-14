@@ -1,24 +1,11 @@
 import React from 'react';
 
-export const SummaryCards = ({ totalBudget, totalExpenditure, totalIncentive }) => {
+export const SummaryCards = ({ totalActualCost, totalSupportCost }) => {
+  // Only show Actual and Support cards per request. Other cards kept commented for reference.
   const cards = [
     {
-      label: 'Total Budget',
-      value: totalBudget,
-      gradient: 'from-red-50 to-white',
-      darkGradient: 'dark:from-gray-800 dark:to-gray-900',
-      border: 'border-red-100',
-      darkBorder: 'dark:border-gray-700',
-      textColor: 'text-[#D22827]',
-      darkTextColor: 'dark:text-red-400',
-      bgColor: 'bg-red-100',
-      darkBgColor: 'dark:bg-gray-700',
-      dotColor: 'bg-[#D22827]',
-      darkDotColor: 'dark:bg-red-400'
-    },
-    {
-      label: 'Total Expenditure',
-      value: totalExpenditure,
+      label: 'Actual cost',
+      value: totalActualCost,
       gradient: 'from-green-50 to-white',
       darkGradient: 'dark:from-gray-800 dark:to-gray-900',
       border: 'border-green-100',
@@ -31,19 +18,23 @@ export const SummaryCards = ({ totalBudget, totalExpenditure, totalIncentive }) 
       darkDotColor: 'dark:bg-emerald-400'
     },
     {
-      label: 'Total Incentive',
-      value: totalIncentive,
-      gradient: 'from-gray-50 to-white',
+      label: 'Support cost',
+      value: totalSupportCost,
+      gradient: 'from-blue-50 to-white',
       darkGradient: 'dark:from-gray-800 dark:to-gray-900',
-      border: 'border-gray-200',
+      border: 'border-blue-100',
       darkBorder: 'dark:border-gray-700',
-      textColor: 'text-[#6B7280]',
-      darkTextColor: 'dark:text-gray-300',
-      bgColor: 'bg-gray-100',
+      textColor: 'text-[#3b82f6]',
+      darkTextColor: 'dark:text-blue-300',
+      bgColor: 'bg-blue-100',
       darkBgColor: 'dark:bg-gray-700',
-      dotColor: 'bg-[#6B7280]',
-      darkDotColor: 'dark:bg-gray-400'
-    }
+      dotColor: 'bg-[#3b82f6]',
+      darkDotColor: 'dark:bg-blue-400'
+    },
+    // Original cards (commented):
+    // { label: 'Total Budget', value: totalBudget, ... }
+    // { label: 'Total Expenditure', value: totalExpenditure, ... }
+    // { label: 'Total Incentive', value: totalIncentive, ... }
   ];
 
   return (
