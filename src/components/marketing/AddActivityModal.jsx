@@ -6,7 +6,19 @@ import { Input } from '@/components/ui/Input';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 
 // Create validation schema with plan date constraints
+// Use string-based YYYY-MM-DD tests and construct local Date(year, month-1, day)
+// to avoid timezone offsets when comparing dates.
 const createActivitySchema = (planStartDate, planEndDate, isEditMode = false) => {
+  // helper to parse YYYY-MM-DD into a local Date (no timezone offset)
+  const parseYMD = (val) => {
+    if (!val || typeof val !== 'string') return null;
+    const parts = val.split('-').map((p) => Number(p));
+    if (parts.length !== 3) return null;
+    const [y, m, d] = parts;
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+  };
+
   return Yup.object({
     activityName: Yup.string()
       .required('Activity name is required')
@@ -14,24 +26,46 @@ const createActivitySchema = (planStartDate, planEndDate, isEditMode = false) =>
       .max(100, 'Activity name must be less than 100 characters'),
     companyId: isEditMode ? Yup.string() : Yup.string().required('Dealer is required'),
     termId: isEditMode ? Yup.string() : Yup.string().required('Term is required'),
-    startsAt: Yup.date()
+    startsAt: Yup.string()
       .required('Start date is required')
-      .typeError('Please enter a valid date')
+      .test('valid-date', 'Please enter a valid date', function(value) {
+        if (!value) return false;
+        return parseYMD(value) instanceof Date && !isNaN(parseYMD(value).getTime());
+      })
       .test('min-plan-start', `Start date cannot be before plan start (${planStartDate})`, function(value) {
         if (!value || !planStartDate) return true;
-        return new Date(value) >= new Date(planStartDate);
+        const v = parseYMD(value);
+        const p = parseYMD(planStartDate) || parseYMD(formatDateForInput(planStartDate));
+        if (!v || !p) return true;
+        return v.getTime() >= p.getTime();
       })
       .test('max-plan-end', `Start date cannot be after plan end (${planEndDate})`, function(value) {
         if (!value || !planEndDate) return true;
-        return new Date(value) <= new Date(planEndDate);
+        const v = parseYMD(value);
+        const p = parseYMD(planEndDate) || parseYMD(formatDateForInput(planEndDate));
+        if (!v || !p) return true;
+        return v.getTime() <= p.getTime();
       }),
-    endsAt: Yup.date()
+    endsAt: Yup.string()
       .required('End date is required')
-      .typeError('Please enter a valid date')
-      .min(Yup.ref('startsAt'), 'End date must be after start date')
+      .test('valid-date', 'Please enter a valid date', function(value) {
+        if (!value) return false;
+        return parseYMD(value) instanceof Date && !isNaN(parseYMD(value).getTime());
+      })
+      .test('min-after-start', 'End date must be after start date', function(value) {
+        const { startsAt } = this.parent || {};
+        if (!value || !startsAt) return true;
+        const v = parseYMD(value);
+        const s = parseYMD(startsAt);
+        if (!v || !s) return true;
+        return v.getTime() >= s.getTime();
+      })
       .test('max-plan-end', `End date cannot be after plan end (${planEndDate})`, function(value) {
         if (!value || !planEndDate) return true;
-        return new Date(value) <= new Date(planEndDate);
+        const v = parseYMD(value);
+        const p = parseYMD(planEndDate) || parseYMD(formatDateForInput(planEndDate));
+        if (!v || !p) return true;
+        return v.getTime() <= p.getTime();
       }),
   });
 };
@@ -442,6 +476,8 @@ export const AddActivityModal = ({
                   onChange={(e) => {
                     formik.handleChange(e);
                     formik.setFieldTouched('startsAt', true);
+                    // Validate immediately so errors clear on change (no need to blur)
+                    formik.validateField('startsAt');
                   }}
                   onBlur={formik.handleBlur}
                   min={planStartDate || undefined}
@@ -468,6 +504,10 @@ export const AddActivityModal = ({
                   onChange={(e) => {
                     formik.handleChange(e);
                     formik.setFieldTouched('endsAt', true);
+                    // Validate immediately so related errors clear on change
+                    formik.validateField('endsAt');
+                    // Also re-validate startsAt since end change can affect start-related rules
+                    formik.validateField('startsAt');
                   }}
                   onBlur={formik.handleBlur}
                   min={formik.values.startsAt || planStartDate || undefined}
