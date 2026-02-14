@@ -156,7 +156,9 @@ export const YearlyExpenseChart = () => {
 
       {!isLoading && !isError && hasData && (
         <div className="space-y-6">
+          {/* Totals cards commented out per request
           <MarketingChartsTotals totals={data.totals} />
+          */}
           <MarketingChartsSeriesChart 
             series={data.series} 
             totals={data.totals}

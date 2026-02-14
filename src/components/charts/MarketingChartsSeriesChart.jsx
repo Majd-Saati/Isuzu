@@ -42,18 +42,19 @@ const formatCompact = (value) => {
   return formatCurrency(num);
 };
 
+// Only keep actual and support costs for this chart. Other metrics commented out intentionally.
 const COLORS = {
   actual_cost: '#10b981',
   support_cost: '#3b82f6',
-  total_cost: '#f59e0b',
-  incentive: '#E60012',
+  // total_cost: '#f59e0b',
+  // incentive: '#E60012',
 };
 
 const METRICS = [
   { key: 'actual_cost', name: 'Actual cost', color: COLORS.actual_cost },
   { key: 'support_cost', name: 'Support cost', color: COLORS.support_cost },
-  { key: 'total_cost', name: 'Total cost', color: COLORS.total_cost },
-  { key: 'incentive', name: 'Incentive', color: COLORS.incentive },
+  // { key: 'total_cost', name: 'Total cost', color: COLORS.total_cost },
+  // { key: 'incentive', name: 'Incentive', color: COLORS.incentive },
 ];
 
 export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketing-chart' }) => {
@@ -392,16 +393,18 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
         </ResponsiveContainer>
       </div>
 
-      {/* Quick stats below chart (excluded from PDF/PNG export) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-        {stats.map(({ key, name, color, avg }) => (
-          <div key={key} className="text-center">
-            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Avg {name}</div>
-            <div className="text-lg font-bold" style={{ color }}>
-              {formatCompact(avg)}
+      {/* Quick stats: only Actual and Support cards shown per request */}
+      <div className="grid grid-cols-2 md:grid-cols-2 gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+        {stats
+          .filter(({ key }) => key === 'actual_cost' || key === 'support_cost')
+          .map(({ key, name, color, avg }) => (
+            <div key={key} className="text-center">
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Avg {name}</div>
+              <div className="text-lg font-bold" style={{ color }}>
+                {formatCompact(avg)}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );

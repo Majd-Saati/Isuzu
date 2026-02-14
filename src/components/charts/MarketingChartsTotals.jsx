@@ -66,7 +66,10 @@ export const MarketingChartsTotals = ({ totals }) => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {cards.map(({ key, label, icon: Icon, gradient, bg, border, text, iconBg }, index) => {
+      {cards
+        // Only render actual_cost and support_cost cards per request; keep others defined but hidden
+        .filter((c) => c.key === 'actual_cost' || c.key === 'support_cost')
+        .map(({ key, label, icon: Icon, gradient, bg, border, text, iconBg }, index) => {
         const value = totals[key];
         const isHovered = hoveredCard === key;
         
