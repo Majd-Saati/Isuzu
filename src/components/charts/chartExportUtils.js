@@ -120,33 +120,73 @@ export const exportReportToExcel = (reportData, filename = 'report') => {
       new Intl.NumberFormat('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(
         Number(value) || 0
       );
+    // Build an array-of-arrays so we can attach hyperlinks to specific cells
+    const header = ['Month', 'Company', 'Plan', 'Activity', 'Actual Cost', 'Support Cost', 'Evidences'];
+    const aoa = [header];
+    const metaRows = []; // keep mapping to original rows so we can construct urls
 
-    const rows = [];
     for (const monthGroup of reportData.months) {
       for (const row of monthGroup.rows || []) {
-        rows.push({
-          Month: monthGroup.label || monthGroup.period,
-          Company: row.company_name || '',
-          Plan: row.plan_name || '',
-          Activity: row.activity_name || '',
-          'Actual Cost': formatNum(row.actual_cost),
-          'Support Cost': formatNum(row.support_cost),
-          'Evidences': row.evidences?.length ?? 0,
-        });
+        const evidCount = row.evidences?.length ?? 0;
+        const rowIndex = aoa.length; // 0-based row index for this new row in aoa
+        aoa.push([
+          monthGroup.label || monthGroup.period || '',
+          row.company_name || '',
+          row.plan_name || '',
+          row.activity_name || '',
+          formatNum(row.actual_cost),
+          formatNum(row.support_cost),
+          String(evidCount),
+        ]);
+
+        // store metadata for hyperlink creation (only if there is at least one evidence)
+        if (evidCount && evidCount > 0) {
+          metaRows.push({ rowIndex, activity_id: row.activity_id, plan_id: row.plan_id });
+        }
       }
     }
 
     const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const worksheet = XLSX.utils.aoa_to_sheet(aoa);
+
+    // Set column widths
     worksheet['!cols'] = [
-      { wch: 14 },
-      { wch: 22 },
-      { wch: 22 },
-      { wch: 28 },
-      { wch: 14 },
-      { wch: 14 },
-      { wch: 10 },
+      { wch: 14 }, // Month
+      { wch: 22 }, // Company
+      { wch: 22 }, // Plan
+      { wch: 28 }, // Activity
+      { wch: 14 }, // Actual Cost
+      { wch: 14 }, // Support Cost
+      { wch: 12 }, // Evidences
     ];
+
+    // Add hyperlinks for evidences cells that have evidence
+    // Link will navigate to marketing-plans and include activity & plan ids and an openDrawer flag
+    const termId = reportData?.term?.id;
+    for (const meta of metaRows) {
+      try {
+        const { rowIndex, activity_id, plan_id } = meta;
+        const params = new URLSearchParams();
+        if (activity_id) params.set('activity', String(activity_id));
+        if (plan_id) params.set('plan', String(plan_id));
+        if (termId) params.set('term', String(termId));
+        params.set('openDrawer', '1');
+
+        const url = `https://marketing.5v.ae/marketing-plans?${params.toString()}`;
+
+        // evidences is the 7th column -> column index 6 (0-based)
+        const cellAddress = XLSX.utils.encode_cell({ c: 6, r: rowIndex });
+        // Ensure cell exists
+        worksheet[cellAddress] = worksheet[cellAddress] || { t: 's', v: '1' };
+        // Set hyperlink
+        worksheet[cellAddress].l = { Target: url, Tooltip: 'Open evidences in Marketing Plans' };
+        worksheet[cellAddress].t = 's';
+        worksheet[cellAddress].v = worksheet[cellAddress].v ?? '';
+      } catch (err) {
+        // ignore individual cell hyperlink errors
+      }
+    }
+
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
     XLSX.writeFile(workbook, `${filename}.xlsx`);
     return true;

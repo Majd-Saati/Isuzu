@@ -18,9 +18,15 @@ const MarketingPlans = () => {
   // Search state
   const [searchTerm, setSearchTerm] = useState('');
 
-  // URL params for activity_id
+  // URL params for activity id and open drawer flag
   const [searchParams] = useSearchParams();
-  const activityIdFromUrl = searchParams.get('activity_id');
+  // support both `activity_id` and `activity` (export previously used `activity`)
+  const rawActivityParam = searchParams.get('activity_id') || searchParams.get('activity');
+  const openDrawerParam = searchParams.get('openDrawer') || searchParams.get('openDrawer');
+  // Only auto-open when openDrawer flag is present and truthy (e.g. '1' or 'true')
+  const activityIdFromUrl = rawActivityParam && ['1', 'true', 'yes'].includes((openDrawerParam || '1').toString().toLowerCase())
+    ? rawActivityParam
+    : null;
 
   // Filters and pagination from custom hook
   const {
