@@ -13,7 +13,9 @@ export const CalendarFilters = ({
 }) => {
   // For admin users, both term and company (or "all") are required
   // For non-admin users, only term is required (company is auto-set)
-  const isFormValid = isAdmin ? (selectedTermId && (selectedCompanyId || selectedCompanyId === 'all')) : selectedTermId;
+  const isFormValid = isAdmin 
+    ? (selectedTermId && (selectedCompanyId === 'all' || selectedCompanyId)) 
+    : selectedTermId;
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 shadow-sm p-5">

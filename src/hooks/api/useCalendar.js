@@ -16,7 +16,7 @@ export const useCalendarView = (params = {}, options = {}) => {
     queryKey: ['calendarView', params],
     queryFn: () => calendarService.getCalendarView(params),
     select: (data) => data?.body || null,
-    enabled: Boolean(enabled && term_id && company_id), // Only fetch if both IDs are provided
+    enabled: Boolean(enabled && term_id), // Only term_id is required, company_id is optional (for "all companies")
     staleTime,
     refetchOnWindowFocus: refetchOnWindowFocus !== undefined ? refetchOnWindowFocus : true,
     refetchOnMount: refetchOnMount !== undefined ? refetchOnMount : true,

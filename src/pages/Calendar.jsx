@@ -51,14 +51,24 @@ const Calendar = () => {
   // Fetch calendar data only when term is selected and user clicked "Load" or "all" is selected
   const { data: calendarData, isLoading, isError, error } = useCalendarView(
     calendarParams,
-    { enabled: shouldFetch && !!selectedTermId && (isAdmin ? (!!selectedCompanyId || selectedCompanyId === 'all') : true) }
+    { 
+      enabled: shouldFetch && !!selectedTermId && (isAdmin ? (selectedCompanyId === 'all' || !!selectedCompanyId) : true)
+    }
   );
 
   const handleSubmit = () => {
     // For admins, both term and company (or "all") are required
     // For non-admins, only term is required (company is auto-set from user)
-    if (selectedTermId && (isAdmin ? (selectedCompanyId || selectedCompanyId === 'all') : true)) {
-      setShouldFetch(true);
+    if (selectedTermId) {
+      if (isAdmin) {
+        // For admin, company must be selected (including "all")
+        if (selectedCompanyId === 'all' || selectedCompanyId) {
+          setShouldFetch(true);
+        }
+      } else {
+        // For non-admin, just need term
+        setShouldFetch(true);
+      }
     }
   };
 
@@ -280,7 +290,7 @@ const Calendar = () => {
               <div className="flex items-center justify-between py-2">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Currency</span>
                 <div className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                  {/* <DollarSign className="w-4 h-4 text-gray-500 dark:text-gray-400" /> */}
                   <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{currency}</span>
                 </div>
               </div>
