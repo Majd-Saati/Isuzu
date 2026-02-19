@@ -24,7 +24,11 @@ const CHART = {
   valueBelowArc: 28,
 };
 
-const formatVal = (v) => Number(v).toLocaleString();
+const formatVal = (v) => {
+  const num = Number(v);
+  if (isNaN(num)) return '0.00';
+  return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
 
 export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTitle = true }) => {
   const uniqueId = chartId ?? React.useId().replace(/:/g, '-');
@@ -40,6 +44,7 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
   } = d;
 
   const percentage = Math.min(100, Math.max(0, Number(rawPercent) ?? 0));
+  const formattedPercentage = percentage.toFixed(2);
   const cx = CHART.size / 2;
   const cy = CHART.size / 2;
   const semicircleLength = Math.PI * CHART.radius;
@@ -57,7 +62,7 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
   const fillBoundaryAngle = 270 - (percentage / 100) * 180;
   const fillBoundary = polarToCartesian(fillBoundaryAngle);
   const valueAtEnd =
-    support_cost != null ? support_cost : Math.round((percentage / 100) * (amount || 0));
+    support_cost != null ? support_cost : (percentage / 100) * (amount || 0);
   const endVal = endValue ?? amount;
   const startVal = startValue ?? 0;
 
@@ -146,7 +151,7 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
               className="fill-gray-900 dark:fill-gray-100 font-extrabold tabular-nums"
               style={{ fontSize: 38, letterSpacing: '-0.02em' }}
             >
-              {percentage}%
+              {formattedPercentage}%
             </text>
             {/* <text
               x={fillBoundary.x}

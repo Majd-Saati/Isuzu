@@ -31,16 +31,33 @@ const Calendar = () => {
     }
   }, [isAdmin, currentUser]);
 
-  // Fetch calendar data only when both IDs are selected and user clicked "Load"
+  // Auto-trigger request when "All companies" is selected and term is available
+  useEffect(() => {
+    if (isAdmin && selectedCompanyId === 'all' && selectedTermId) {
+      setShouldFetch(true);
+    }
+  }, [selectedCompanyId, selectedTermId, isAdmin]);
+
+  // Prepare API params - exclude company_id if "all" is selected
+  const calendarParams = useMemo(() => {
+    const params = { term_id: selectedTermId };
+    // Only include company_id if it's not "all" and not empty
+    if (selectedCompanyId && selectedCompanyId !== 'all') {
+      params.company_id = selectedCompanyId;
+    }
+    return params;
+  }, [selectedTermId, selectedCompanyId]);
+
+  // Fetch calendar data only when term is selected and user clicked "Load" or "all" is selected
   const { data: calendarData, isLoading, isError, error } = useCalendarView(
-    { term_id: selectedTermId, company_id: selectedCompanyId },
-    { enabled: shouldFetch && !!selectedTermId && !!selectedCompanyId }
+    calendarParams,
+    { enabled: shouldFetch && !!selectedTermId && (isAdmin ? (!!selectedCompanyId || selectedCompanyId === 'all') : true) }
   );
 
   const handleSubmit = () => {
-    // For admins, both term and company are required
+    // For admins, both term and company (or "all") are required
     // For non-admins, only term is required (company is auto-set from user)
-    if (selectedTermId && selectedCompanyId) {
+    if (selectedTermId && (isAdmin ? (selectedCompanyId || selectedCompanyId === 'all') : true)) {
       setShouldFetch(true);
     }
   };
@@ -108,7 +125,7 @@ const Calendar = () => {
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {isAdmin 
-                ? 'Please select a term and company above, then click "Load Calendar Data" to view the calendar information.'
+                ? 'Please select a term and company (or "All companies") above, then click "Load Calendar Data" to view the calendar information.'
                 : 'Please select a term above, then click "Load Calendar Data" to view the calendar information.'
               }
             </p>
@@ -222,8 +239,8 @@ const Calendar = () => {
           </div>
         )}
 
-        {/* Company Info Card */}
-        {company && (
+        {/* Company Info Card - Only show when a specific company is selected, not "All companies" */}
+        {company && selectedCompanyId !== 'all' && (
           <div className="bg-gradient-to-br from-green-50 to-white dark:from-green-900/20 dark:to-gray-900 rounded-2xl border-2 border-green-200 dark:border-green-800 shadow-sm p-6">
             <div className="flex items-center gap-3 mb-4">
               {company.logo ? (

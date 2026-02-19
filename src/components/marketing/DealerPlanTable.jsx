@@ -548,10 +548,13 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
               <thead className="bg-gray-50/70 dark:bg-gray-800/70 sticky top-0 z-10">
                 <tr>
                   <th className="w-12 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700">
-                    <Checkbox 
-                      checked={isAllSelected}
-                      onChange={handleSelectAll}
-                    />
+                    <div className="flex items-center justify-center">
+                      <Checkbox 
+                        checked={isAllSelected}
+                        onChange={handleSelectAll}
+                        className="[&>div]:w-4 [&>div]:h-4 [&>div]:border [&>div]:border-gray-300"
+                      />
+                    </div>
                   </th>
                   <th className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-[250px]">
                     Activities
@@ -600,10 +603,13 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
                 {plan.activities.length > 0 && plan.activities.map((activity) => (
                 <tr key={activity.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors group relative">
                   <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-12">
-                    <Checkbox 
-                      checked={selectedActivities.includes(activity.id)}
-                      onChange={() => handleSelectActivity(activity.id)}
-                    />
+                    <div className="flex items-center justify-center">
+                      <Checkbox 
+                        checked={selectedActivities.includes(activity.id)}
+                        onChange={() => handleSelectActivity(activity.id)}
+                        className="[&>div]:w-4 [&>div]:h-4 [&>div]:border [&>div]:border-gray-300"
+                      />
+                    </div>
                   </td>
                   <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-[250px]">
                     <div className="flex items-center gap-3">
@@ -848,6 +854,39 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
                   )}
                 </tr>
                 ))}
+                {/* Add New Activity Row */}
+                <tr 
+                  onClick={() => setShowAddActivityModal(true)}
+                  className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
+                >
+                  <td className="py-4 px-6 w-12"></td>
+                  <td className="py-4 px-6 w-[250px]">
+                    <div className="flex items-center gap-2">
+                      <Plus className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                      <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                        Add item
+                      </span>
+                    </div>
+                  </td>
+                  <td className="py-4 px-6 w-24"></td>
+                  <td className="py-4 px-6 w-40"></td>
+                  <td className="py-4 px-6 w-36"></td>
+                  <td className="py-4 px-6 w-44"></td>
+                  {showBudgetColumns && (
+                    <>
+                      <td className="py-4 px-6 w-32"></td>
+                      <td className="py-4 px-6 w-32"></td>
+                      <td className="py-4 px-6 w-32"></td>
+                      <td className="py-4 px-6 w-32"></td>
+                    </>
+                  )}
+                  {showMediaUploadColumns && (
+                    <>
+                      <td className="py-4 px-6 w-28"></td>
+                      <td className="py-4 px-6 w-28"></td>
+                    </>
+                  )}
+                </tr>
               </tbody>
             </table>
             {plan.activities.length === 0 && (
@@ -869,6 +908,7 @@ export const DealerPlanTable = ({ plan, onEdit, companies = [], terms = [], onPl
                         <Checkbox 
                           checked={selectedActivities.includes(activity.id)}
                           onChange={() => handleSelectActivity(activity.id)}
+                          className="[&>div]:w-4 [&>div]:h-4 [&>div]:border [&>div]:border-gray-300"
                         />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">

@@ -11,9 +11,9 @@ export const CalendarFilters = ({
   isAdmin = true,
   onSubmit 
 }) => {
-  // For admin users, both term and company are required
+  // For admin users, both term and company (or "all") are required
   // For non-admin users, only term is required (company is auto-set)
-  const isFormValid = isAdmin ? (selectedTermId && selectedCompanyId) : selectedTermId;
+  const isFormValid = isAdmin ? (selectedTermId && (selectedCompanyId || selectedCompanyId === 'all')) : selectedTermId;
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 shadow-sm p-5">
@@ -22,7 +22,7 @@ export const CalendarFilters = ({
           <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
           <p className="text-sm text-amber-800 dark:text-amber-300">
             {isAdmin ? (
-              <>Please select both a <strong>Term</strong> and a <strong>Company</strong> to view calendar data.</>
+              <>Please select both a <strong>Term</strong> and a <strong>Company</strong> (or "All companies") to view calendar data.</>
             ) : (
               <>Please select a <strong>Term</strong> to view calendar data.</>
             )}
@@ -62,6 +62,7 @@ export const CalendarFilters = ({
               className="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012] dark:focus:ring-red-500 focus:border-[#E60012] dark:focus:border-red-500 transition-all"
             >
               <option value="">Choose a company...</option>
+              <option value="all">All companies</option>
               {companies.map((company) => (
                 <option key={company.id} value={company.id}>
                   {company.name}

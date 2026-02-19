@@ -160,7 +160,7 @@ export const AddPlanModal = ({
               {isAdmin && (
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Dealer
+                    Company
                   </label>
                   <div className="relative">
                     <button
@@ -174,7 +174,7 @@ export const AddPlanModal = ({
                       } text-sm text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 focus:border-transparent transition-all`}
                     >
                       <span className={selectedCompanyName ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-500'}>
-                        {selectedCompanyName || 'Select dealer'}
+                        {selectedCompanyName || 'Select company'}
                       </span>
                       <ChevronDown className={`w-5 h-5 text-gray-400 dark:text-gray-500 transition-transform ${showCompanyDropdown ? 'rotate-180' : ''}`} />
                     </button>
