@@ -15,7 +15,6 @@ const Calendar = () => {
   
   const [selectedTermId, setSelectedTermId] = useState('');
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
-  const [shouldFetch, setShouldFetch] = useState(false);
 
   // Fetch terms and companies for dropdowns
   const { data: termsData } = useTerms({ page: 1, perPage: 100 }, { enabled: true });
@@ -31,13 +30,6 @@ const Calendar = () => {
     }
   }, [isAdmin, currentUser]);
 
-  // Auto-trigger request when "All companies" is selected and term is available
-  useEffect(() => {
-    if (isAdmin && selectedCompanyId === 'all' && selectedTermId) {
-      setShouldFetch(true);
-    }
-  }, [selectedCompanyId, selectedTermId, isAdmin]);
-
   // Prepare API params - exclude company_id if "all" is selected
   const calendarParams = useMemo(() => {
     const params = { term_id: selectedTermId };
@@ -48,29 +40,22 @@ const Calendar = () => {
     return params;
   }, [selectedTermId, selectedCompanyId]);
 
-  // Fetch calendar data only when term is selected and user clicked "Load" or "all" is selected
+  // Determine if the query should be enabled based on selections
+  const isQueryEnabled = useMemo(() => {
+    if (!selectedTermId) return false;
+    if (isAdmin) {
+      // For admin, need both term and company (or "all")
+      return selectedCompanyId === 'all' || !!selectedCompanyId;
+    }
+    // For non-admin, only need term (company is auto-set)
+    return true;
+  }, [selectedTermId, selectedCompanyId, isAdmin]);
+
+  // Fetch calendar data automatically when selections are valid
   const { data: calendarData, isLoading, isError, error } = useCalendarView(
     calendarParams,
-    { 
-      enabled: shouldFetch && !!selectedTermId && (isAdmin ? (selectedCompanyId === 'all' || !!selectedCompanyId) : true)
-    }
+    { enabled: isQueryEnabled }
   );
-
-  const handleSubmit = () => {
-    // For admins, both term and company (or "all") are required
-    // For non-admins, only term is required (company is auto-set from user)
-    if (selectedTermId) {
-      if (isAdmin) {
-        // For admin, company must be selected (including "all")
-        if (selectedCompanyId === 'all' || selectedCompanyId) {
-          setShouldFetch(true);
-        }
-      } else {
-        // For non-admin, just need term
-        setShouldFetch(true);
-      }
-    }
-  };
 
   // Calculate summary stats from calendar data
   const summaryStats = useMemo(() => {
@@ -111,7 +96,7 @@ const Calendar = () => {
   };
 
   // Show empty state when no data is loaded
-  if (!shouldFetch || (!calendarData && !isLoading)) {
+  if (!isQueryEnabled || (!calendarData && !isLoading)) {
     return (
       <div className="space-y-5">
         <SectionTitle title="MARKETING CALENDAR VIEW" />
@@ -124,10 +109,9 @@ const Calendar = () => {
           terms={terms}
           companies={companies}
           isAdmin={isAdmin}
-          onSubmit={handleSubmit}
         />
 
-        {!shouldFetch && (
+        {!isQueryEnabled && (
           <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 shadow-sm p-12 text-center">
             <Info className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
@@ -135,8 +119,8 @@ const Calendar = () => {
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {isAdmin 
-                ? 'Please select a term and company (or "All companies") above, then click "Load Calendar Data" to view the calendar information.'
-                : 'Please select a term above, then click "Load Calendar Data" to view the calendar information.'
+                ? 'Please select a term and company (or "All companies") above to view the calendar information.'
+                : 'Please select a term above to view the calendar information.'
               }
             </p>
           </div>
@@ -159,7 +143,6 @@ const Calendar = () => {
           terms={terms}
           companies={companies}
           isAdmin={isAdmin}
-          onSubmit={handleSubmit}
         />
 
         <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 shadow-sm p-12 text-center">
@@ -184,7 +167,6 @@ const Calendar = () => {
           terms={terms}
           companies={companies}
           isAdmin={isAdmin}
-          onSubmit={handleSubmit}
         />
 
         <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-red-200 dark:border-red-800 shadow-sm p-6">

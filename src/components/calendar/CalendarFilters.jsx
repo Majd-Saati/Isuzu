@@ -8,30 +8,10 @@ export const CalendarFilters = ({
   setSelectedCompanyId,
   terms = [],
   companies = [],
-  isAdmin = true,
-  onSubmit 
+  isAdmin = true
 }) => {
-  // For admin users, both term and company (or "all") are required
-  // For non-admin users, only term is required (company is auto-set)
-  const isFormValid = isAdmin 
-    ? (selectedTermId && (selectedCompanyId === 'all' || selectedCompanyId)) 
-    : selectedTermId;
-
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 shadow-sm p-5">
-      {!isFormValid && (
-        <div className="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-200 dark:border-amber-800 rounded-xl flex items-center gap-3">
-          <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-          <p className="text-sm text-amber-800 dark:text-amber-300">
-            {isAdmin ? (
-              <>Please select both a <strong>Term</strong> and a <strong>Company</strong> (or "All companies") to view calendar data.</>
-            ) : (
-              <>Please select a <strong>Term</strong> to view calendar data.</>
-            )}
-          </p>
-        </div>
-      )}
-      
       <div className="flex flex-wrap items-end gap-4">
         {/* Term Selection */}
         <div className="flex-1 min-w-[200px]">
@@ -73,15 +53,6 @@ export const CalendarFilters = ({
             </select>
           </div>
         )}
-
-        {/* Submit Button */}
-        <button
-          onClick={onSubmit}
-          disabled={!isFormValid}
-          className="px-6 py-3 bg-[#E60012] text-white rounded-xl text-sm font-semibold hover:bg-[#C00010] transition-all shadow-md hover:shadow-lg hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-md"
-        >
-          Load Calendar Data
-        </button>
       </div>
     </div>
   );
