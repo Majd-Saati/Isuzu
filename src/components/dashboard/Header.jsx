@@ -32,7 +32,7 @@ export const Header = ({ onMenuClick, sidebarCollapsed = false }) => {
 
   return (
     <header 
-      className={`fixed top-0 z-40 bg-[#F5F6FA] dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-sm flex flex-col items-stretch font-normal px-4 md:px-8 lg:px-12 py-4 animate-fade-in transition-all duration-300 left-0 right-0 ${
+      className={`fixed top-0 z-40 bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 shadow-sm flex flex-col items-stretch font-normal px-4 md:px-8 lg:px-12 py-4 animate-fade-in transition-all duration-300 left-0 right-0 ${
         sidebarCollapsed ? 'md:left-[80px]' : 'md:left-[306px]'
       }`}
     >

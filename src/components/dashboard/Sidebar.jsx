@@ -64,7 +64,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
       {/* Sidebar */}
       <aside
         className={`
-          fixed left-0 top-0 bottom-0 h-screen flex flex-col items-stretch bg-white dark:bg-gray-900 z-40
+          fixed left-0 top-0 bottom-0 h-screen flex flex-col items-stretch bg-gray-50 dark:bg-gray-900 z-40
           transition-all duration-300 ease-in-out border-r-2 border-gray-200 dark:border-gray-800 shadow-2xl
           ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
           ${isCollapsed ? 'w-[80px]' : 'w-[306px] max-w-[85vw]'}
@@ -109,7 +109,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
         </button>
       </div>
       {/* Scrollable area: navigation, PDF and other items */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll bg-white dark:bg-gray-900">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll bg-gray-50 dark:bg-gray-900">
         {/* Navigation Section */}
         <nav className={`w-full text-[#848E9A] dark:text-gray-400 font-normal mt-4 sm:mt-6 transition-all duration-300 ${isCollapsed ? 'px-3' : 'px-4 sm:px-8'}`}>
         <div className="w-full overflow-hidden">
