@@ -194,7 +194,6 @@ const Calendar = () => {
         terms={terms}
         companies={companies}
         isAdmin={isAdmin}
-        onSubmit={handleSubmit}
       />
 
       {/* Summary Cards */}

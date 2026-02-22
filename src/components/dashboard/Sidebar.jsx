@@ -16,9 +16,6 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
   // Check if user is admin
   const isAdmin = isAdminUser(user);
   
-  const [marketingPlansExpanded, setMarketingPlansExpanded] = useState(
-    location.pathname === '/marketing-plans' || location.pathname.startsWith('/marketing-plans/')
-  );
   const [dealersExpanded, setDealersExpanded] = useState(true);
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
   
@@ -43,16 +40,8 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
     return location.pathname === '/marketing-plans' || location.pathname.startsWith('/marketing-plans/');
   };
 
-  const handleNavClick = (path, hasSubMenu = false) => {
-    // Always navigate to the path first
+  const handleNavClick = (path) => {
     navigate(path);
-    
-    // Then toggle submenu if it exists
-    if (hasSubMenu) {
-      setMarketingPlansExpanded(!marketingPlansExpanded);
-    }
-    
-    // Close sidebar on mobile after navigation
     if (window.innerWidth < 768) {
       onClose?.();
     }
@@ -131,7 +120,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
             {filteredMainNavigation.map((item) => (
               <div key={item.id}>
                 <button
-                  onClick={() => handleNavClick(item.path, item.id === 'marketing-plans')}
+                  onClick={() => handleNavClick(item.path)}
                   className={`flex items-center gap-3 sm:gap-4 py-2.5 sm:py-3 rounded-xl w-full transition-all duration-200 group relative ${
                     isCollapsed ? 'px-3 justify-center' : 'px-3 sm:px-4'
                   } ${
@@ -147,12 +136,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                     alt={item.label}
                   />
                   {!isCollapsed && (
-                    <>
-                      <span className="flex-1 my-auto text-left text-sm leading-6 whitespace-nowrap">{item.label}</span>
-                      {item.id === 'marketing-plans' && (
-                        <ChevronDown className={`w-5 h-5 flex-shrink-0 transition-transform duration-200 ${marketingPlansExpanded ? 'rotate-180 text-[#E60012]' : ''}`} />
-                      )}
-                    </>
+                    <span className="flex-1 my-auto text-left text-sm leading-6 whitespace-nowrap">{item.label}</span>
                   )}
                 </button>
               </div>
@@ -240,12 +224,10 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
 
         {!isCollapsed && <div className="border-t-2 w-full mt-8 mb-8 border-gray-200 dark:border-gray-800 opacity-50" />}
 
-        {/* Other Navigation Section - Enhanced */}
-        {!marketingPlansExpanded && (
+        {/* Other Navigation Section - Always visible when sidebar is expanded */}
+        {!isCollapsed && (
           <div className="w-full overflow-hidden">
-            {!isCollapsed && (
-              <div className="text-[#848E9A] dark:text-gray-400 text-xs font-bold uppercase tracking-wider mb-4 px-2">Others</div>
-            )}
+            <div className="text-[#848E9A] dark:text-gray-400 text-xs font-bold uppercase tracking-wider mb-4 px-2">Others</div>
             <div className="flex w-full flex-col text-base space-y-1.5">
               {filteredOtherNavigation.map((item) => (
                 <button
