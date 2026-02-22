@@ -8,7 +8,7 @@ export const Layout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen overflow-x-hidden transition-colors duration-300">
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen overflow-x-hidden transition-colors duration-300">
       <Sidebar 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)}
@@ -26,7 +26,7 @@ export const Layout = () => {
           sidebarCollapsed={sidebarCollapsed}
         />
         
-        <div className="w-full bg-gray-50 dark:bg-gray-950 p-5 pt-24 transition-colors duration-300 min-h-[calc(100vh-96px)]">
+        <div className="w-full bg-white dark:bg-gray-950 p-5 pt-24 min-h-[calc(100vh-96px)] transition-colors duration-300 rounded-t-2xl shadow-[0_-4px_24px_rgba(0,0,0,0.06)] dark:shadow-none border-t border-gray-200/80 dark:border-gray-800/50">
           <Suspense fallback={null}>
             <Outlet />
           </Suspense>

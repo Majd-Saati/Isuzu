@@ -64,14 +64,14 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
       {/* Sidebar */}
       <aside
         className={`
-          fixed left-0 top-0 bottom-0 h-screen flex flex-col items-stretch bg-gray-50 dark:bg-gray-900 z-40
-          transition-all duration-300 ease-in-out border-r-2 border-gray-200 dark:border-gray-800 shadow-2xl
+          fixed left-0 top-0 bottom-0 h-screen flex flex-col items-stretch bg-white dark:bg-gray-900 z-40
+          transition-all duration-300 ease-in-out border-r-2 border-gray-200 dark:border-gray-800 shadow-[4px_0_24px_rgba(0,0,0,0.06)] dark:shadow-2xl
           ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
           ${isCollapsed ? 'w-[80px]' : 'w-[306px] max-w-[85vw]'}
         `}
       >
-      {/* Logo Section */}
-      <div className={`bg-white dark:bg-gray-900 w-full h-[80px] sm:h-[100px] flex items-center justify-center border-b-2 border-gray-100 dark:border-gray-800 relative flex-shrink-0 `}>
+      {/* Logo Section - subtle gradient in light for same depth as dark */}
+      <div className={`bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-900 w-full h-[80px] sm:h-[100px] flex items-center justify-center border-b-2 border-gray-200 dark:border-gray-800 relative flex-shrink-0`}>
         <button
           onClick={() => navigate('/dashboard')}
           className={`transform hover:scale-105 transition-transform duration-300 cursor-pointer ${isCollapsed ? 'hidden' : ''}`}
@@ -98,7 +98,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
         {/* Toggle Button - Fully inside sidebar so it is not cut off */}
         <button
           onClick={onToggleCollapse}
-          className={`hidden md:flex absolute top-1/2 -translate-y-1/2 w-7 h-7 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full items-center justify-center hover:bg-[#E60012] hover:border-[#E60012] hover:text-white text-gray-600 dark:text-gray-300 transition-all duration-300 shadow-md hover:shadow-lg z-20 group right-0`}
+          className={`hidden md:flex absolute top-1/2 -translate-y-1/2 w-7 h-7 bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full items-center justify-center hover:bg-[#E60012] hover:border-[#E60012] hover:text-white text-gray-600 dark:text-gray-300 transition-all duration-300 shadow-sm hover:shadow-md z-20 group right-0`}
           title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {isCollapsed ? (
@@ -109,7 +109,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
         </button>
       </div>
       {/* Scrollable area: navigation, PDF and other items */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll bg-gray-50 dark:bg-gray-900">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll bg-white dark:bg-gray-900">
         {/* Navigation Section */}
         <nav className={`w-full text-[#848E9A] dark:text-gray-400 font-normal mt-4 sm:mt-6 transition-all duration-300 ${isCollapsed ? 'px-3' : 'px-4 sm:px-8'}`}>
         <div className="w-full overflow-hidden">
@@ -181,7 +181,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
               </div>
             </div>
             {dealersExpanded && (
-              <div className="flex flex-col gap-1.5 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+              <div className="flex flex-col gap-1.5 bg-gray-100/90 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
                 {dealers.length === 0 ? (
                   <div className="text-sm text-gray-400 dark:text-gray-500 text-center py-2">No companies available</div>
                 ) : (
@@ -203,7 +203,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                         className={`flex items-center gap-3 py-2 px-3 rounded-lg transition-all duration-200 group min-w-0 ${
                           isDealerActive 
                             ? 'bg-red-100 dark:bg-red-900/30 shadow-sm border-l-4 border-[#E60012]' 
-                            : 'hover:bg-white dark:hover:bg-gray-700 border-l-4 border-transparent hover:border-gray-300 dark:hover:border-gray-600'
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-700 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-600'
                         }`}
                       >
                         <div 
@@ -222,7 +222,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
           </div>
         )}
 
-        {!isCollapsed && <div className="border-t-2 w-full mt-8 mb-8 border-gray-200 dark:border-gray-800 opacity-50" />}
+        {!isCollapsed && <div className="border-t-2 w-full mt-8 mb-8 border-gray-200 dark:border-gray-800 opacity-60" />}
 
         {/* Other Navigation Section - Always visible when sidebar is expanded */}
         {!isCollapsed && (

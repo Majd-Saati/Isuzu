@@ -32,11 +32,11 @@ export const Header = ({ onMenuClick, sidebarCollapsed = false }) => {
 
   return (
     <header 
-      className={`fixed top-0 z-40 bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 shadow-sm flex flex-col items-stretch font-normal px-4 md:px-8 lg:px-12 py-4 animate-fade-in transition-all duration-300 left-0 right-0 ${
+      className={`fixed top-0 z-40 bg-white/95 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-sm dark:shadow-none backdrop-blur-md flex flex-col items-stretch font-normal px-4 md:px-8 lg:px-12 py-4 animate-fade-in transition-all duration-300 left-0 right-0 ${
         sidebarCollapsed ? 'md:left-[80px]' : 'md:left-[306px]'
       }`}
     >
-      <button onClick={onMenuClick} className="fixed top-4 left-4 z-50 md:hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 border border-gray-100 dark:border-gray-700" aria-label="Toggle menu">
+      <button onClick={onMenuClick} className="fixed top-4 left-4 z-50 md:hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 border-2 border-gray-200 dark:border-gray-700" aria-label="Toggle menu">
         <Menu className="w-6 h-6 text-[#344251] dark:text-gray-300" />
       </button>
       
