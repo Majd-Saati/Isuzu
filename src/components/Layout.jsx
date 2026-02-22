@@ -1,7 +1,7 @@
 import React, { useState, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from '@/components/dashboard/Sidebar';
-import { Header } from '@/components/dashboard/Header';
+import Header from '@/components/dashboard/Header';
 
 export const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);

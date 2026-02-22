@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, Grid3x3 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Menu } from 'lucide-react';
 import LogoutModal from '../LogoutModal';
-import { SearchBar } from '../header/SearchBar';
 import { NotificationsDropdown } from '../header/NotificationsDropdown';
 import { UserMenuDropdown } from '../header/UserMenuDropdown';
 import { DarkModeToggle } from '../header/DarkModeToggle';
+import { useLogout } from '@/hooks/api/useAuth';
 
 export const Header = ({ onMenuClick, sidebarCollapsed = false }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  
-  const navigate = useNavigate();
+
+  const logoutMutation = useLogout();
   const notificationsRef = useRef(null);
   const userMenuRef = useRef(null);
 
@@ -54,7 +53,17 @@ export const Header = ({ onMenuClick, sidebarCollapsed = false }) => {
         </div>
       </div>
 
-      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} onConfirm={() => { setShowLogoutModal(false); navigate('/login'); }} />
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={() => {
+          setShowLogoutModal(false);
+          logoutMutation.mutate();
+        }}
+        isLoading={logoutMutation.isPending}
+      />
     </header>
   );
 };
+
+export default Header;

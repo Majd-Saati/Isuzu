@@ -1,18 +1,20 @@
-import { X, LogOut, AlertTriangle } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { X, LogOut, AlertTriangle, Loader2 } from 'lucide-react';
 
-const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
+const LogoutModal = ({ isOpen, onClose, onConfirm, isLoading = false }) => {
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+  const modal = (
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4" aria-modal="true" role="dialog">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
-      ></div>
+        aria-hidden="true"
+      />
 
-      {/* Modal */}
-      <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border-2 border-gray-200 dark:border-gray-700 w-full max-w-md p-6 animate-scale-in">
+      {/* Modal - centered in viewport */}
+      <div className="relative z-10 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border-2 border-gray-200 dark:border-gray-700 w-full max-w-md p-6 animate-scale-in">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -40,21 +42,34 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            disabled={isLoading}
+            className="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-3 bg-[#D22827] text-white rounded-lg font-semibold hover:bg-[#B91C1C] transition-colors flex items-center justify-center gap-2"
+            disabled={isLoading}
+            className="flex-1 px-4 py-3 bg-[#D22827] text-white rounded-lg font-semibold hover:bg-[#B91C1C] transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            <LogOut className="w-4 h-4" />
-            Logout
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Logging out...
+              </>
+            ) : (
+              <>
+                <LogOut className="w-4 h-4" />
+                Logout
+              </>
+            )}
           </button>
         </div>
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(modal, document.body) : null;
 };
 
 export default LogoutModal;
