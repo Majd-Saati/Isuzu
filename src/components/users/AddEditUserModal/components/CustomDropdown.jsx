@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef, useLayoutEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown } from 'lucide-react';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 
@@ -18,6 +19,20 @@ export const CustomDropdown = ({
   optionalLabel = null,
   className = '',
 }) => {
+  const triggerRef = useRef(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+
+  useLayoutEffect(() => {
+    if (isOpen && triggerRef.current && typeof document !== 'undefined') {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + 8,
+        left: rect.left,
+        width: rect.width,
+      });
+    }
+  }, [isOpen]);
+
   return (
     <div className={className}>
       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -25,6 +40,7 @@ export const CustomDropdown = ({
       </label>
       <div className="relative">
         <button
+          ref={triggerRef}
           type="button"
           onClick={onToggle}
           onBlur={() => setTimeout(onClose, 200)}
@@ -41,8 +57,16 @@ export const CustomDropdown = ({
           <ChevronDown className={`w-5 h-5 text-gray-400 dark:text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
 
-        {isOpen && !isLoading && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl z-[10000] max-h-48 overflow-y-auto">
+        {/* Options list in portal - overlays modal, does not cause modal scroll */}
+        {isOpen && !isLoading && typeof document !== 'undefined' && createPortal(
+          <div
+            className="fixed bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl z-[10001] max-h-48 overflow-y-auto"
+            style={{
+              top: dropdownPosition.top,
+              left: dropdownPosition.left,
+              width: dropdownPosition.width,
+            }}
+          >
             {options.length === 0 ? (
               <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
                 No options available
@@ -59,7 +83,8 @@ export const CustomDropdown = ({
                 </button>
               ))
             )}
-          </div>
+          </div>,
+          document.body
         )}
       </div>
       {touched && <ErrorMessage message={error} />}

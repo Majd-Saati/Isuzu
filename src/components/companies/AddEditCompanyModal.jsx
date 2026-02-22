@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Loader2, ChevronDown } from 'lucide-react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -31,6 +32,8 @@ export const AddEditCompanyModal = ({ isOpen, onClose, editData = null }) => {
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [selectedCountryName, setSelectedCountryName] = useState('');
   const [logoFiles, setLogoFiles] = useState([]);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const countryTriggerRef = useRef(null);
 
   // Fetch countries from API
   const { data: countriesData, isLoading: isLoadingCountries } = useCountries();
@@ -67,6 +70,18 @@ export const AddEditCompanyModal = ({ isOpen, onClose, editData = null }) => {
       });
     },
   });
+
+  // Position dropdown overlay when it opens (so it overlays the modal instead of causing scroll)
+  useLayoutEffect(() => {
+    if (showCountryDropdown && countryTriggerRef.current) {
+      const rect = countryTriggerRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + 8,
+        left: rect.left,
+        width: rect.width,
+      });
+    }
+  }, [showCountryDropdown]);
 
   // Set initial country name when editing
   useEffect(() => {
@@ -144,13 +159,14 @@ export const AddEditCompanyModal = ({ isOpen, onClose, editData = null }) => {
               disabled={isLoading}
             />
 
-            {/* Country Dropdown */}
+            {/* Country Dropdown - trigger in flow, list rendered in portal so it overlays modal */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Country
               </label>
               <div className="relative">
                 <button
+                  ref={countryTriggerRef}
                   type="button"
                   onClick={() => setShowCountryDropdown(!showCountryDropdown)}
                   onBlur={() => setTimeout(() => setShowCountryDropdown(false), 200)}
@@ -174,8 +190,16 @@ export const AddEditCompanyModal = ({ isOpen, onClose, editData = null }) => {
                   <ChevronDown className={`w-5 h-5 text-gray-400 dark:text-gray-500 transition-transform ${showCountryDropdown ? 'rotate-180' : ''}`} />
                 </button>
 
-                {showCountryDropdown && !isLoadingCountries && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl z-[10000] max-h-48 overflow-y-auto">
+                {/* Dropdown list in portal - overlays modal, does not cause modal scroll */}
+                {showCountryDropdown && !isLoadingCountries && typeof document !== 'undefined' && createPortal(
+                  <div
+                    className="fixed bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl z-[10001] max-h-48 overflow-y-auto"
+                    style={{
+                      top: dropdownPosition.top,
+                      left: dropdownPosition.left,
+                      width: dropdownPosition.width,
+                    }}
+                  >
                     {countries.length === 0 ? (
                       <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
                         No countries available
@@ -193,7 +217,8 @@ export const AddEditCompanyModal = ({ isOpen, onClose, editData = null }) => {
                         </button>
                       ))
                     )}
-                  </div>
+                  </div>,
+                  document.body
                 )}
               </div>
               {formik.submitCount > 0 && (

@@ -71,7 +71,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
         `}
       >
       {/* Logo Section */}
-      <div className="bg-white dark:bg-gray-900 w-full h-[80px] sm:h-[100px] flex items-center justify-center border-b-2 border-gray-100 dark:border-gray-800 relative flex-shrink-0">
+      <div className={`bg-white dark:bg-gray-900 w-full h-[80px] sm:h-[100px] flex items-center justify-center border-b-2 border-gray-100 dark:border-gray-800 relative flex-shrink-0 `}>
         <button
           onClick={() => navigate('/dashboard')}
           className={`transform hover:scale-105 transition-transform duration-300 cursor-pointer ${isCollapsed ? 'hidden' : ''}`}
@@ -95,16 +95,16 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
           </button>
         )}
         
-        {/* Toggle Button - Only visible on desktop */}
+        {/* Toggle Button - Fully inside sidebar so it is not cut off */}
         <button
           onClick={onToggleCollapse}
-          className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full items-center justify-center hover:bg-[#E60012] hover:border-[#E60012] hover:text-white text-gray-600 dark:text-gray-300 transition-all duration-300 shadow-md hover:shadow-lg z-20 group"
+          className={`hidden md:flex absolute top-1/2 -translate-y-1/2 w-7 h-7 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full items-center justify-center hover:bg-[#E60012] hover:border-[#E60012] hover:text-white text-gray-600 dark:text-gray-300 transition-all duration-300 shadow-md hover:shadow-lg z-20 group right-0`}
           title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {isCollapsed ? (
-            <ChevronRight className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+            <ChevronRight className="w-4 h-4 group-hover:scale-110 transition-transform" />
           ) : (
-            <ChevronLeft className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+            <ChevronLeft className="w-4 h-4 group-hover:scale-110 transition-transform" />
           )}
         </button>
       </div>

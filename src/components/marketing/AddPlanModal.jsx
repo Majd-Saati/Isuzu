@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ChevronDown, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
@@ -35,6 +36,11 @@ export const AddPlanModal = ({
   // Selected names state
   const [selectedTermName, setSelectedTermName] = useState('');
   const [selectedCompanyName, setSelectedCompanyName] = useState('');
+  // Portal dropdown positions (so lists overlay modal instead of causing scroll)
+  const [companyDropdownPosition, setCompanyDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [termDropdownPosition, setTermDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const companyTriggerRef = useRef(null);
+  const termTriggerRef = useRef(null);
 
   // Modal state synchronization
   usePlanModalState({
@@ -50,6 +56,20 @@ export const AddPlanModal = ({
     setSelectedTermName,
     setSelectedCompanyName,
   });
+
+  // Position dropdowns for portal (overlay modal, no scroll)
+  useLayoutEffect(() => {
+    if (showCompanyDropdown && companyTriggerRef.current && typeof document !== 'undefined') {
+      const rect = companyTriggerRef.current.getBoundingClientRect();
+      setCompanyDropdownPosition({ top: rect.bottom + 8, left: rect.left, width: rect.width });
+    }
+  }, [showCompanyDropdown]);
+  useLayoutEffect(() => {
+    if (showTermDropdown && termTriggerRef.current && typeof document !== 'undefined') {
+      const rect = termTriggerRef.current.getBoundingClientRect();
+      setTermDropdownPosition({ top: rect.top - 8, left: rect.left, width: rect.width });
+    }
+  }, [showTermDropdown]);
 
   // Handlers
   const handleBackdropClick = (e) => {
@@ -156,7 +176,7 @@ export const AddPlanModal = ({
                 )}
               </div>
 
-              {/* Dealer Dropdown - Full Width - Only show for admin users */}
+              {/* Company Dropdown - Full Width - Only show for admin users; list in portal to overlay modal */}
               {isAdmin && (
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -164,9 +184,10 @@ export const AddPlanModal = ({
                   </label>
                   <div className="relative">
                     <button
+                      ref={companyTriggerRef}
                       type="button"
                       onClick={toggleCompanyDropdown}
-                      onBlur={closeCompanyDropdown}
+                      onBlur={() => setTimeout(closeCompanyDropdown, 200)}
                       className={`w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 ${
                         formik.errors.companyId && formik.submitCount > 0
                           ? 'border-red-500 dark:border-red-600'
@@ -179,8 +200,15 @@ export const AddPlanModal = ({
                       <ChevronDown className={`w-5 h-5 text-gray-400 dark:text-gray-500 transition-transform ${showCompanyDropdown ? 'rotate-180' : ''}`} />
                     </button>
 
-                    {showCompanyDropdown && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl z-[10000] max-h-48 overflow-y-auto">
+                    {showCompanyDropdown && typeof document !== 'undefined' && createPortal(
+                      <div
+                        className="fixed bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl z-[10001] max-h-48 overflow-y-auto"
+                        style={{
+                          top: companyDropdownPosition.top,
+                          left: companyDropdownPosition.left,
+                          width: companyDropdownPosition.width,
+                        }}
+                      >
                         {companies.length === 0 ? (
                           <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
                             No dealers available
@@ -197,7 +225,8 @@ export const AddPlanModal = ({
                             </button>
                           ))
                         )}
-                      </div>
+                      </div>,
+                      document.body
                     )}
                   </div>
                   {formik.submitCount > 0 && (
@@ -206,16 +235,17 @@ export const AddPlanModal = ({
                 </div>
               )}
 
-              {/* Term Dropdown - Full Width */}
+              {/* Term Dropdown - Full Width; list in portal to overlay modal (opens upward) */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Term
                 </label>
                 <div className="relative">
                   <button
+                    ref={termTriggerRef}
                     type="button"
                     onClick={toggleTermDropdown}
-                    onBlur={closeTermDropdown}
+                    onBlur={() => setTimeout(closeTermDropdown, 200)}
                     className={`w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 ${
                       formik.errors.termId && formik.submitCount > 0
                         ? 'border-red-500 dark:border-red-600'
@@ -228,8 +258,15 @@ export const AddPlanModal = ({
                     <ChevronDown className={`w-5 h-5 text-gray-400 dark:text-gray-500 transition-transform ${showTermDropdown ? 'rotate-180' : ''}`} />
                   </button>
 
-                  {showTermDropdown && (
-                    <div className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl z-[10000] max-h-48 overflow-y-auto">
+                  {showTermDropdown && typeof document !== 'undefined' && createPortal(
+                    <div
+                      className="fixed bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl z-[10001] max-h-48 overflow-y-auto transform -translate-y-full"
+                      style={{
+                        top: termDropdownPosition.top,
+                        left: termDropdownPosition.left,
+                        width: termDropdownPosition.width,
+                      }}
+                    >
                       {terms.length === 0 ? (
                         <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
                           No terms available
@@ -249,7 +286,8 @@ export const AddPlanModal = ({
                           </button>
                         ))
                       )}
-                    </div>
+                    </div>,
+                    document.body
                   )}
                 </div>
                 {formik.submitCount > 0 && (
