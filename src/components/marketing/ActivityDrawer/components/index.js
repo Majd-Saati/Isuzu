@@ -4,6 +4,7 @@ export { TabButton } from './TabButton';
 export { BudgetCard } from './BudgetCard';
 export { CommentCard } from './CommentCard';
 export { AcceptBudgetModal } from './AcceptBudgetModal';
+export { DeclineBudgetModal } from './DeclineBudgetModal';
 export { EmojiPicker } from './EmojiPicker';
 export { AddBudgetForm } from './AddBudgetForm/index.js';
 export { AddCommentForm } from './AddCommentForm';

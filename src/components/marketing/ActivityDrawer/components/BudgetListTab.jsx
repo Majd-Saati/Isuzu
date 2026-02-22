@@ -12,6 +12,7 @@ export const BudgetListTab = ({
   planId,
   companyId,
   onAcceptBudget,
+  onDeclineBudget,
   onDeleteBudget,
   filterType,
   filterStatus,
@@ -163,7 +164,7 @@ export const BudgetListTab = ({
           {isBudgetItemsExpanded && (
             <div className="space-y-3 animate-accordion-down">
               {budget.map((item) => (
-                <BudgetCard key={item.id} item={item} showCreator={false} onAccept={onAcceptBudget} onDelete={onDeleteBudget} />
+                <BudgetCard key={item.id} item={item} showCreator={false} onAccept={onAcceptBudget} onDecline={onDeclineBudget} onDelete={onDeleteBudget} />
               ))}
             </div>
           )}

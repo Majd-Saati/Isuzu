@@ -11,6 +11,7 @@ export const OverviewTab = ({
   isLoading,
   isError,
   onAcceptBudget,
+  onDeclineBudget,
   onDeleteBudget,
   onDeleteMeta,
   activityId,
@@ -183,7 +184,7 @@ export const OverviewTab = ({
           {isBudgetExpanded && (
             <div className="space-y-3 animate-accordion-down">
               {filteredBudget.map((item) => (
-                <BudgetCard key={item.id} item={item} onAccept={onAcceptBudget} onDelete={onDeleteBudget} />
+                <BudgetCard key={item.id} item={item} onAccept={onAcceptBudget} onDecline={onDeclineBudget} onDelete={onDeleteBudget} />
               ))}
             </div>
           )}

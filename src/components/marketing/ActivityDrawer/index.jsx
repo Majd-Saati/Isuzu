@@ -8,6 +8,7 @@ import { DrawerResizeHandle } from './components/DrawerResizeHandle';
 import { OverviewTab } from './components/OverviewTab';
 import { BudgetListTab } from './components/BudgetListTab';
 import { AcceptBudgetModal } from './components/AcceptBudgetModal';
+import { DeclineBudgetModal } from './components/DeclineBudgetModal';
 import { AddActivityModal } from '../AddActivityModal';
 import { useActivityDrawerData } from './hooks/useActivityDrawerData';
 import { useActivityDrawerActions } from './hooks/useActivityDrawerActions';
@@ -64,6 +65,11 @@ export const ActivityDrawer = ({
     handleAcceptBudget,
     handleConfirmAccept,
     handleCloseAcceptModal,
+    showDeclineModal,
+    budgetToDecline,
+    handleDeclineBudget,
+    handleConfirmDecline,
+    handleCloseDeclineModal,
     showDeleteModal,
     handleDeleteActivity,
     handleConfirmDeleteActivity,
@@ -167,6 +173,8 @@ export const ActivityDrawer = ({
           handleCloseDeleteBudgetModal();
         } else if (showDeleteModal) {
           handleCloseDeleteModal();
+        } else if (showDeclineModal) {
+          handleCloseDeclineModal();
         } else if (showAcceptModal) {
           handleCloseAcceptModal();
         } else {
@@ -178,7 +186,7 @@ export const ActivityDrawer = ({
       document.addEventListener('keydown', handleEscape);
     }
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [isOpen, onClose, showAcceptModal, showDeleteModal, showDeleteBudgetModal, showDeleteMetaModal, handleCloseAcceptModal, handleCloseDeleteModal, handleCloseDeleteBudgetModal, handleCloseDeleteMetaModal]);
+  }, [isOpen, onClose, showAcceptModal, showDeclineModal, showDeleteModal, showDeleteBudgetModal, showDeleteMetaModal, handleCloseAcceptModal, handleCloseDeclineModal, handleCloseDeleteModal, handleCloseDeleteBudgetModal, handleCloseDeleteMetaModal]);
 
   return (
     <>
@@ -230,11 +238,12 @@ export const ActivityDrawer = ({
         {/* Drawer Content */}
         <div className="p-6 overflow-y-auto h-[calc(100%-168px)]">
           {activeTab === 'overview' ? (
-            <OverviewTab 
-              data={metaData} 
-              isLoading={isLoadingMeta} 
+            <OverviewTab
+              data={metaData}
+              isLoading={isLoadingMeta}
               isError={isErrorMeta}
               onAcceptBudget={handleAcceptBudget}
+              onDeclineBudget={handleDeclineBudget}
               onDeleteBudget={handleDeleteBudget}
               onDeleteMeta={handleDeleteMeta}
               activityId={activity?.id}
@@ -255,6 +264,7 @@ export const ActivityDrawer = ({
               planId={planId}
               companyId={companyId}
               onAcceptBudget={handleAcceptBudget}
+              onDeclineBudget={handleDeclineBudget}
               onDeleteBudget={handleDeleteBudget}
               filterType={budgetFilterType}
               filterStatus={budgetFilterStatus}
@@ -272,6 +282,15 @@ export const ActivityDrawer = ({
         onClose={handleCloseAcceptModal}
         onConfirm={handleConfirmAccept}
         budget={selectedBudget}
+        isLoading={updateBudgetStatusMutation.isPending}
+      />
+
+      {/* Decline Budget Confirmation Modal */}
+      <DeclineBudgetModal
+        isOpen={showDeclineModal}
+        onClose={handleCloseDeclineModal}
+        onConfirm={handleConfirmDecline}
+        budget={budgetToDecline}
         isLoading={updateBudgetStatusMutation.isPending}
       />
 

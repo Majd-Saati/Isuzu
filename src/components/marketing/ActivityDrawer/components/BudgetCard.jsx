@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { DollarSign, Clock, User, FileText, Check, Trash2, Calendar } from 'lucide-react';
+import { DollarSign, Clock, User, FileText, Check, XCircle, Trash2, Calendar } from 'lucide-react';
 import { StatusBadge } from './StatusBadge';
 import { formatCurrency, formatDate, formatMonthLabel } from '../utils/formatters';
 import { isAdminUser } from '@/lib/permissions';
 
-export const BudgetCard = ({ item, showCreator = true, onAccept, onDelete }) => {
+export const BudgetCard = ({ item, showCreator = true, onAccept, onDecline, onDelete }) => {
   const currentUser = useSelector((state) => state.auth.user);
   const canAcceptBudget = isAdminUser(currentUser);
   const isEstimated = item.type === 'estimated cost';
@@ -47,6 +47,15 @@ export const BudgetCard = ({ item, showCreator = true, onAccept, onDelete }) => 
               title="Accept Budget"
             >
               <Check className="w-4 h-4" />
+            </button>
+          )}
+          {isPending && onDecline && canAcceptBudget && (
+            <button
+              onClick={() => onDecline(item)}
+              className="p-1.5 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/60 transition-all"
+              title="Decline Budget"
+            >
+              <XCircle className="w-4 h-4" />
             </button>
           )}
           {onDelete && (

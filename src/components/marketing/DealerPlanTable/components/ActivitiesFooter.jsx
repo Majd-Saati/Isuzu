@@ -56,3 +56,4 @@ export const ActivitiesFooter = ({ activities, selectedActivities, showBudgetCol
 };
 
 
+
