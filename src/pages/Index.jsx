@@ -426,8 +426,6 @@ const Index = () => {
 
       const estimatedCost = dealer.costs?.estimated_cost_total ?? 0;
 
-      const invoiceTotal = dealer.costs?.invoice_total ?? 0;
-
       const totalCost = dealer.costs?.total_cost ?? 0;
 
 
@@ -447,8 +445,6 @@ const Index = () => {
         expense,
 
         estimatedCost,
-
-        invoiceTotal,
 
         totalCost,
 

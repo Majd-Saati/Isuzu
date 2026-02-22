@@ -188,42 +188,19 @@ export const ActivityTableRow = ({
               ${activity.supportCost.toLocaleString()}
             </button>
           </td>
-          <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-32">
-            <button
-              type="button"
-              onClick={() => onOpenDrawer(activity, 'invoice', activity.invoiceStatus)}
-              className={`text-sm font-medium ${getAmountColorByStatus(
-                activity.invoiceStatus
-              )} ${activity.invoiceCost === 0 ? 'dark:text-white' : ''} hover:underline`}
-            >
-              ${activity.invoiceCost.toLocaleString()}
-            </button>
-          </td>
         </>
       )}
       {showMediaUploadColumns && (
-        <>
-          <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-28 text-center">
-            <button
-              type="button"
-              onClick={() => onOpenDrawer(activity, null, null, 'evidence')}
-              className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all text-gray-600 dark:text-gray-400 hover:text-[#E60012]"
-              title="Evidence Media"
-            >
-              <FileText className="w-5 h-5" />
-            </button>
-          </td>
-          <td className="py-4 px-6 w-28 text-center">
-            <button
-              type="button"
-              onClick={() => onOpenDrawer(activity, 'invoice', null)}
-              className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all text-gray-600 dark:text-gray-400 hover:text-[#E60012]"
-              title="Invoice Upload"
-            >
-              <PlusCircle className="w-5 h-5" />
-            </button>
-          </td>
-        </>
+        <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-28 text-center">
+          <button
+            type="button"
+            onClick={() => onOpenDrawer(activity, null, null, 'evidence')}
+            className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all text-gray-600 dark:text-gray-400 hover:text-[#E60012]"
+            title="Evidence Media"
+          >
+            <FileText className="w-5 h-5" />
+          </button>
+        </td>
       )}
     </tr>
   );

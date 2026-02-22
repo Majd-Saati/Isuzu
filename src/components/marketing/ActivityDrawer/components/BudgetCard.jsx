@@ -11,14 +11,12 @@ export const BudgetCard = ({ item, showCreator = true, onAccept, onDecline, onDe
   const isEstimated = item.type === 'estimated cost';
   const isActual = item.type === 'actual cost';
   const isSupport = item.type === 'support cost';
-  const isInvoice = item.type === 'invoice';
   const isPending = (item.status || '').toLowerCase() === 'pending';
-  
+
   const getStyles = () => {
     if (isEstimated) return { bg: 'bg-blue-50/50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800', icon: 'bg-blue-100 dark:bg-blue-900/40', text: 'text-blue-600 dark:text-blue-400' };
     if (isActual) return { bg: 'bg-emerald-50/50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800', icon: 'bg-emerald-100 dark:bg-emerald-900/40', text: 'text-emerald-600 dark:text-emerald-400' };
     if (isSupport) return { bg: 'bg-purple-50/50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800', icon: 'bg-purple-100 dark:bg-purple-900/40', text: 'text-purple-600 dark:text-purple-400' };
-    if (isInvoice) return { bg: 'bg-amber-50/50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800', icon: 'bg-amber-100 dark:bg-amber-900/40', text: 'text-amber-600 dark:text-amber-400' };
     return { bg: 'bg-gray-50/50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700', icon: 'bg-gray-100 dark:bg-gray-700', text: 'text-gray-600 dark:text-gray-400' };
   };
 

@@ -25,14 +25,10 @@ export const AddActivityRow = ({ onClick, showBudgetColumns, showMediaUploadColu
           <td className="py-4 px-6 w-32"></td>
           <td className="py-4 px-6 w-32"></td>
           <td className="py-4 px-6 w-32"></td>
-          <td className="py-4 px-6 w-32"></td>
         </>
       )}
       {showMediaUploadColumns && (
-        <>
-          <td className="py-4 px-6 w-28"></td>
-          <td className="py-4 px-6 w-28"></td>
-        </>
+        <td className="py-4 px-6 w-28"></td>
       )}
     </tr>
   );

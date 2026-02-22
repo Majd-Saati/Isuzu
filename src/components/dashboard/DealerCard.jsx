@@ -18,8 +18,6 @@ export const DealerCard = ({
 
   estimatedCost = 0,
 
-  invoiceTotal = 0,
-
   totalCost = 0,
 
 }) => {
@@ -161,20 +159,6 @@ export const DealerCard = ({
                 </div>
 
               </div>
-
-              <div className="flex items-center justify-between gap-2">
-
-                <div className="text-[#9CA3AF] dark:text-gray-400 text-xs leading-4 font-medium whitespace-nowrap">Invoice:</div>
-
-                <div className="text-[#1F2937] dark:text-gray-200 text-base leading-4 font-bold">
-
-                  {Number(invoiceTotal).toLocaleString()}
-
-                </div>
-
-              </div>
-
-              <div className="h-px bg-amber-200/60 dark:bg-amber-800/30"></div>
 
               <div className="flex items-center justify-between gap-2 pt-1">
 

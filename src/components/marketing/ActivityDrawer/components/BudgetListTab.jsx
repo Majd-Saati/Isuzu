@@ -28,18 +28,15 @@ export const BudgetListTab = ({
   const estimatedCosts = budget.filter(item => item.type === 'estimated cost');
   const actualCosts = budget.filter(item => item.type === 'actual cost');
   const supportCosts = budget.filter(item => item.type === 'support cost');
-  const invoiceCosts = budget.filter(item => item.type === 'invoice');
 
   // Calculate totals
   const totalEstimated = estimatedCosts.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
   const totalActual = actualCosts.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
   const totalSupport = supportCosts.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
-  const totalInvoice = invoiceCosts.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
 
   const hasEstimated = totalEstimated > 0;
   const hasActual = totalActual > 0;
   const hasSupport = totalSupport > 0;
-  const hasInvoice = totalInvoice > 0;
 
   if (isLoading) {
     return (
@@ -112,7 +109,7 @@ export const BudgetListTab = ({
       )}
 
       {/* Summary */}
-      {(hasEstimated || hasActual || hasSupport || hasInvoice) && (
+      {(hasEstimated || hasActual || hasSupport) && (
         <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-4 items-stretch mt-1">
           {hasEstimated && (
             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl px-4 py-3 md:p-4 border border-blue-200 dark:border-blue-800 flex flex-col justify-center text-center shadow-sm">
@@ -130,12 +127,6 @@ export const BudgetListTab = ({
             <div className="bg-purple-50 dark:bg-purple-900/20 rounded-2xl px-4 py-3 md:p-4 border border-purple-200 dark:border-purple-800 flex flex-col justify-center text-center shadow-sm">
               <p className="text-xs font-medium text-purple-600 dark:text-purple-400 uppercase tracking-wide mb-1">Support Total</p>
               <p className="text-xl md:text-2xl font-bold text-purple-700 dark:text-purple-300">{formatCurrency(totalSupport)}</p>
-            </div>
-          )}
-          {hasInvoice && (
-            <div className="bg-amber-50 dark:bg-amber-900/20 rounded-2xl px-4 py-3 md:p-4 border border-amber-200 dark:border-amber-800 flex flex-col justify-center text-center shadow-sm">
-              <p className="text-xs font-medium text-amber-600 dark:text-amber-400 uppercase tracking-wide mb-1">Invoice Total</p>
-              <p className="text-xl md:text-2xl font-bold text-amber-700 dark:text-amber-300">{formatCurrency(totalInvoice)}</p>
             </div>
           )}
         </div>

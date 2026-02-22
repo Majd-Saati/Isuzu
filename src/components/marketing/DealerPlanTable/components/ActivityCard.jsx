@@ -119,7 +119,7 @@ export const ActivityCard = ({
       {/* Activity Details Grid */}
       <div
         className={`ml-8 lg:ml-10 grid gap-3 lg:gap-4 text-xs lg:text-sm ${
-          showBudgetColumns ? 'grid-cols-2 lg:grid-cols-4' : 'grid-cols-2'
+          showBudgetColumns ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-2'
         }`}
       >
         {/* Duration */}
@@ -194,20 +194,6 @@ export const ActivityCard = ({
                 )} ${activity.supportCost === 0 ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
               >
                 ${activity.supportCost.toLocaleString()}
-              </button>
-            </div>
-
-            {/* Invoice */}
-            <div>
-              <span className="text-gray-500 dark:text-gray-400 font-medium">Invoice</span>
-              <button
-                type="button"
-                onClick={() => onOpenDrawer(activity, 'invoice', activity.invoiceStatus)}
-                className={`${getAmountColorByStatus(
-                  activity.invoiceStatus
-                )} ${activity.invoiceCost === 0 ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
-              >
-                ${activity.invoiceCost.toLocaleString()}
               </button>
             </div>
           </>

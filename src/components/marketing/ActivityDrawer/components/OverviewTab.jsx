@@ -49,18 +49,15 @@ export const OverviewTab = ({
   const estimatedCosts = filteredBudget.filter(item => item.type === 'estimated cost');
   const actualCosts = filteredBudget.filter(item => item.type === 'actual cost');
   const supportCosts = filteredBudget.filter(item => item.type === 'support cost');
-  const invoiceCosts = filteredBudget.filter(item => item.type === 'invoice');
 
   // Calculate totals
   const totalEstimated = estimatedCosts.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
   const totalActual = actualCosts.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
   const totalSupport = supportCosts.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
-  const totalInvoice = invoiceCosts.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
 
   const hasEstimated = totalEstimated > 0;
   const hasActual = totalActual > 0;
   const hasSupport = totalSupport > 0;
-  const hasInvoice = totalInvoice > 0;
 
   if (isLoading) {
     return (

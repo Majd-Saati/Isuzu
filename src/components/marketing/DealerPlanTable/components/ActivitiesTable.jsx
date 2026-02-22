@@ -63,20 +63,12 @@ export const ActivitiesTable = ({
                 <th className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-32">
                   Support
                 </th>
-                <th className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-32">
-                  Invoice
-                </th>
               </>
             )}
             {showMediaUploadColumns && (
-              <>
-                <th className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-28">
-                  Evidence Media
-                </th>
-                <th className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 py-4 px-6 w-28">
-                  Invoice Upload
-                </th>
-              </>
+              <th className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-28">
+                Evidence Media
+              </th>
             )}
           </tr>
         </thead>

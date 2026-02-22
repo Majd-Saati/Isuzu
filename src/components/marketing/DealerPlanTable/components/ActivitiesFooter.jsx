@@ -7,7 +7,6 @@ export const ActivitiesFooter = ({ activities, selectedActivities, showBudgetCol
     estimated: activities.reduce((sum, a) => sum + a.estimatedCost, 0),
     actual: activities.reduce((sum, a) => sum + a.actualCost, 0),
     support: activities.reduce((sum, a) => sum + a.supportCost, 0),
-    invoice: activities.reduce((sum, a) => sum + a.invoiceCost, 0),
   } : null;
 
   return (
@@ -40,13 +39,6 @@ export const ActivitiesFooter = ({ activities, selectedActivities, showBudgetCol
             <span className="text-gray-600 dark:text-gray-400">Support:</span>
             <span className={`font-semibold text-purple-600 ${totals.support === 0 ? 'dark:text-white' : 'dark:text-purple-400'}`}>
               ${totals.support.toLocaleString()}
-            </span>
-          </div>
-          <span className="hidden sm:inline text-gray-400 dark:text-gray-600">|</span>
-          <div className="flex items-center gap-1">
-            <span className="text-gray-600 dark:text-gray-400">Invoice:</span>
-            <span className={`font-semibold text-amber-600 ${totals.invoice === 0 ? 'dark:text-white' : 'dark:text-amber-400'}`}>
-              ${totals.invoice.toLocaleString()}
             </span>
           </div>
         </div>

@@ -6,12 +6,10 @@ const calculateCosts = (budget = []) => {
   let estimatedCost = 0;
   let actualCost = 0;
   let supportCost = 0;
-  let invoiceCost = 0;
 
   let estimatedStatus = null;
   let actualStatus = null;
   let supportStatus = null;
-  let invoiceStatus = null;
 
   budget.forEach((item) => {
     const value = parseFloat(item.value) || 0;
@@ -27,9 +25,6 @@ const calculateCosts = (budget = []) => {
     } else if (type === 'support cost') {
       supportCost += value;
       supportStatus = status || supportStatus;
-    } else if (type === 'invoice') {
-      invoiceCost += value;
-      invoiceStatus = status || invoiceStatus;
     }
   });
 
@@ -37,11 +32,9 @@ const calculateCosts = (budget = []) => {
     estimatedCost,
     actualCost,
     supportCost,
-    invoiceCost,
     estimatedStatus,
     actualStatus,
     supportStatus,
-    invoiceStatus,
   };
 };
 
@@ -51,11 +44,9 @@ const transformActivity = (apiActivity) => {
     estimatedCost,
     actualCost,
     supportCost,
-    invoiceCost,
     estimatedStatus,
     actualStatus,
     supportStatus,
-    invoiceStatus,
   } = calculateCosts(apiActivity.budget);
 
   const isOverBudget = actualCost > estimatedCost;
@@ -77,11 +68,9 @@ const transformActivity = (apiActivity) => {
     estimatedCost,
     actualCost,
     supportCost,
-    invoiceCost,
     estimatedStatus,
     actualStatus,
     supportStatus,
-    invoiceStatus,
     isOverBudget,
     status: apiActivity.status,
     created_by_name: apiActivity.created_by_name,

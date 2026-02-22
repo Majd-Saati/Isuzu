@@ -1,29 +1,19 @@
 /**
  * Validates if a budget type can be added based on existing budgets
- * Order: estimated cost -> invoice -> actual cost -> support cost
- * 
+ * Order: estimated cost -> actual cost -> support cost
+ *
  * @param {string} type - The budget type to validate
  * @param {Array} existingBudgets - Array of existing budget entries
  * @returns {Object} - { canAdd: boolean, reason: string }
  */
 export const canAddBudgetType = (type, existingBudgets = []) => {
   const hasEstimated = existingBudgets.some(b => b.type === 'estimated cost');
-  const hasInvoice = existingBudgets.some(b => b.type === 'invoice');
   const hasActual = existingBudgets.some(b => b.type === 'actual cost');
 
   switch (type) {
     case 'estimated cost':
       return { canAdd: true, reason: '' };
-    
-    case 'invoice':
-      if (!hasEstimated) {
-        return {
-          canAdd: false,
-          reason: 'You must add at least one "Estimated Cost" entry before adding an "Invoice" entry.'
-        };
-      }
-      return { canAdd: true, reason: '' };
-    
+
     case 'actual cost':
       if (!hasEstimated) {
         return {
@@ -31,25 +21,13 @@ export const canAddBudgetType = (type, existingBudgets = []) => {
           reason: 'You must add at least one "Estimated Cost" entry before adding an "Actual Cost" entry.'
         };
       }
-      if (!hasInvoice) {
-        return {
-          canAdd: false,
-          reason: 'You must add at least one "Invoice" entry before adding an "Actual Cost" entry.'
-        };
-      }
       return { canAdd: true, reason: '' };
-    
+
     case 'support cost':
       if (!hasEstimated) {
         return {
           canAdd: false,
           reason: 'You must add at least one "Estimated Cost" entry before adding a "Support Cost" entry.'
-        };
-      }
-      if (!hasInvoice) {
-        return {
-          canAdd: false,
-          reason: 'You must add at least one "Invoice" entry before adding a "Support Cost" entry.'
         };
       }
       if (!hasActual) {
@@ -59,7 +37,7 @@ export const canAddBudgetType = (type, existingBudgets = []) => {
         };
       }
       return { canAdd: true, reason: '' };
-    
+
     default:
       return { canAdd: true, reason: '' };
   }
@@ -74,7 +52,6 @@ export const canAddBudgetType = (type, existingBudgets = []) => {
 export const getAvailableBudgetTypes = (existingBudgets = []) => {
   const allTypes = [
     { value: 'estimated cost', label: 'Estimated Cost', color: 'text-blue-600' },
-    { value: 'invoice', label: 'Invoice', color: 'text-amber-600' },
     { value: 'actual cost', label: 'Actual Cost', color: 'text-emerald-600' },
     { value: 'support cost', label: 'Support Cost', color: 'text-purple-600' },
   ];
