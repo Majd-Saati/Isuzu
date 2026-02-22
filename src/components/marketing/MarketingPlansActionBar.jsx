@@ -26,14 +26,16 @@ export const MarketingPlansActionBar = ({
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 shadow-sm p-5 mb-8">
       <div className="flex flex-wrap items-center gap-4">
-        {/* Add Plan Button */}
-        <button
-          onClick={onAddPlan}
-          className="flex items-center gap-2 px-6 py-3 bg-[#E60012] text-white rounded-xl text-sm font-semibold hover:bg-[#C00010] transition-all shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
-        >
-          <Plus className="w-4 h-4" />
-          Add Plan
-        </button>
+        {/* Add Plan Button - Hidden for admin users (admins cannot add plans) */}
+        {!isAdmin && (
+          <button
+            onClick={onAddPlan}
+            className="flex items-center gap-2 px-6 py-3 bg-[#E60012] text-white rounded-xl text-sm font-semibold hover:bg-[#C00010] transition-all shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            Add Plan
+          </button>
+        )}
 
         {/* Search Input */}
         <div className="relative flex-1 min-w-[240px] max-w-[320px]">
