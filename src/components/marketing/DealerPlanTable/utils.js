@@ -22,3 +22,4 @@ export const getAmountColorByStatus = (status) => {
   return 'text-gray-900';
 };
 
+

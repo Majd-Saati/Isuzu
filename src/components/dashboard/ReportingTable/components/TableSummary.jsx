@@ -39,3 +39,4 @@ export const TableSummary = ({ term, summary }) => {
   );
 };
 
+

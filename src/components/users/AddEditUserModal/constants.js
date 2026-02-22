@@ -28,3 +28,4 @@ export const formatStatusLabel = (status) => {
   return (status === '1' || status === 1) ? 'Active' : 'Inactive';
 };
 
+
