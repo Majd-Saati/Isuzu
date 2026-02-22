@@ -160,16 +160,16 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
           </div>
         </div>
 
-        {/* Dealers Section - Enhanced styling - Only show for admins */}
-        {marketingPlansExpanded && !isCollapsed && isAdmin && (
+        {/* Companies Section - Always visible for admins when sidebar is expanded */}
+        {!isCollapsed && isAdmin && (
           <div className="w-full mt-8 animate-fade-in overflow-hidden">
             <div className="flex items-center justify-between mb-4 px-2">
               <button
                 onClick={() => setDealersExpanded(!dealersExpanded)}
                 className="text-[#848E9A] hover:text-[#E60012] transition-all duration-300 text-xs font-bold uppercase tracking-wider whitespace-nowrap cursor-pointer hover:bg-red-50 rounded-lg px-2 py-1.5 -ml-2"
-                title={dealersExpanded ? "Collapse dealers" : "Expand dealers"}
+                title={dealersExpanded ? "Collapse companies" : "Expand companies"}
               >
-                Dealers
+                Companies
               </button>
               <div className="flex gap-2 flex-shrink-0">
                 {/* Add Company Button - Only for admins */}
@@ -177,7 +177,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                   <button 
                     onClick={() => setShowAddCompanyModal(true)}
                     className="text-[#848E9A] hover:text-[#E60012] transition-all duration-300 p-1.5 hover:bg-red-50 rounded-lg hover:scale-110"
-                    title="Add new dealer/company"
+                    title="Add new company"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -186,7 +186,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                 <button 
                   onClick={() => setDealersExpanded(!dealersExpanded)}
                   className="text-[#848E9A] hover:text-[#E60012] transition-all duration-300 p-1.5 hover:bg-red-50 rounded-lg hover:scale-110"
-                  title={dealersExpanded ? "Collapse dealers" : "Expand dealers"}
+                  title={dealersExpanded ? "Collapse companies" : "Expand companies"}
                 >
                   {dealersExpanded ? (
                     <ChevronUp className="w-4 h-4" />
@@ -199,7 +199,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
             {dealersExpanded && (
               <div className="flex flex-col gap-1.5 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
                 {dealers.length === 0 ? (
-                  <div className="text-sm text-gray-400 dark:text-gray-500 text-center py-2">No dealers available</div>
+                  <div className="text-sm text-gray-400 dark:text-gray-500 text-center py-2">No companies available</div>
                 ) : (
                   dealers.map((dealer) => {
                     const isDealerActive = (location.pathname === '/marketing-plans' || location.pathname === '/budgets-allocation') && String(currentCompanyId) === String(dealer.id);
