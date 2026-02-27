@@ -226,9 +226,15 @@ const Terms = () => {
 
       {/* Term exchange rates section */}
       <section className="mt-8">
+        {/* Title alone - same pattern as Terms header */}
+        <div className="pt-6 pb-8 mb-8 border-b-2 border-gray-100 dark:border-gray-800">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 pb-3 border-b-4 border-[#E60012] inline-block">
+            Term exchange rates
+          </h2>
+        </div>
+        {/* Action bar: filter and add button */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 shadow-sm p-5 mb-8">
           <div className="flex flex-wrap items-center gap-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Term exchange rates</h2>
             <div className="flex items-center gap-2">
               <label htmlFor="exchange-term-filter" className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
                 Term:
