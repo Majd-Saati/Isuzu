@@ -79,7 +79,7 @@ const transformActivity = (apiActivity) => {
 };
 
 // Transform API plan data to component format
-const transformPlanData = (apiPlan, activitiesForPlan = []) => {
+const transformPlanData = (apiPlan, activitiesForPlan = [], planSummary = null) => {
   // Transform only real activities from API
   const activities = activitiesForPlan.map(transformActivity);
   
@@ -90,6 +90,7 @@ const transformPlanData = (apiPlan, activitiesForPlan = []) => {
     description: apiPlan.description,
     totalActivities: activities.length,
     activities: activities,
+    planSummary,
     // Additional data from API
     company_name: apiPlan.company_name,
     company_id: apiPlan.company_id,
@@ -102,7 +103,7 @@ const transformPlanData = (apiPlan, activitiesForPlan = []) => {
   };
 };
 
-export const MarketingPlansTable = ({ plans = [], activities = [], onEditPlan, companies = [], terms = [], showBudgetColumns = false, showMediaUploadColumns = false, autoOpenActivityId = null }) => {
+export const MarketingPlansTable = ({ plans = [], activities = [], plansSummary = [], onEditPlan, companies = [], terms = [], showBudgetColumns = false, showMediaUploadColumns = false, autoOpenActivityId = null }) => {
   // Group activities by plan_id
   const activitiesByPlan = useMemo(() => {
     const grouped = {};
@@ -115,14 +116,26 @@ export const MarketingPlansTable = ({ plans = [], activities = [], onEditPlan, c
     });
     return grouped;
   }, [activities]);
+
+  // Map plan_id -> summary for lookup
+  const summaryByPlanId = useMemo(() => {
+    const map = {};
+    (plansSummary || []).forEach((s) => {
+      const id = s.plan_id != null ? String(s.plan_id) : null;
+      if (id) map[id] = s;
+    });
+    return map;
+  }, [plansSummary]);
   
-  // Transform plans with their activities
+  // Transform plans with their activities and API plan summary
   const transformedPlans = useMemo(() => {
     return plans.map(plan => {
       const planActivities = activitiesByPlan[plan.id] || [];
-      return transformPlanData(plan, planActivities);
+      const planIdKey = plan.id != null ? String(plan.id) : null;
+      const summary = planIdKey ? summaryByPlanId[planIdKey] || null : null;
+      return transformPlanData(plan, planActivities, summary);
     });
-  }, [plans, activitiesByPlan]);
+  }, [plans, activitiesByPlan, summaryByPlanId]);
   
   return (
     <div className="space-y-6">

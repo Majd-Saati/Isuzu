@@ -65,6 +65,7 @@ const MarketingPlans = () => {
     perPage: 100,
   });
   const activities = activitiesData?.activities || [];
+  const plansSummary = activitiesData?.plans_summary || [];
 
   const isLoading = isLoadingPlans || isLoadingActivities;
 
@@ -106,6 +107,7 @@ const MarketingPlans = () => {
       <MarketingPlansTable
         plans={plans}
         activities={activities}
+        plansSummary={plansSummary}
         companies={companies}
         terms={terms}
         showBudgetColumns

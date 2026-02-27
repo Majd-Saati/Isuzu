@@ -13,6 +13,7 @@ export const useActivities = (params = {}) => {
         total: 0,
         total_pages: 1,
       },
+      plans_summary: data?.body?.plans_summary || [],
     }),
     enabled: params.planIds && params.planIds.length > 0,
   });

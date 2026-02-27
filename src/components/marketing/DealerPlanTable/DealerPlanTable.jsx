@@ -126,6 +126,7 @@ export const DealerPlanTable = ({
             activities={plan.activities}
             selectedActivities={selectedActivities}
             showBudgetColumns={showBudgetColumns}
+            planSummary={plan.planSummary}
           />
         </div>
       )}
