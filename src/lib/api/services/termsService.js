@@ -49,5 +49,9 @@ export const termsService = {
       ...(data.note != null && data.note !== '' && { note: data.note }),
     });
   },
+
+  deleteTermExchange: async (termExchangeId) => {
+    return apiClient.post('/delete_term_exchange', { term_exchange_id: termExchangeId });
+  },
 };
 

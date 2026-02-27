@@ -1,4 +1,5 @@
 import React from 'react';
+import { Trash2 } from 'lucide-react';
 import { CustomPagination } from '@/components/ui/CustomPagination';
 
 const formatDate = (dateString) => {
@@ -26,6 +27,7 @@ export const TermExchangeTable = ({
   pagination,
   onPageChange,
   onItemsPerPageChange,
+  onDelete,
 }) => {
   const safePagination = pagination || {
     page: 1,
@@ -64,8 +66,8 @@ export const TermExchangeTable = ({
               <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r-2 border-gray-200 dark:border-gray-700">
                 Created
               </th>
-              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                Allowed to Update
+              <th className="text-center px-6 py-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Actions
               </th>
             </tr>
           </thead>
@@ -96,15 +98,25 @@ export const TermExchangeTable = ({
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <span
-                    className={`inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium ${
-                      row.allowed_to_update
-                        ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
-                    }`}
-                  >
-                    {row.allowed_to_update ? 'Yes' : 'No'}
-                  </span>
+                  {onDelete ? (
+                    <div className="flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => row.allowed_to_update && onDelete(row)}
+                        disabled={!row.allowed_to_update}
+                        title={row.allowed_to_update ? 'Delete exchange rate' : 'Not allowed to update'}
+                        className={`p-2 rounded-lg transition-all ${
+                          row.allowed_to_update
+                            ? 'hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 hover:scale-110 active:scale-95'
+                            : 'opacity-40 cursor-not-allowed text-gray-400 dark:text-gray-500'
+                        }`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="text-sm text-gray-400 dark:text-gray-600">—</span>
+                  )}
                 </td>
               </tr>
             ))}

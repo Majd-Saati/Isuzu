@@ -13,7 +13,7 @@ import {
 import { AddEditTermModal } from '@/components/terms/AddEditTermModal';
 import { AddTermExchangeModal } from '@/components/terms/AddTermExchangeModal';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
-import { useTerms, useDeleteTerm, useTermExchange } from '@/hooks/api/useTerms';
+import { useTerms, useDeleteTerm, useTermExchange, useDeleteTermExchange } from '@/hooks/api/useTerms';
 import { hasPermission } from '@/lib/permissions';
 
 const Terms = () => {
@@ -30,6 +30,8 @@ const Terms = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingTerm, setDeletingTerm] = useState(null);
   const [showAddExchangeModal, setShowAddExchangeModal] = useState(false);
+  const [showDeleteExchangeModal, setShowDeleteExchangeModal] = useState(false);
+  const [deletingExchange, setDeletingExchange] = useState(null);
 
   // Pagination
   const [page, setPage] = useState(1);
@@ -48,6 +50,7 @@ const Terms = () => {
     isError: exchangeError,
   } = useTermExchange({ page: exchangePage, perPage: exchangePerPage });
   const deleteMutation = useDeleteTerm();
+  const deleteExchangeMutation = useDeleteTermExchange();
 
   const terms = data?.terms || [];
   const pagination = data?.pagination;
@@ -111,6 +114,26 @@ const Terms = () => {
     setExchangePage(1);
   }, []);
 
+  const openDeleteExchangeModal = useCallback((exchange) => {
+    setDeletingExchange(exchange);
+    setShowDeleteExchangeModal(true);
+  }, []);
+
+  const closeDeleteExchangeModal = useCallback(() => {
+    setShowDeleteExchangeModal(false);
+    setDeletingExchange(null);
+  }, []);
+
+  const handleConfirmDeleteExchange = useCallback(() => {
+    if (deletingExchange) {
+      deleteExchangeMutation.mutate(deletingExchange.id, {
+        onSuccess: () => {
+          closeDeleteExchangeModal();
+        },
+      });
+    }
+  }, [deletingExchange, deleteExchangeMutation, closeDeleteExchangeModal]);
+
   // Search handler
   const handleSearchChange = useCallback((value) => {
     setSearch(value);
@@ -162,6 +185,7 @@ const Terms = () => {
         pagination={exchangePagination}
         onPageChange={handleExchangePageChange}
         onItemsPerPageChange={handleExchangeItemsPerPageChange}
+        onDelete={openDeleteExchangeModal}
       />
     );
   };
@@ -196,7 +220,7 @@ const Terms = () => {
       {/* Add/Edit Term Modal */}
       <AddEditTermModal isOpen={showModal} onClose={closeModal} editData={editingTerm} />
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Term Confirmation Modal */}
       <DeleteConfirmationModal
         isOpen={showDeleteModal}
         onClose={closeDeleteModal}
@@ -206,6 +230,18 @@ const Terms = () => {
         itemName={deletingTerm?.name}
         confirmText="Delete Term"
         isLoading={deleteMutation.isPending}
+      />
+
+      {/* Delete Term Exchange Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={showDeleteExchangeModal}
+        onClose={closeDeleteExchangeModal}
+        onConfirm={handleConfirmDeleteExchange}
+        title="Delete exchange rate"
+        message="Are you sure you want to delete this term exchange rate? This action cannot be undone."
+        itemName={deletingExchange ? `${deletingExchange.country_name} – ${deletingExchange.currency}` : ''}
+        confirmText="Delete"
+        isLoading={deleteExchangeMutation.isPending}
       />
     </>
   );
