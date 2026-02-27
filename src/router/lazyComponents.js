@@ -15,7 +15,7 @@ export const Login = lazy(() => import('../pages/Login'));
 
 // Protected pages
 export const Index = lazy(() => import('../pages/Index'));
-export const MarketingPlans = lazy(() => import('../pages/MarketingPlans'));
+export const MarketingPlans = lazy(() => import('../pages/MarketingPlans.jsx'));
 export const BudgetsAllocation = lazy(() => import('../pages/BudgetsAllocation'));
 export const Administrators = lazy(() => import('../pages/Administrators'));
 export const Companies = lazy(() => import('../pages/Users')); // Companies page (formerly Users)
