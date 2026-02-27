@@ -35,9 +35,13 @@ export const termsService = {
   },
 
   getTermExchange: async (params = {}) => {
-    const { page = 1, perPage = 20 } = params;
+    const { page = 1, perPage = 20, termId } = params;
+    const queryParams = { page, per_page: perPage };
+    if (termId != null && termId !== '') {
+      queryParams.term_id = termId;
+    }
     return apiClient.get('/get_term_exchange', {
-      params: { page, per_page: perPage },
+      params: queryParams,
     });
   },
 

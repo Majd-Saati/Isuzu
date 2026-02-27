@@ -42,17 +42,24 @@ const Terms = () => {
   const [perPage, setPerPage] = useState(20);
   const [exchangePage, setExchangePage] = useState(1);
   const [exchangePerPage, setExchangePerPage] = useState(20);
+  const [exchangeTermId, setExchangeTermId] = useState(''); // '' = last term
 
   // Search
   const [search, setSearch] = useState('');
 
   // API hooks
   const { data, isLoading, isError } = useTerms({ page, perPage, search });
+  const { data: termsListData } = useTerms({ page: 1, perPage: 100 }); // for exchange filter dropdown
+  const termsList = termsListData?.terms || [];
   const {
     data: exchangeData,
     isLoading: exchangeLoading,
     isError: exchangeError,
-  } = useTermExchange({ page: exchangePage, perPage: exchangePerPage });
+  } = useTermExchange({
+    page: exchangePage,
+    perPage: exchangePerPage,
+    termId: exchangeTermId || undefined,
+  });
   const deleteMutation = useDeleteTerm();
   const deleteExchangeMutation = useDeleteTermExchange();
 
@@ -115,6 +122,12 @@ const Terms = () => {
 
   const handleExchangeItemsPerPageChange = useCallback((newPerPage) => {
     setExchangePerPage(newPerPage);
+    setExchangePage(1);
+  }, []);
+
+  const handleExchangeTermFilterChange = useCallback((e) => {
+    const value = e.target.value;
+    setExchangeTermId(value);
     setExchangePage(1);
   }, []);
 
@@ -216,6 +229,24 @@ const Terms = () => {
         <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 shadow-sm p-5 mb-8">
           <div className="flex flex-wrap items-center gap-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Term exchange rates</h2>
+            <div className="flex items-center gap-2">
+              <label htmlFor="exchange-term-filter" className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                Term:
+              </label>
+              <select
+                id="exchange-term-filter"
+                value={exchangeTermId}
+                onChange={handleExchangeTermFilterChange}
+                className="px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012] focus:border-transparent transition-all min-w-[200px]"
+              >
+                <option value="">Last term</option>
+                {termsList.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            </div>
             <button
               type="button"
               onClick={() => setShowAddExchangeModal(true)}
