@@ -118,3 +118,14 @@ export const useDeleteTermExchange = () => {
   });
 };
 
+export const useUpdateTermExchange = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: termsService.updateTermExchange,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['termExchange'] });
+    },
+  });
+};
+

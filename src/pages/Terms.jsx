@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { Plus } from 'lucide-react';
 import { TermsTable } from '@/components/terms/TermsTable';
 import { TermsTableSkeleton } from '@/components/terms/TermsTableSkeleton';
 import { TermsTableEmpty } from '@/components/terms/TermsTableEmpty';
@@ -12,6 +13,7 @@ import {
 } from '@/components/terms';
 import { AddEditTermModal } from '@/components/terms/AddEditTermModal';
 import { AddTermExchangeModal } from '@/components/terms/AddTermExchangeModal';
+import { EditTermExchangeModal } from '@/components/terms/EditTermExchangeModal';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 import { useTerms, useDeleteTerm, useTermExchange, useDeleteTermExchange } from '@/hooks/api/useTerms';
 import { hasPermission } from '@/lib/permissions';
@@ -30,6 +32,8 @@ const Terms = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingTerm, setDeletingTerm] = useState(null);
   const [showAddExchangeModal, setShowAddExchangeModal] = useState(false);
+  const [showEditExchangeModal, setShowEditExchangeModal] = useState(false);
+  const [editingExchange, setEditingExchange] = useState(null);
   const [showDeleteExchangeModal, setShowDeleteExchangeModal] = useState(false);
   const [deletingExchange, setDeletingExchange] = useState(null);
 
@@ -114,6 +118,16 @@ const Terms = () => {
     setExchangePage(1);
   }, []);
 
+  const openEditExchangeModal = useCallback((exchange) => {
+    setEditingExchange(exchange);
+    setShowEditExchangeModal(true);
+  }, []);
+
+  const closeEditExchangeModal = useCallback(() => {
+    setShowEditExchangeModal(false);
+    setEditingExchange(null);
+  }, []);
+
   const openDeleteExchangeModal = useCallback((exchange) => {
     setDeletingExchange(exchange);
     setShowDeleteExchangeModal(true);
@@ -185,6 +199,7 @@ const Terms = () => {
         pagination={exchangePagination}
         onPageChange={handleExchangePageChange}
         onItemsPerPageChange={handleExchangeItemsPerPageChange}
+        onEdit={openEditExchangeModal}
         onDelete={openDeleteExchangeModal}
       />
     );
@@ -198,15 +213,18 @@ const Terms = () => {
 
       {/* Term exchange rates section */}
       <section className="mt-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Term exchange rates</h2>
-          <button
-            type="button"
-            onClick={() => setShowAddExchangeModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-[#E60012] hover:bg-[#C00010] transition-all shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
-          >
-            Add exchange rate
-          </button>
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 shadow-sm p-5 mb-8">
+          <div className="flex flex-wrap items-center gap-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Term exchange rates</h2>
+            <button
+              type="button"
+              onClick={() => setShowAddExchangeModal(true)}
+              className="flex items-center gap-2 px-6 py-3 bg-[#E60012] text-white rounded-xl text-sm font-semibold hover:bg-[#C00010] transition-all shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
+            >
+              <Plus className="w-4 h-4" />
+              Add exchange rate
+            </button>
+          </div>
         </div>
         {renderExchangeContent()}
       </section>
@@ -215,6 +233,13 @@ const Terms = () => {
       <AddTermExchangeModal
         isOpen={showAddExchangeModal}
         onClose={() => setShowAddExchangeModal(false)}
+      />
+
+      {/* Edit term exchange rate modal */}
+      <EditTermExchangeModal
+        isOpen={showEditExchangeModal}
+        onClose={closeEditExchangeModal}
+        editData={editingExchange}
       />
 
       {/* Add/Edit Term Modal */}

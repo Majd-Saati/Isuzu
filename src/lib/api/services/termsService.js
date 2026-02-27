@@ -53,5 +53,13 @@ export const termsService = {
   deleteTermExchange: async (termExchangeId) => {
     return apiClient.post('/delete_term_exchange', { term_exchange_id: termExchangeId });
   },
+
+  updateTermExchange: async (data) => {
+    return apiClient.post('/term_exchange_update', {
+      exchange_id: data.exchange_id,
+      rate: data.rate,
+      ...(data.note != null && data.note !== '' && { note: data.note }),
+    });
+  },
 };
 

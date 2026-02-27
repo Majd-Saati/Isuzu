@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2 } from 'lucide-react';
+import { Edit2, Trash2, Globe } from 'lucide-react';
 import { CustomPagination } from '@/components/ui/CustomPagination';
 
 const formatDate = (dateString) => {
@@ -10,8 +10,6 @@ const formatDate = (dateString) => {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
   });
 };
 
@@ -27,6 +25,7 @@ export const TermExchangeTable = ({
   pagination,
   onPageChange,
   onItemsPerPageChange,
+  onEdit,
   onDelete,
 }) => {
   const safePagination = pagination || {
@@ -78,9 +77,14 @@ export const TermExchangeTable = ({
                 className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-all duration-200"
               >
                 <td className="px-6 py-4 border-r-2 border-gray-200 dark:border-gray-700">
-                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {row.country_name ?? '—'}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#E60012] to-[#C00010] flex items-center justify-center text-white font-semibold text-xs shrink-0">
+                      <Globe className="w-4 h-4" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {row.country_name ?? '—'}
+                    </span>
+                  </div>
                 </td>
                 <td className="px-6 py-4 border-r-2 border-gray-200 dark:border-gray-700">
                   <span className="inline-flex items-center px-3 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-sm font-medium">
@@ -98,21 +102,38 @@ export const TermExchangeTable = ({
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  {onDelete ? (
-                    <div className="flex items-center justify-center">
-                      <button
-                        type="button"
-                        onClick={() => row.allowed_to_update && onDelete(row)}
-                        disabled={!row.allowed_to_update}
-                        title={row.allowed_to_update ? 'Delete exchange rate' : 'Not allowed to update'}
-                        className={`p-2 rounded-lg transition-all ${
-                          row.allowed_to_update
-                            ? 'hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 hover:scale-110 active:scale-95'
-                            : 'opacity-40 cursor-not-allowed text-gray-400 dark:text-gray-500'
-                        }`}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                  {(onEdit || onDelete) ? (
+                    <div className="flex items-center justify-center gap-2">
+                      {onEdit && (
+                        <button
+                          type="button"
+                          onClick={() => row.allowed_to_update && onEdit(row)}
+                          disabled={!row.allowed_to_update}
+                          title={row.allowed_to_update ? 'Edit exchange rate' : 'Not allowed to update'}
+                          className={`p-2 rounded-lg transition-all ${
+                            row.allowed_to_update
+                              ? 'hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:scale-110 active:scale-95'
+                              : 'opacity-40 cursor-not-allowed text-gray-400 dark:text-gray-500'
+                          }`}
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                      )}
+                      {onDelete && (
+                        <button
+                          type="button"
+                          onClick={() => row.allowed_to_update && onDelete(row)}
+                          disabled={!row.allowed_to_update}
+                          title={row.allowed_to_update ? 'Delete exchange rate' : 'Not allowed to update'}
+                          className={`p-2 rounded-lg transition-all ${
+                            row.allowed_to_update
+                              ? 'hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 hover:scale-110 active:scale-95'
+                              : 'opacity-40 cursor-not-allowed text-gray-400 dark:text-gray-500'
+                          }`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   ) : (
                     <span className="text-sm text-gray-400 dark:text-gray-600">—</span>
