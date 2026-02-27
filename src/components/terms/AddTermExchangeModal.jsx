@@ -94,12 +94,12 @@ export const AddTermExchangeModal = ({ isOpen, onClose }) => {
   }, [showCountryDropdown]);
 
   const handleTermSelect = (term) => {
-    formik.setFieldValue('term_id', term.id);
+    formik.setFieldValue('term_id', String(term.id));
     setShowTermDropdown(false);
   };
 
   const handleCountrySelect = (country) => {
-    formik.setFieldValue('country_id', country.id);
+    formik.setFieldValue('country_id', String(country.id));
     setShowCountryDropdown(false);
   };
 
