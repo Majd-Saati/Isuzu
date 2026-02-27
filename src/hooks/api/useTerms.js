@@ -71,3 +71,39 @@ export const useDeleteTerm = () => {
   });
 };
 
+export const useTermExchange = (params = {}, options = {}) => {
+  const { enabled = true } = options;
+
+  return useQuery({
+    queryKey: ['termExchange', params],
+    queryFn: () => termsService.getTermExchange(params),
+    select: (data) => {
+      const body = data?.body || {};
+      const exchanges = body.exchanges || [];
+      const pagination = body.pagination || {
+        page: 1,
+        per_page: 20,
+        total: exchanges.length,
+        total_pages: 1,
+      };
+      return {
+        term: body.term || null,
+        exchanges,
+        pagination,
+      };
+    },
+    enabled,
+  });
+};
+
+export const useAddTermExchange = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: termsService.addTermExchange,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['termExchange'] });
+    },
+  });
+};
+
