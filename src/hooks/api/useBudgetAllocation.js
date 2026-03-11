@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { budgetAllocationService } from '@/lib/api/services/budgetAllocationService';
 
 /**
@@ -14,5 +14,18 @@ export const useBudgetAllocationList = (params = {}, options = {}) => {
       terms: data?.body?.terms ?? [],
     }),
     enabled,
+  });
+};
+
+/**
+ * Set budget allocation. On success invalidates budget allocation list so the table refetches.
+ */
+export const useSetBudgetAllocation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body) => budgetAllocationService.setBudgetAllocation(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgetAllocationList'] });
+    },
   });
 };

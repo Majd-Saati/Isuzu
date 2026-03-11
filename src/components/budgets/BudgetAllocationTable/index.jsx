@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Plus } from 'lucide-react';
 import { SectionTitle } from '@/components/dashboard/SectionTitle';
 import { useBudgetAllocationTable } from './hooks/useBudgetAllocationTable';
 import { BudgetAllocationFilters } from './components/Filters';
@@ -6,8 +7,13 @@ import { TermSection } from './components/TermSection';
 import { BudgetAllocationEmptyState } from './components/EmptyState';
 import { BudgetAllocationErrorState } from './components/ErrorState';
 import { BudgetAllocationTableSkeleton } from './BudgetAllocationTableSkeleton';
+import { SetBudgetAllocationModal } from '@/components/budgets/SetBudgetAllocationModal';
+import { useSetBudgetAllocation } from '@/hooks/api/useBudgetAllocation';
 
 export const BudgetAllocationTable = () => {
+  const [showSetModal, setShowSetModal] = useState(false);
+  const setAllocationMutation = useSetBudgetAllocation();
+
   const {
     termId,
     setTermId,
@@ -32,22 +38,48 @@ export const BudgetAllocationTable = () => {
     return <BudgetAllocationErrorState error={error} />;
   }
 
+  const filtersAndAction = (
+    <div className="flex flex-wrap items-center gap-3 md:gap-4">
+      <BudgetAllocationFilters
+        termId={termId}
+        terms={termsFromList}
+        companyId={companyId}
+        companies={companies}
+        onTermChange={setTermId}
+        onCompanyChange={setCompanyId}
+        isAdmin={isAdmin}
+      />
+      {isAdmin && (
+        <button
+          type="button"
+          onClick={() => setShowSetModal(true)}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#E60012] hover:bg-[#C00010] transition-all shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
+        >
+          <Plus className="w-4 h-4" />
+          Set allocation
+        </button>
+      )}
+    </div>
+  );
+
   if (!hasTerms || !hasAnyAllocations) {
     return (
       <div className="bg-white dark:bg-gray-900 rounded-[24px] p-6 md:p-8 shadow-[0px_4px_16px_rgba(0,0,0,0.06)] border-2 border-gray-100 dark:border-gray-800 animate-fade-in">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <SectionTitle title="Budget allocations" />
-          <BudgetAllocationFilters
-            termId={termId}
-            terms={termsFromList}
-            companyId={companyId}
-            companies={companies}
-            onTermChange={setTermId}
-            onCompanyChange={setCompanyId}
-            isAdmin={isAdmin}
-          />
+          {filtersAndAction}
         </div>
         <BudgetAllocationEmptyState />
+        <SetBudgetAllocationModal
+          isOpen={showSetModal}
+          onClose={() => setShowSetModal(false)}
+          onSubmit={(payload, { onSuccess, onSettled }) => {
+            setAllocationMutation.mutate(payload, { onSuccess, onSettled });
+          }}
+          isSubmitting={setAllocationMutation.isPending}
+          terms={termsFromList}
+          companies={companies}
+        />
       </div>
     );
   }
@@ -56,21 +88,23 @@ export const BudgetAllocationTable = () => {
     <div className="bg-white dark:bg-gray-900 rounded-[24px] p-6 md:p-8 shadow-[0px_4px_16px_rgba(0,0,0,0.06)] border-2 border-gray-100 dark:border-gray-800 animate-fade-in">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <SectionTitle title="Budget allocations" />
-        <BudgetAllocationFilters
-          termId={termId}
-          terms={termsFromList}
-          companyId={companyId}
-          companies={companies}
-          onTermChange={setTermId}
-          onCompanyChange={setCompanyId}
-          isAdmin={isAdmin}
-        />
+        {filtersAndAction}
       </div>
       <div className="space-y-2">
         {terms.map((term) => (
           <TermSection key={term.term_id} term={term} />
         ))}
       </div>
+      <SetBudgetAllocationModal
+        isOpen={showSetModal}
+        onClose={() => setShowSetModal(false)}
+        onSubmit={(payload, { onSuccess, onSettled }) => {
+          setAllocationMutation.mutate(payload, { onSuccess, onSettled });
+        }}
+        isSubmitting={setAllocationMutation.isPending}
+        terms={termsFromList}
+        companies={companies}
+      />
     </div>
   );
 };

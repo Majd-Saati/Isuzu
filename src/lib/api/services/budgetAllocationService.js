@@ -12,4 +12,12 @@ export const budgetAllocationService = {
     if (company_id != null && company_id !== '') queryParams.company_id = company_id;
     return apiClient.get('/budget_allocation_list', { params: queryParams });
   },
+
+  /**
+   * Set budget allocation for a term and company.
+   * @param {{ term_id: number, company_id: number, value: number }} body
+   */
+  setBudgetAllocation: async (body) => {
+    return apiClient.post('/budget_allocation_set', body);
+  },
 };
