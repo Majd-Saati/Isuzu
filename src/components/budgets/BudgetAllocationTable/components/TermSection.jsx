@@ -4,7 +4,7 @@ import { BudgetAllocationTableHeader } from './TableHeader';
 import { AllocationRow } from './AllocationRow';
 import { formatDate } from '../utils';
 
-export const TermSection = ({ term }) => {
+export const TermSection = ({ term, onDeleteAllocation }) => {
   const allocations = term.allocations ?? [];
   const hasAllocations = allocations.length > 0;
 
@@ -30,7 +30,11 @@ export const TermSection = ({ term }) => {
             <BudgetAllocationTableHeader />
             <tbody>
               {allocations.map((allocation) => (
-                <AllocationRow key={allocation.id} allocation={allocation} />
+                <AllocationRow
+                  key={allocation.id}
+                  allocation={allocation}
+                  onDelete={onDeleteAllocation}
+                />
               ))}
             </tbody>
           </table>

@@ -20,4 +20,12 @@ export const budgetAllocationService = {
   setBudgetAllocation: async (body) => {
     return apiClient.post('/budget_allocation_set', body);
   },
+
+  /**
+   * Delete a budget allocation.
+   * @param {{ id: number }} body
+   */
+  deleteBudgetAllocation: async (body) => {
+    return apiClient.post('/budget_allocation_delete', body);
+  },
 };

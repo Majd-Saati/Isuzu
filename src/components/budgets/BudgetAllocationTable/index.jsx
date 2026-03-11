@@ -8,11 +8,14 @@ import { BudgetAllocationEmptyState } from './components/EmptyState';
 import { BudgetAllocationErrorState } from './components/ErrorState';
 import { BudgetAllocationTableSkeleton } from './BudgetAllocationTableSkeleton';
 import { SetBudgetAllocationModal } from '@/components/budgets/SetBudgetAllocationModal';
-import { useSetBudgetAllocation } from '@/hooks/api/useBudgetAllocation';
+import { useSetBudgetAllocation, useDeleteBudgetAllocation } from '@/hooks/api/useBudgetAllocation';
+import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 
 export const BudgetAllocationTable = () => {
   const [showSetModal, setShowSetModal] = useState(false);
+  const [allocationToDelete, setAllocationToDelete] = useState(null);
   const setAllocationMutation = useSetBudgetAllocation();
+  const deleteAllocationMutation = useDeleteBudgetAllocation();
 
   const {
     termId,
@@ -92,9 +95,31 @@ export const BudgetAllocationTable = () => {
       </div>
       <div className="space-y-2">
         {terms.map((term) => (
-          <TermSection key={term.term_id} term={term} />
+          <TermSection
+            key={term.term_id}
+            term={term}
+            onDeleteAllocation={(allocation) => setAllocationToDelete({ id: allocation.id, company_name: allocation.company_name })}
+          />
         ))}
       </div>
+      <DeleteConfirmationModal
+        isOpen={!!allocationToDelete}
+        onClose={() => setAllocationToDelete(null)}
+        onConfirm={() => {
+          if (allocationToDelete) {
+            deleteAllocationMutation.mutate(
+              { id: allocationToDelete.id },
+              { onSuccess: () => setAllocationToDelete(null) }
+            );
+          }
+        }}
+        title="Delete budget allocation"
+        message="Are you sure you want to delete this budget allocation? This action cannot be undone."
+        itemName={allocationToDelete?.company_name ? `${allocationToDelete.company_name} (ID: ${allocationToDelete.id})` : ''}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isLoading={deleteAllocationMutation.isPending}
+      />
       <SetBudgetAllocationModal
         isOpen={showSetModal}
         onClose={() => setShowSetModal(false)}

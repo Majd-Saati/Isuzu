@@ -21,6 +21,9 @@ export const BudgetAllocationTableHeader = () => (
       <th className="text-left py-4 px-4 md:px-6 text-[#4A5568] dark:text-gray-300 text-xs font-semibold uppercase tracking-wide hidden lg:table-cell">
         Created
       </th>
+      <th className="text-center py-4 px-4 md:px-6 text-[#4A5568] dark:text-gray-300 text-xs font-semibold uppercase tracking-wide w-14">
+        Actions
+      </th>
     </tr>
   </thead>
 );
