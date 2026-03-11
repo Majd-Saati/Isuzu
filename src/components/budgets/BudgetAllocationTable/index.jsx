@@ -12,6 +12,8 @@ import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal
 
 export const BudgetAllocationTable = () => {
   const [showSetModal, setShowSetModal] = useState(false);
+  const [preselectedTermId, setPreselectedTermId] = useState(null);
+  const [preselectedTermName, setPreselectedTermName] = useState('');
   const [allocationToDelete, setAllocationToDelete] = useState(null);
   const setAllocationMutation = useSetBudgetAllocation();
   const deleteAllocationMutation = useDeleteBudgetAllocation();
@@ -54,7 +56,11 @@ export const BudgetAllocationTable = () => {
       {isAdmin && (
         <button
           type="button"
-          onClick={() => setShowSetModal(true)}
+          onClick={() => {
+            setPreselectedTermId(null);
+            setPreselectedTermName('');
+            setShowSetModal(true);
+          }}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#E60012] hover:bg-[#C00010] transition-all shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
         >
           <Plus className="w-4 h-4" />
@@ -82,6 +88,8 @@ export const BudgetAllocationTable = () => {
           isSubmitting={setAllocationMutation.isPending}
           terms={termsFromList}
           companies={companies}
+          preselectedTermId={preselectedTermId}
+          preselectedTermName={preselectedTermName}
         />
       </div>
     );
@@ -100,6 +108,7 @@ export const BudgetAllocationTable = () => {
             key={term.term_id}
             term={term}
             onDeleteAllocation={(allocation) => setAllocationToDelete({ id: allocation.id, company_name: allocation.company_name })}
+            onAddAllocation={isAdmin ? (t) => { setPreselectedTermId(t.term_id); setPreselectedTermName(t.term_name || ''); setShowSetModal(true); } : undefined}
           />
         ))}
       </div>
@@ -130,6 +139,8 @@ export const BudgetAllocationTable = () => {
         isSubmitting={setAllocationMutation.isPending}
         terms={termsFromList}
         companies={companies}
+        preselectedTermId={preselectedTermId}
+        preselectedTermName={preselectedTermName}
       />
     </div>
   );

@@ -11,6 +11,8 @@ export const SetBudgetAllocationModal = ({
   isSubmitting = false,
   terms = [],
   companies = [],
+  preselectedTermId = null,
+  preselectedTermName = '',
 }) => {
   const { formik, handleClose } = useSetBudgetAllocationModal({
     isOpen,
@@ -18,6 +20,7 @@ export const SetBudgetAllocationModal = ({
     onSubmit: (payload, callbacks) => {
       onSubmit(payload, callbacks);
     },
+    preselectedTermId,
   });
 
   const handleBackdropClick = (e) => {
@@ -53,6 +56,8 @@ export const SetBudgetAllocationModal = ({
               terms={terms}
               companies={companies}
               disabled={submitting}
+              preselectedTermId={preselectedTermId}
+              preselectedTermName={preselectedTermName}
             />
           </div>
 
