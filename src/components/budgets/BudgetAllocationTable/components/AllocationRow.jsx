@@ -7,11 +7,11 @@ export const AllocationRow = ({ allocation, onDelete }) => {
   const logoUrl = getCompanyLogoUrl(allocation.company_logo);
   const showLogo = logoUrl && !logoError;
   return (
-    <tr className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200">
-      <td className="py-4 px-4 md:px-6">
+    <tr className="hover:bg-gray-50/80 dark:hover:bg-gray-800/50 transition-colors duration-150">
+      <td className="py-3.5 px-4 md:px-6">
         <div className="flex items-center gap-3">
           {showLogo ? (
-            <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0 border border-gray-200 dark:border-gray-700 relative">
+            <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0 border border-gray-200 dark:border-gray-700 ring-1 ring-gray-100 dark:ring-gray-700">
               <img
                 src={logoUrl}
                 alt=""
@@ -20,7 +20,7 @@ export const AllocationRow = ({ allocation, onDelete }) => {
               />
             </div>
           ) : (
-            <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+            <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0 ring-1 ring-gray-100 dark:ring-gray-700">
               <Building2 className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             </div>
           )}
@@ -29,26 +29,26 @@ export const AllocationRow = ({ allocation, onDelete }) => {
           </span>
         </div>
       </td>
-      <td className="py-4 px-4 md:px-6 text-sm text-gray-600 dark:text-gray-400 hidden sm:table-cell">
+      <td className="py-3.5 px-4 md:px-6 text-sm text-gray-600 dark:text-gray-400 hidden sm:table-cell">
         {allocation.country_name || '—'}
       </td>
-      <td className="py-4 px-4 md:px-6">
-        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+      <td className="py-3.5 px-4 md:px-6">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
           {allocation.currency || '—'}
         </span>
       </td>
-      <td className="py-4 px-4 md:px-6 text-right">
+      <td className="py-3.5 px-4 md:px-6 text-right tabular-nums">
         <span className="text-sm font-semibold text-[#1F2937] dark:text-gray-200">
           {formatNumber(allocation.value)}
         </span>
       </td>
-      <td className="py-4 px-4 md:px-6 text-right text-sm text-gray-600 dark:text-gray-400 hidden md:table-cell">
+      <td className="py-3.5 px-4 md:px-6 text-right text-sm text-gray-600 dark:text-gray-400 hidden md:table-cell tabular-nums">
         {formatNumber(allocation.support_used)}
       </td>
-      <td className="py-4 px-4 md:px-6 text-sm text-gray-500 dark:text-gray-400 hidden lg:table-cell">
+      <td className="py-3.5 px-4 md:px-6 text-sm text-gray-500 dark:text-gray-400 hidden lg:table-cell">
         {formatDate(allocation.creation_date)}
       </td>
-      <td className="py-4 px-4 md:px-6 text-center">
+      <td className="py-3.5 px-4 md:px-6 text-center">
         <button
           type="button"
           onClick={() => onDelete?.(allocation)}

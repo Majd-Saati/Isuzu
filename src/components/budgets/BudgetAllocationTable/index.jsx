@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
-import { SectionTitle } from '@/components/dashboard/SectionTitle';
 import { useBudgetAllocationTable } from './hooks/useBudgetAllocationTable';
 import { BudgetAllocationFilters } from './components/Filters';
 import { TermSection } from './components/TermSection';
@@ -67,10 +66,11 @@ export const BudgetAllocationTable = () => {
 
   if (!hasTerms || !hasAnyAllocations) {
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-[24px] p-6 md:p-8 shadow-[0px_4px_16px_rgba(0,0,0,0.06)] border-2 border-gray-100 dark:border-gray-800 animate-fade-in">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <SectionTitle title="Budget allocations" />
-          {filtersAndAction}
+      <div className="space-y-6 animate-fade-in">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-5">
+          <div className="flex flex-wrap items-center justify-end gap-3 md:gap-4">
+            {filtersAndAction}
+          </div>
         </div>
         <BudgetAllocationEmptyState />
         <SetBudgetAllocationModal
@@ -88,12 +88,13 @@ export const BudgetAllocationTable = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-[24px] p-6 md:p-8 shadow-[0px_4px_16px_rgba(0,0,0,0.06)] border-2 border-gray-100 dark:border-gray-800 animate-fade-in">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <SectionTitle title="Budget allocations" />
-        {filtersAndAction}
+    <div className="space-y-6 animate-fade-in">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-5">
+        <div className="flex flex-wrap items-center justify-end gap-3 md:gap-4">
+          {filtersAndAction}
+        </div>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-6">
         {terms.map((term) => (
           <TermSection
             key={term.term_id}

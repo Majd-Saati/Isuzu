@@ -2,7 +2,7 @@ import React from 'react';
 import { Wallet, FileX } from 'lucide-react';
 
 export const BudgetAllocationEmptyState = () => (
-  <div className="bg-white dark:bg-gray-900 rounded-[24px] p-6 md:p-8 shadow-[0px_4px_16px_rgba(0,0,0,0.06)] dark:shadow-[0px_4px_16px_rgba(0,0,0,0.3)] border-2 border-gray-100 dark:border-gray-800 animate-fade-in">
+  <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 md:p-8 shadow-sm border border-gray-200 dark:border-gray-700">
     <div className="flex flex-col items-center justify-center text-center py-12 md:py-16">
       <div className="relative mb-4">
         <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#E60012]/10 dark:from-[#E60012]/20 to-[#F38088]/10 dark:to-[#F38088]/20 flex items-center justify-center">
