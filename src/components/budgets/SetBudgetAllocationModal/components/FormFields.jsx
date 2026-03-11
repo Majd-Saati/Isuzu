@@ -71,10 +71,12 @@ export const SetBudgetAllocationFormFields = ({
         {showError('companyId') && <ErrorMessage message={formik.errors.companyId} />}
       </div>
 
-      {/* Value */}
+      {/* Value - required */}
       <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Allocation value <span className="text-red-500">*</span>
+        </label>
         <Input
-          label="Allocation value"
           name="value"
           type="number"
           min={1}
@@ -87,6 +89,7 @@ export const SetBudgetAllocationFormFields = ({
           touched={showError('value')}
           disabled={disabled}
         />
+        {showError('value') && <ErrorMessage message={formik.errors.value} />}
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-1">
           Enter the budget allocation amount (whole number)
         </p>
