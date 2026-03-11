@@ -1,8 +1,40 @@
 import axios from 'axios';
 import { toast } from 'sonner';
+import { getStoredCurrency } from '@/contexts/CurrencyContext';
 
 // API Base URL - Change this to update all API calls
 const API_BASE_URL = 'https://marketing.5v.ae/api/';
+
+// Endpoints that require x-currency header (for non-admin currency selection)
+const CURRENCY_HEADER_ENDPOINTS = [
+  'activity_budget_add',
+  'activity_budget_list',
+  'activity_meta_list',
+  'overview',
+  'calendar_view',
+  'charts',
+  'report',
+];
+
+const urlNeedsCurrencyHeader = (config) => {
+  const url = config?.url || '';
+  const path = typeof url === 'string' ? url.replace(/^\//, '').split('?')[0] : '';
+  return CURRENCY_HEADER_ENDPOINTS.some(
+    (endpoint) => path === endpoint || path.endsWith('/' + endpoint)
+  );
+};
+
+/** Only non-admin users get x-currency; admin requests must not send it. */
+const isCurrentUserAdmin = () => {
+  try {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return false;
+    const user = JSON.parse(userStr);
+    return user?.is_admin === '1' || user?.is_admin === 1 || user?.is_admin === true;
+  } catch {
+    return false;
+  }
+};
 
 // Create axios instance with default config
 const apiClient = axios.create({
@@ -20,6 +52,13 @@ apiClient.interceptors.request.use(
     const token = localStorage.getItem('authToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    // Add x-currency only for non-admin users on specific endpoints
+    if (!isCurrentUserAdmin() && urlNeedsCurrencyHeader(config)) {
+      const currency = getStoredCurrency();
+      if (currency) {
+        config.headers['x-currency'] = currency;
+      }
     }
     return config;
   },

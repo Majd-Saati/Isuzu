@@ -9,6 +9,7 @@ import { prefetchDealers } from '@/hooks/api/useCompanies';
 import { isAuthenticated } from '@/hooks/api/useAuth';
 import { AppRouter } from './router/AppRouter';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { CurrencyProvider } from './contexts/CurrencyContext';
 
 // Component to prefetch dealers when authenticated and user is admin
 const DealersPrefetcher = () => {
@@ -30,6 +31,7 @@ const App = () => (
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
+        <CurrencyProvider>
         <DealersPrefetcher />
         <Toaster
           position="top-right"
@@ -60,6 +62,7 @@ const App = () => (
         <BrowserRouter>
           <AppRouter />
         </BrowserRouter>
+        </CurrencyProvider>
       </ThemeProvider>
     </QueryClientProvider>
   </Provider>
