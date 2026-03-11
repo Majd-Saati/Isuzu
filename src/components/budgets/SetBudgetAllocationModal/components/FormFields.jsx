@@ -15,40 +15,34 @@ export const SetBudgetAllocationFormFields = ({
 
   return (
     <div className="p-6 space-y-5">
-      {/* Term: dropdown or read-only when preselected */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Term <span className="text-red-500">*</span>
-        </label>
-        {isTermPreselected ? (
-          <div className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-gray-100">
-            {preselectedTermName || `Term ${preselectedTermId}`}
-          </div>
-        ) : (
-          <>
-            <select
-              name="termId"
-              value={formik.values.termId}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              disabled={disabled}
-              className={`w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none transition-all ${
-                formik.errors.termId && showError('termId')
-                  ? 'border-red-500 dark:border-red-600'
-                  : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
-              } disabled:opacity-50 cursor-pointer`}
-            >
-              <option value="">Select term</option>
-              {terms.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name || t.term_name || `Term ${t.id}`}
-                </option>
-              ))}
-            </select>
-            {showError('termId') && <ErrorMessage message={formik.errors.termId} />}
-          </>
-        )}
-      </div>
+      {/* Term: only show dropdown when term is not preselected */}
+      {!isTermPreselected && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Term <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="termId"
+            value={formik.values.termId}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            disabled={disabled}
+            className={`w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none transition-all ${
+              formik.errors.termId && showError('termId')
+                ? 'border-red-500 dark:border-red-600'
+                : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+            } disabled:opacity-50 cursor-pointer`}
+          >
+            <option value="">Select term</option>
+            {terms.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name || t.term_name || `Term ${t.id}`}
+              </option>
+            ))}
+          </select>
+          {showError('termId') && <ErrorMessage message={formik.errors.termId} />}
+        </div>
+      )}
 
       {/* Company */}
       <div>
