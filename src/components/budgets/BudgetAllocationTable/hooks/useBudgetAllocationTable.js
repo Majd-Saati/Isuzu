@@ -11,7 +11,6 @@ export const useBudgetAllocationTable = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = isAdminUser(user);
 
-  const [termId, setTermId] = useState('');
   const [companyId, setCompanyId] = useState('');
 
   const { data: termsData } = useTerms({ perPage: 100 });
@@ -23,7 +22,6 @@ export const useBudgetAllocationTable = () => {
   const params = {
     page: 1,
     per_page: PER_PAGE,
-    ...(termId ? { term_id: termId } : {}),
     ...(companyId && isAdmin ? { company_id: companyId } : {}),
   };
 
@@ -33,8 +31,6 @@ export const useBudgetAllocationTable = () => {
   const hasAnyAllocations = terms.some((t) => (t.allocations ?? []).length > 0);
 
   return {
-    termId,
-    setTermId,
     companyId,
     setCompanyId,
     termsFromList,

@@ -19,8 +19,6 @@ export const BudgetAllocationTable = () => {
   const deleteAllocationMutation = useDeleteBudgetAllocation();
 
   const {
-    termId,
-    setTermId,
     companyId,
     setCompanyId,
     termsFromList,
@@ -59,11 +57,8 @@ export const BudgetAllocationTable = () => {
         </button>
       )}
       <BudgetAllocationFilters
-        termId={termId}
-        terms={termsFromList}
         companyId={companyId}
         companies={companies}
-        onTermChange={setTermId}
         onCompanyChange={setCompanyId}
         isAdmin={isAdmin}
       />
