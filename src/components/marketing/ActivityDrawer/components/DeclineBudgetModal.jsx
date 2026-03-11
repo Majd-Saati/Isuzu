@@ -23,8 +23,8 @@ export const DeclineBudgetModal = ({ isOpen, onClose, onConfirm, budget, isLoadi
                 <XCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Decline Budget</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Confirm budget decline</p>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Deny budget</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Confirm budget denial</p>
               </div>
             </div>
           </div>
@@ -32,7 +32,7 @@ export const DeclineBudgetModal = ({ isOpen, onClose, onConfirm, budget, isLoadi
           {/* Content */}
           <div className="p-6">
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-              Are you sure you want to decline this budget entry? This action will mark it as declined.
+              Are you sure you want to deny this budget entry? This action will mark it as denied.
             </p>
 
             {/* Budget Details */}
@@ -62,7 +62,7 @@ export const DeclineBudgetModal = ({ isOpen, onClose, onConfirm, budget, isLoadi
               <div className="text-gray-400 dark:text-gray-600">→</div>
               <div className="flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
                 <XCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
-                <span className="text-sm font-medium text-red-700 dark:text-red-300">Declined</span>
+                <span className="text-sm font-medium text-red-700 dark:text-red-300">Denied</span>
               </div>
             </div>
           </div>
@@ -84,12 +84,12 @@ export const DeclineBudgetModal = ({ isOpen, onClose, onConfirm, budget, isLoadi
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Declining...
+                  Denying...
                 </>
               ) : (
                 <>
                   <X className="w-4 h-4" />
-                  Decline Budget
+                  Deny budget
                 </>
               )}
             </button>

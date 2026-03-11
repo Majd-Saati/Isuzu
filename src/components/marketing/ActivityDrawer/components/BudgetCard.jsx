@@ -51,7 +51,7 @@ export const BudgetCard = ({ item, showCreator = true, onAccept, onDecline, onDe
             <button
               onClick={() => onDecline(item)}
               className="p-1.5 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/60 transition-all"
-              title="Decline Budget"
+              title="Deny budget"
             >
               <XCircle className="w-4 h-4" />
             </button>

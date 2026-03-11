@@ -44,7 +44,7 @@ export const useActivityDrawerModals = ({ isOpen, activity, updateBudgetStatusMu
     updateBudgetStatusMutation.mutate(
       {
         budgetId: budgetToDecline.id,
-        status: 'declined',
+        status: 'denied',
       },
       {
         onSuccess: () => {
