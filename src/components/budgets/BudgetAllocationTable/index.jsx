@@ -44,16 +44,7 @@ export const BudgetAllocationTable = () => {
 
   const filtersAndAction = (
     <div className="flex flex-wrap items-center gap-3 md:gap-4">
-      <BudgetAllocationFilters
-        termId={termId}
-        terms={termsFromList}
-        companyId={companyId}
-        companies={companies}
-        onTermChange={setTermId}
-        onCompanyChange={setCompanyId}
-        isAdmin={isAdmin}
-      />
-      {isAdmin && (
+        {isAdmin && (
         <button
           type="button"
           onClick={() => {
@@ -67,6 +58,16 @@ export const BudgetAllocationTable = () => {
           Set allocation
         </button>
       )}
+      <BudgetAllocationFilters
+        termId={termId}
+        terms={termsFromList}
+        companyId={companyId}
+        companies={companies}
+        onTermChange={setTermId}
+        onCompanyChange={setCompanyId}
+        isAdmin={isAdmin}
+      />
+    
     </div>
   );
 
@@ -98,7 +99,7 @@ export const BudgetAllocationTable = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-5">
-        <div className="flex flex-wrap items-center justify-end gap-3 md:gap-4">
+        <div className="flex flex-wrap items-center justify-start gap-3 md:gap-4">
           {filtersAndAction}
         </div>
       </div>
