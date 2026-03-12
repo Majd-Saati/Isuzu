@@ -10,6 +10,7 @@ import { ReportingTable } from '@/components/dashboard/ReportingTable';
 import { ReportingTableSkeleton } from '@/components/dashboard/ReportingTableSkeleton';
 import { ReportingTableEmpty } from '@/components/dashboard/ReportingTableEmpty';
 import { MarketingChartsSection, YearlyExpenseChart, TwoYearsCompareChart } from '@/components/charts';
+import { SectionNav } from '@/components/SectionNav';
 import { useCharts } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
 import { useCompanies } from '@/hooks/api/useCompanies';
@@ -356,17 +357,28 @@ const Charts = () => {
     legendLabel: 'Budget'
   };
 
+  const chartsSections = [
+    { id: 'dealer-efficiency', label: 'Dealer Efficiency' },
+    { id: 'marketing-charts', label: 'Marketing Charts' },
+    { id: 'yearly-expense', label: 'Yearly Expense' },
+    { id: 'two-years-compare', label: 'Two Years Compare' },
+    { id: 'efficiency-charts', label: 'Efficiency Charts' },
+    { id: 'reporting-table', label: 'Reporting Table' },
+  ];
+
   return (
     <>
-      {/* Page Header */}
-      <div className="pt-6 pb-8 mb-8 border-b-2 border-gray-100 dark:border-gray-800">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 pb-4 border-b-4 border-[#E60012] inline-block">
-          Charts
-        </h1>
-      </div>
+      <SectionNav sections={chartsSections} />
+      <div>
+        {/* Page Header */}
+        <div className="pt-6 pb-8 mb-8 border-b-2 border-gray-100 dark:border-gray-800">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 pb-4 border-b-4 border-[#E60012] inline-block">
+            Charts
+          </h1>
+        </div>
 
-      {/* Dealer Efficiency - by month and by term, side by side */}
-      <section className="pb-12 border-b border-gray-200 dark:border-gray-700">
+        {/* Dealer Efficiency - by month and by term, side by side */}
+        <section id="dealer-efficiency" className="pb-12 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-7 w-1 shrink-0 rounded-full bg-gradient-to-b from-[#EF5A6F] to-rose-400" />
           <h2 className="text-[#1F2937] dark:text-gray-100 text-xl font-bold tracking-tight">
@@ -377,39 +389,40 @@ const Charts = () => {
           <DealerEfficiencyChartByMonth />
           <DealerEfficiencyChartByTerm />
         </div>
-      </section>
+        </section>
 
-      {/* Marketing API Charts - month or term_id */}
-      <section className="py-12 border-b border-gray-200 dark:border-gray-700">
-        <MarketingChartsSection />
-      </section>
+        {/* Marketing API Charts - month or term_id */}
+        <section id="marketing-charts" className="py-12 border-b border-gray-200 dark:border-gray-700">
+          <MarketingChartsSection />
+        </section>
 
-      {/* Yearly Expense Chart - by year */}
-      <section className="py-12 border-b border-gray-200 dark:border-gray-700">
-        <YearlyExpenseChart />
-      </section>
+        {/* Yearly Expense Chart - by year */}
+        <section id="yearly-expense" className="py-12 border-b border-gray-200 dark:border-gray-700">
+          <YearlyExpenseChart />
+        </section>
 
-      {/* Two years comparison - Support cost (JPY) */}
-      <section className="py-12 border-b border-gray-200 dark:border-gray-700">
-        <TwoYearsCompareChart />
-      </section>
+        {/* Two years comparison - Support cost (JPY) */}
+        <section id="two-years-compare" className="py-12 border-b border-gray-200 dark:border-gray-700">
+          <TwoYearsCompareChart />
+        </section>
 
-      {/* First Section - Two Charts Side by Side */}
-      <section className="py-12 border-b border-gray-200 dark:border-gray-700">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {renderEfficiencyCharts()}
-        </div>
-      </section>
+        {/* First Section - Two Charts Side by Side */}
+        <section id="efficiency-charts" className="py-12 border-b border-gray-200 dark:border-gray-700">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {renderEfficiencyCharts()}
+          </div>
+        </section>
 
       {/* Second Section - Bar Chart */}
       {/* <div className="mb-8">
         {renderPerformanceChart()}
       </div> */}
 
-      {/* Third Section - Reporting Table */}
-      <section className="pt-12">
-        {renderReportingSection()}
-      </section>
+        {/* Third Section - Reporting Table */}
+        <section id="reporting-table" className="pt-12">
+          {renderReportingSection()}
+        </section>
+      </div>
     </>
   );
 };

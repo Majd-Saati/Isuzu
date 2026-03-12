@@ -16,6 +16,7 @@ import { ReportingTable } from '@/components/dashboard/ReportingTable';
 import { ReportingTableSkeleton } from '@/components/dashboard/ReportingTableSkeleton';
 import { ReportingTableEmpty } from '@/components/dashboard/ReportingTableEmpty';
 import { MarketingChartsSection, YearlyExpenseChart, TwoYearsCompareChart } from '@/components/charts';
+import { SectionNav } from '@/components/SectionNav';
 import { useCharts } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
 import { useCompanies } from '@/hooks/api/useCompanies';
@@ -498,12 +499,23 @@ const Index = () => {
 
 
 
+  const dashboardSections = [
+    { id: 'dealer-efficiency', label: 'Dealer Efficiency' },
+    { id: 'marketing-charts', label: 'Marketing Charts' },
+    { id: 'yearly-expense', label: 'Yearly Expense' },
+    { id: 'two-years-compare', label: 'Two Years Compare' },
+    { id: 'reporting-table', label: 'Reporting Table' },
+    { id: 'overview-recently', label: 'Overview Recently' },
+    { id: 'isuzu-dealers', label: 'ISUZU Dealers' },
+  ];
+
   return (
+    <>
+      <SectionNav sections={dashboardSections} />
+      <div className="flex w-full flex-col items-stretch mt-[19px] px-5 max-w-full">
 
-    <div className="flex w-full flex-col items-stretch mt-[19px] px-5 max-w-full">
-
-      {/* Dealer Efficiency - by month and by term, side by side */}
-      <section className="mt-[38px] max-md:mt-8 pb-12 border-b border-gray-200 dark:border-gray-700">
+        {/* Dealer Efficiency - by month and by term, side by side */}
+        <section id="dealer-efficiency" className="mt-[38px] max-md:mt-8 pb-12 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-7 w-1 shrink-0 rounded-full bg-gradient-to-b from-[#EF5A6F] to-rose-400" />
           <h2 className="text-[#1F2937] dark:text-gray-100 text-xl font-bold tracking-tight">
@@ -514,31 +526,30 @@ const Index = () => {
           <DealerEfficiencyChartByMonth />
           <DealerEfficiencyChartByTerm />
         </div>
-      </section>
+        </section>
 
-      {/* Marketing API Charts - month or term_id */}
-      <section className="py-12 border-b border-gray-200 dark:border-gray-700">
-        <MarketingChartsSection />
-      </section>
+        {/* Marketing API Charts - month or term_id */}
+        <section id="marketing-charts" className="py-12 border-b border-gray-200 dark:border-gray-700">
+          <MarketingChartsSection />
+        </section>
 
-      {/* Yearly Expense Chart - by year */}
-      <section className="py-12 border-b border-gray-200 dark:border-gray-700">
-        <YearlyExpenseChart />
-      </section>
+        {/* Yearly Expense Chart - by year */}
+        <section id="yearly-expense" className="py-12 border-b border-gray-200 dark:border-gray-700">
+          <YearlyExpenseChart />
+        </section>
 
-      {/* Two years comparison - Support cost (JPY) */}
-      <section className="py-12 border-b border-gray-200 dark:border-gray-700">
-        <TwoYearsCompareChart />
-      </section>
+        {/* Two years comparison - Support cost (JPY) */}
+        <section id="two-years-compare" className="py-12 border-b border-gray-200 dark:border-gray-700">
+          <TwoYearsCompareChart />
+        </section>
 
-      {/* Reporting Table */}
-      <section className="py-12 border-b border-gray-200 dark:border-gray-700">
-        <ReportingTable />
-      </section>
+        {/* Reporting Table */}
+        <section id="reporting-table" className="py-12 border-b border-gray-200 dark:border-gray-700">
+          <ReportingTable />
+        </section>
 
-      <div className="mt-[52px] max-md:mt-10">
-
-        <SectionTitle title="Overview Recently" />
+        <div id="overview-recently" className="mt-[52px] max-md:mt-10">
+          <SectionTitle title="Overview Recently" />
 
       </div>
 
@@ -548,26 +559,18 @@ const Index = () => {
 
         {renderOverviewSection()}
 
-      </div>
+        </div>
 
+        <div id="isuzu-dealers" className="mt-[52px] max-md:mt-10">
+          <SectionTitle title="ISUZU Dealers" showButton={true} />
+        </div>
 
-
-      <div className="mt-[52px] max-md:mt-10">
-
-        <SectionTitle title="ISUZU Dealers" showButton={true} />
-
-      </div>
-
-
-
-      <div className="mt-7 md:mt-9">
-
-        {renderDealersSection()}
+        <div className="mt-7 md:mt-9">
+          {renderDealersSection()}
+        </div>
 
       </div>
-
-    </div>
-
+    </>
   );
 
 };
