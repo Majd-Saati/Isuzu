@@ -1,12 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { AlertCircle, CalendarRange } from 'lucide-react';
+import { AlertCircle, CalendarRange, Download, FileSpreadsheet, FileText, Image, ChevronDown } from 'lucide-react';
 import { useTwoYearsCharts } from '@/hooks/api/useCharts';
 import { useCompanies } from '@/hooks/api/useCompanies';
 import { SectionHeader } from '@/components/dashboard/SectionHeader';
 import { MarketingChartsSkeleton } from '../MarketingChartsSkeleton';
 import { TwoYearsFilters } from './components/TwoYearsFilters';
 import { YearSupportChart } from './components/YearSupportChart';
+import { toast } from 'sonner';
+
+let exportUtils = null;
+const loadExportUtils = async () => {
+  if (!exportUtils) {
+    try {
+      exportUtils = await import('../chartExportUtils');
+    } catch (e) {
+      return null;
+    }
+  }
+  return exportUtils;
+};
 
 const currentYear = () => new Date().getFullYear();
 
@@ -37,12 +50,146 @@ export const TwoYearsCompareChart = () => {
   const hasData = years.length > 0;
   const showEmpty = !isLoading && !isError && (!hasData || years.every((y) => !y.months?.length));
 
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const chartsContainerRef = useRef(null);
+  const filename = `two-years-support-cost-${year1}-${year2}-${companyId}`;
+
+  const handleExportJSON = () => {
+    if (!data) return;
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${filename}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success('Chart data exported successfully');
+    setShowExportMenu(false);
+  };
+
+  const handleExportExcel = async () => {
+    setIsExporting(true);
+    try {
+      const utils = await loadExportUtils();
+      if (!utils?.exportTwoYearsToExcel) {
+        toast.error('Export feature unavailable. Please restart the dev server.');
+        return;
+      }
+      const success = utils.exportTwoYearsToExcel(data, filename);
+      if (success) toast.success('Excel file exported successfully');
+      else toast.error('Failed to export Excel file');
+    } catch (err) {
+      toast.error('Error exporting to Excel.');
+    } finally {
+      setIsExporting(false);
+      setShowExportMenu(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    if (!chartsContainerRef.current) return;
+    setIsExporting(true);
+    try {
+      const utils = await loadExportUtils();
+      if (!utils?.exportToPDF) {
+        toast.error('Export feature unavailable. Please restart the dev server.');
+        return;
+      }
+      const success = await utils.exportToPDF(
+        chartsContainerRef.current,
+        filename,
+        `Two years comparison – Support cost (JPY) (${year1} vs ${year2})`
+      );
+      if (success) toast.success('PDF exported successfully');
+      else toast.error('Failed to export PDF');
+    } catch (err) {
+      toast.error('Error exporting to PDF.');
+    } finally {
+      setIsExporting(false);
+      setShowExportMenu(false);
+    }
+  };
+
+  const handleExportPNG = async () => {
+    if (!chartsContainerRef.current) return;
+    setIsExporting(true);
+    try {
+      const utils = await loadExportUtils();
+      if (!utils?.exportToPNG) {
+        toast.error('Export feature unavailable. Please restart the dev server.');
+        return;
+      }
+      const success = await utils.exportToPNG(chartsContainerRef.current, filename);
+      if (success) toast.success('Image exported successfully');
+      else toast.error('Failed to export image');
+    } catch (err) {
+      toast.error('Error exporting to image.');
+    } finally {
+      setIsExporting(false);
+      setShowExportMenu(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <SectionHeader
         title="Two years comparison – Support cost (JPY)"
         subtitle={hasData ? `${year1} vs ${year2}` : undefined}
-      />
+      >
+        {hasData && (
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowExportMenu(!showExportMenu)}
+              disabled={isExporting}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+            >
+              <Download className={isExporting ? 'animate-pulse w-3.5 h-3.5' : 'w-3.5 h-3.5'} />
+              Export
+              <ChevronDown className={`w-3 h-3 transition-transform ${showExportMenu ? 'rotate-180' : ''}`} />
+            </button>
+            {showExportMenu && (
+              <>
+                <div role="button" tabIndex={0} className="fixed inset-0 z-10" onClick={() => setShowExportMenu(false)} aria-label="Close" />
+                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 shadow-xl z-20 py-1 animate-fade-in">
+                  <button type="button" onClick={handleExportJSON} className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <FileText className="w-4 h-4 text-amber-600" />
+                    <div>
+                      <div className="font-medium">JSON (.json)</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Raw data</div>
+                    </div>
+                  </button>
+                  <button type="button" onClick={handleExportExcel} disabled={isExporting} className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50">
+                    <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                    <div>
+                      <div className="font-medium">Excel (.xlsx)</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">One sheet per year</div>
+                    </div>
+                  </button>
+                  <button type="button" onClick={handleExportPDF} disabled={isExporting} className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50">
+                    <FileText className="w-4 h-4 text-red-600" />
+                    <div>
+                      <div className="font-medium">PDF (.pdf)</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Charts as image</div>
+                    </div>
+                  </button>
+                  <button type="button" onClick={handleExportPNG} disabled={isExporting} className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50">
+                    <Image className="w-4 h-4 text-blue-600" />
+                    <div>
+                      <div className="font-medium">Image (.png)</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">High-resolution</div>
+                    </div>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </SectionHeader>
 
       <TwoYearsFilters
         year1={year1}
@@ -82,7 +229,7 @@ export const TwoYearsCompareChart = () => {
       )}
 
       {!isLoading && !isError && hasData && (
-        <div className="flex flex-col gap-6">
+        <div ref={chartsContainerRef} className="flex flex-col gap-6">
           {years.map((yearData) => (
             <YearSupportChart key={yearData.year} yearData={yearData} />
           ))}

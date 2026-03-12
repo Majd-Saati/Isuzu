@@ -402,6 +402,47 @@ export const exportChartWithDataToPDF = async (
 };
 
 /**
+ * Export two-years comparison data to Excel (one sheet per year)
+ * @param {{ years: Array<{ year: number, months: Array<{ period: string, label: string, support_cost_jpy: number }>, total_support_cost_jpy: number }> }} twoYearsData
+ * @param {string} filename - Name of the file (without extension)
+ */
+export const exportTwoYearsToExcel = (twoYearsData, filename = 'two-years-support-cost') => {
+  if (!twoYearsData?.years || !Array.isArray(twoYearsData.years) || twoYearsData.years.length === 0) {
+    console.warn('No two-years data to export');
+    return false;
+  }
+
+  try {
+    const workbook = XLSX.utils.book_new();
+
+    twoYearsData.years.forEach((yearBlock) => {
+      const rows = (yearBlock.months || []).map((m) => ({
+        Period: m.period || '',
+        Label: m.label || '',
+        'Support Cost (JPY)': Number(m.support_cost_jpy) || 0,
+      }));
+      if (yearBlock.total_support_cost_jpy != null) {
+        rows.push({
+          Period: '',
+          Label: 'TOTAL',
+          'Support Cost (JPY)': Number(yearBlock.total_support_cost_jpy) || 0,
+        });
+      }
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      worksheet['!cols'] = [{ wch: 12 }, { wch: 14 }, { wch: 18 }];
+      const sheetName = `Year ${yearBlock.year}`.slice(0, 31);
+      XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    });
+
+    XLSX.writeFile(workbook, `${filename}.xlsx`);
+    return true;
+  } catch (error) {
+    console.error('Error exporting two-years to Excel:', error);
+    return false;
+  }
+};
+
+/**
  * Export chart as PNG image
  * @param {HTMLElement} element - The DOM element to capture
  * @param {string} filename - Name of the file (without extension)
