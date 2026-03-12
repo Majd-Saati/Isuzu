@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { AlertCircle, CalendarRange } from 'lucide-react';
 import { useTwoYearsCharts } from '@/hooks/api/useCharts';
 import { useCompanies } from '@/hooks/api/useCompanies';
+import { SectionHeader } from '@/components/dashboard/SectionHeader';
 import { MarketingChartsSkeleton } from '../MarketingChartsSkeleton';
 import { TwoYearsFilters } from './components/TwoYearsFilters';
 import { YearSupportChart } from './components/YearSupportChart';
@@ -38,19 +39,10 @@ export const TwoYearsCompareChart = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <div className="h-8 w-1 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full" />
-        <div>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Two years comparison – Support cost (JPY)
-          </h2>
-          {hasData && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {year1} vs {year2}
-            </p>
-          )}
-        </div>
-      </div>
+      <SectionHeader
+        title="Two years comparison – Support cost (JPY)"
+        subtitle={hasData ? `${year1} vs ${year2}` : undefined}
+      />
 
       <TwoYearsFilters
         year1={year1}

@@ -8,6 +8,7 @@ import { DealerCard } from '@/components/dashboard/DealerCard';
 import { DealerCardSkeleton } from '@/components/dashboard/DealerCardSkeleton';
 import { DealerCardsEmpty } from '@/components/dashboard/DealerCardsEmpty';
 import { SectionTitle } from '@/components/dashboard/SectionTitle';
+import { SectionHeader } from '@/components/dashboard/SectionHeader';
 import { useOverview } from '@/hooks/api/useOverview';
 import { DealerEfficiencyChart } from '@/components/dashboard/DealerEfficiencyChart';
 import { DealerEfficiencyChartSkeleton } from '@/components/dashboard/DealerEfficiencyChartSkeleton';
@@ -516,16 +517,11 @@ const Index = () => {
 
         {/* Dealer Efficiency - by month and by term, side by side */}
         <section id="dealer-efficiency" className="mt-[38px] max-md:mt-8 pb-12 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="h-7 w-1 shrink-0 rounded-full bg-gradient-to-b from-[#EF5A6F] to-rose-400" />
-          <h2 className="text-[#1F2937] dark:text-gray-100 text-xl font-bold tracking-tight">
-            Dealer Efficiency
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SectionHeader title="Dealer Efficiency" />
+          <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
           <DealerEfficiencyChartByMonth />
           <DealerEfficiencyChartByTerm />
-        </div>
+          </div>
         </section>
 
         {/* Marketing API Charts - month or term_id */}

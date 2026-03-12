@@ -11,6 +11,7 @@ import { ReportingTableSkeleton } from '@/components/dashboard/ReportingTableSke
 import { ReportingTableEmpty } from '@/components/dashboard/ReportingTableEmpty';
 import { MarketingChartsSection, YearlyExpenseChart, TwoYearsCompareChart } from '@/components/charts';
 import { SectionNav } from '@/components/SectionNav';
+import { SectionHeader } from '@/components/dashboard/SectionHeader';
 import { useCharts } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
 import { useCompanies } from '@/hooks/api/useCompanies';
@@ -379,16 +380,11 @@ const Charts = () => {
 
         {/* Dealer Efficiency - by month and by term, side by side */}
         <section id="dealer-efficiency" className="pb-12 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="h-7 w-1 shrink-0 rounded-full bg-gradient-to-b from-[#EF5A6F] to-rose-400" />
-          <h2 className="text-[#1F2937] dark:text-gray-100 text-xl font-bold tracking-tight">
-            Dealer Efficiency
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <DealerEfficiencyChartByMonth />
-          <DealerEfficiencyChartByTerm />
-        </div>
+          <SectionHeader title="Dealer Efficiency" />
+          <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <DealerEfficiencyChartByMonth />
+            <DealerEfficiencyChartByTerm />
+          </div>
         </section>
 
         {/* Marketing API Charts - month or term_id */}
@@ -408,7 +404,8 @@ const Charts = () => {
 
         {/* First Section - Two Charts Side by Side */}
         <section id="efficiency-charts" className="py-12 border-b border-gray-200 dark:border-gray-700">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SectionHeader title="Efficiency Charts" />
+          <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
             {renderEfficiencyCharts()}
           </div>
         </section>

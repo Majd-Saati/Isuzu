@@ -4,6 +4,15 @@ import { Calendar, AlertCircle, Building2 } from 'lucide-react';
 import { useCharts } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
 import { useCompanies } from '@/hooks/api/useCompanies';
+import { SectionHeader } from '@/components/dashboard/SectionHeader';
+import {
+  SECTION_FILTERS_CLASS,
+  SECTION_FILTER_ICON_BOX_CLASS,
+  SECTION_FILTER_ICON_CLASS,
+  SECTION_FILTER_LABEL_CLASS,
+  SECTION_FILTER_SELECT_CLASS,
+  SECTION_FILTER_DIVIDER_CLASS,
+} from '@/components/dashboard/sectionStyles';
 import { MarketingChartsTotals } from './MarketingChartsTotals';
 import { MarketingChartsSeriesChart } from './MarketingChartsSeriesChart';
 import { MarketingChartsSkeleton } from './MarketingChartsSkeleton';
@@ -49,36 +58,24 @@ export const MarketingChartsSection = () => {
 
   return (
     <div className="space-y-6">
-      {/* Section header with actions */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-1 bg-gradient-to-b from-[#E60012] to-rose-600 rounded-full" />
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Marketing cost & incentive
-            </h2>
-            {hasData && (
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {selectedCompany} • {periodLabel}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
+      <SectionHeader
+        title="Marketing cost & incentive"
+        subtitle={hasData ? `${selectedCompany} • ${periodLabel}` : undefined}
+      />
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
-          {/* Company filter (admin only) */}
-          {isAdmin && (
-            <>
-              <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-[#E60012]" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
-              </div>
+      <div className={SECTION_FILTERS_CLASS}>
+        {isAdmin && (
+          <div className="flex items-center gap-3">
+            <div className={SECTION_FILTER_ICON_BOX_CLASS}>
+              <Building2 className={SECTION_FILTER_ICON_CLASS} />
+            </div>
+            <div className="flex flex-col">
+              <label className={SECTION_FILTER_LABEL_CLASS}>Company</label>
               <select
                 value={companyId}
                 onChange={(e) => setCompanyId(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[180px] cursor-pointer"
+                className={`${SECTION_FILTER_SELECT_CLASS} min-w-[180px]`}
               >
                 <option value="all">All companies</option>
                 {companies.map((c) => (
@@ -87,16 +84,15 @@ export const MarketingChartsSection = () => {
                   </option>
                 ))}
               </select>
-            </>
-          )}
+            </div>
+          </div>
+        )}
 
-        {/* Period filter */}
-        <div className="flex items-center gap-2 border-l border-gray-300 dark:border-gray-600 pl-4">
-          <Calendar className="w-4 h-4 text-[#E60012]" />
+        <div className={`flex flex-wrap items-center gap-3 ${isAdmin ? SECTION_FILTER_DIVIDER_CLASS : ''}`}>
+          <div className={SECTION_FILTER_ICON_BOX_CLASS}>
+            <Calendar className={SECTION_FILTER_ICON_CLASS} />
+          </div>
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Period</span>
-        </div>
-        
-        <div className="flex flex-wrap items-center gap-3">
           <div className="flex rounded-lg border border-gray-200 dark:border-gray-600 overflow-hidden bg-white dark:bg-gray-900">
             <button
               type="button"
@@ -121,19 +117,19 @@ export const MarketingChartsSection = () => {
               By term
             </button>
           </div>
-          
+
           {periodType === 'month' ? (
             <input
               type="month"
               value={month}
               onChange={(e) => setMonth(e.target.value)}
-              className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] cursor-pointer"
+              className={SECTION_FILTER_SELECT_CLASS}
             />
           ) : (
             <select
               value={termId}
               onChange={(e) => setTermId(e.target.value)}
-              className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[180px] cursor-pointer"
+              className={`${SECTION_FILTER_SELECT_CLASS} min-w-[180px]`}
             >
               <option value="">Select term</option>
               {terms.map((t) => (

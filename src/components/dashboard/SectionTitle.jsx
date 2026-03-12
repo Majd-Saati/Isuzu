@@ -4,8 +4,8 @@ export const SectionTitle = ({ title, showButton = false, onButtonClick }) => {
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex items-center gap-3">
-        <div className="h-10 w-1.5 bg-gradient-to-b from-[#F38088] to-[#e8566e] rounded-full shadow-sm"></div>
-        <h2 className="text-[#1F2937] dark:text-gray-200 text-xl md:text-2xl font-bold leading-7 tracking-tight">
+        <div className="h-8 w-1 shrink-0 rounded-full bg-gradient-to-b from-[#E60012] to-rose-500" />
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
           {title}
         </h2>
       </div>
