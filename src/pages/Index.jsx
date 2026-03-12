@@ -15,7 +15,7 @@ import { DealerEfficiencyChartEmpty } from '@/components/dashboard/DealerEfficie
 import { ReportingTable } from '@/components/dashboard/ReportingTable';
 import { ReportingTableSkeleton } from '@/components/dashboard/ReportingTableSkeleton';
 import { ReportingTableEmpty } from '@/components/dashboard/ReportingTableEmpty';
-import { MarketingChartsSection, YearlyExpenseChart } from '@/components/charts';
+import { MarketingChartsSection, YearlyExpenseChart, TwoYearsCompareChart } from '@/components/charts';
 import { useCharts } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
 import { useCompanies } from '@/hooks/api/useCompanies';
@@ -524,6 +524,11 @@ const Index = () => {
       {/* Yearly Expense Chart - by year */}
       <section className="py-12 border-b border-gray-200 dark:border-gray-700">
         <YearlyExpenseChart />
+      </section>
+
+      {/* Two years comparison - Support cost (JPY) */}
+      <section className="py-12 border-b border-gray-200 dark:border-gray-700">
+        <TwoYearsCompareChart />
       </section>
 
       {/* Reporting Table */}
