@@ -54,7 +54,7 @@ const cards = [
   },
 ];
 
-export const MarketingChartsTotals = ({ totals, isAdmin = false }) => {
+export const MarketingChartsTotals = ({ totals, isAdmin = false, currencyCode = 'JPY' }) => {
   const [hoveredCard, setHoveredCard] = useState(null);
 
   if (!totals || typeof totals !== 'object') return null;
@@ -84,7 +84,7 @@ export const MarketingChartsTotals = ({ totals, isAdmin = false }) => {
               <div className="flex items-center justify-between mb-3">
                 <div className={`p-2.5 rounded-xl ${iconBg} transition-transform duration-300 ${isHovered ? 'scale-110 rotate-6' : ''}`}>
                   {useMoneyGlyph ? (
-                    <MoneyGlyph isAdmin={isAdmin} className={`w-5 h-5 ${text}`} />
+                    <MoneyGlyph isAdmin={isAdmin} currencyCode={currencyCode} className={`w-5 h-5 ${text}`} />
                   ) : (
                     <Icon className={`w-5 h-5 ${text}`} />
                   )}
@@ -98,7 +98,7 @@ export const MarketingChartsTotals = ({ totals, isAdmin = false }) => {
               
               <div className="space-y-1">
                 <p className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 transition-all duration-300">
-                  {formatChartsCurrency(value, isAdmin)}
+                  {formatChartsCurrency(value, isAdmin, currencyCode)}
                 </p>
                 <p className={`text-xs font-medium ${text} opacity-60`}>
                   {formatCompact(value)} total

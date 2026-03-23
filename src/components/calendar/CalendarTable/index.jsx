@@ -1,9 +1,8 @@
 import React from 'react';
 import { Info } from 'lucide-react';
-import { formatCurrency } from '../utils/calendarUtils';
 import { CalendarMonthCell } from './CalendarMonthCell';
 
-export const CalendarTable = ({ plans = [], months = [], currency = 'AED' }) => {
+export const CalendarTable = ({ plans = [], months = [], isAdmin = false, currencyCode = 'JPY' }) => {
   if (plans.length === 0) {
     return (
       <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-gray-200 dark:border-gray-800 shadow-sm p-12 text-center">
@@ -88,7 +87,8 @@ export const CalendarTable = ({ plans = [], months = [], currency = 'AED' }) => 
                       >
                         <CalendarMonthCell
                           monthData={monthData[month.key] || {}}
-                          currency={currency}
+                          isAdmin={isAdmin}
+                          currencyCode={currencyCode}
                         />
                       </td>
                     ))}

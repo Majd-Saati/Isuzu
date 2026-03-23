@@ -9,6 +9,8 @@ import { CalendarTermCard } from '@/components/calendar/CalendarTermCard';
 import { CalendarCompanyCard } from '@/components/calendar/CalendarCompanyCard';
 import { CalendarTable } from '@/components/calendar/CalendarTable';
 import { useCalendarPage } from '@/hooks/calendar/useCalendarPage';
+import { useCurrency } from '@/contexts/CurrencyContext';
+import { getEffectiveCurrencyCode } from '@/lib/dashboardMoney';
 
 const Calendar = () => {
   const {
@@ -26,6 +28,9 @@ const Calendar = () => {
     error,
     summaryStats,
   } = useCalendarPage();
+
+  const { currency } = useCurrency();
+  const displayCurrencyCode = getEffectiveCurrencyCode(isAdmin, currency);
 
   const filters = (
     <CalendarFilters
@@ -71,7 +76,6 @@ const Calendar = () => {
   }
 
   const { term, company, months = [], plans = [] } = calendarData || {};
-  const currency = company?.currency || 'AED';
 
   return (
     <div className="space-y-5">
@@ -81,16 +85,18 @@ const Calendar = () => {
       <SummaryCards
         totalActualCost={summaryStats.totalActualCost}
         totalSupportCost={summaryStats.totalSupportCost}
+        isAdmin={isAdmin}
+        currencyCode={currency}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <CalendarTermCard term={term} />
         {company && selectedCompanyId !== 'all' && (
-          <CalendarCompanyCard company={company} currency={currency} />
+          <CalendarCompanyCard company={company} displayCurrencyCode={displayCurrencyCode} />
         )}
       </div>
 
-      <CalendarTable plans={plans} months={months} currency={currency} />
+      <CalendarTable plans={plans} months={months} isAdmin={isAdmin} currencyCode={currency} />
     </div>
   );
 };

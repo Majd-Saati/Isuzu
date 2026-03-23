@@ -2,14 +2,19 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Loader2, DollarSign } from 'lucide-react';
 import { useCountries } from '@/hooks/api/useCountries';
-import { useCurrency } from '@/contexts/CurrencyContext';
+import { useCurrency, DEFAULT_CURRENCY } from '@/contexts/CurrencyContext';
 
 /**
  * Build unique currency options from countries list (body.countries with id, name, currency, exchange_rate).
  */
+const JPY_OPTION = { code: 'JPY', name: 'Japanese Yen' };
+
 const getUniqueCurrencies = (countries) => {
-  if (!Array.isArray(countries) || countries.length === 0) return [];
   const byCode = new Map();
+  byCode.set(JPY_OPTION.code, JPY_OPTION);
+  if (!Array.isArray(countries) || countries.length === 0) {
+    return Array.from(byCode.values()).sort((a, b) => a.code.localeCompare(b.code));
+  }
   countries.forEach((c) => {
     const code = c?.currency?.trim();
     if (code && !byCode.has(code)) {
@@ -21,7 +26,7 @@ const getUniqueCurrencies = (countries) => {
 
 export const CurrencyModal = ({ isOpen, onClose }) => {
   const { currency: storedCurrency, setCurrency } = useCurrency();
-  const [selectedCurrency, setSelectedCurrency] = useState(storedCurrency || '');
+  const [selectedCurrency, setSelectedCurrency] = useState(storedCurrency || DEFAULT_CURRENCY);
 
   const { data, isLoading, isError } = useCountries({ perPage: 500 });
   const countries = data?.countries ?? [];
@@ -29,16 +34,14 @@ export const CurrencyModal = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     if (isOpen) {
-      setSelectedCurrency(storedCurrency || (currencyOptions[0]?.code ?? ''));
+      setSelectedCurrency(storedCurrency?.trim() || DEFAULT_CURRENCY);
     }
   }, [isOpen, storedCurrency, currencyOptions]);
 
   const handleConfirm = () => {
-    const hasCurrencyChanged = Boolean(selectedCurrency) && selectedCurrency !== storedCurrency;
+    const hasCurrencyChanged = selectedCurrency !== storedCurrency;
 
-    if (selectedCurrency) {
-      setCurrency(selectedCurrency);
-    }
+    setCurrency(selectedCurrency || DEFAULT_CURRENCY);
 
     if (hasCurrencyChanged && typeof window !== 'undefined') {
       window.location.reload();
@@ -112,7 +115,6 @@ export const CurrencyModal = ({ isOpen, onClose }) => {
               onChange={(e) => setSelectedCurrency(e.target.value)}
               className="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 focus:border-transparent transition-all"
             >
-              <option value="">Select currency</option>
               {currencyOptions.map((opt) => (
                 <option key={opt.code} value={opt.code}>
                   {opt.code} {opt.name !== opt.code ? `(${opt.name})` : ''}
@@ -133,7 +135,7 @@ export const CurrencyModal = ({ isOpen, onClose }) => {
           <button
             type="button"
             onClick={handleConfirm}
-            disabled={!selectedCurrency || isLoading}
+            disabled={isLoading}
             className="flex-1 px-4 py-3 rounded-xl text-sm font-semibold text-white bg-[#E60012] hover:bg-[#C00010] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Confirm

@@ -1,11 +1,8 @@
-/**
- * Format a number as currency (no symbol, locale grouping).
- */
-export const formatCurrency = (amount, currency = 'AED') => {
-  return new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount || 0);
+import { formatDealerCardMoney } from '@/lib/dashboardMoney';
+
+/** Calendar amounts use the same display rules as the rest of the app. */
+export const formatCurrency = (amount, isAdmin, currencyCode = 'JPY') => {
+  return formatDealerCardMoney(amount, isAdmin, currencyCode);
 };
 
 /**

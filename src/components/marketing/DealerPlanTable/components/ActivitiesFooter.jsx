@@ -1,10 +1,7 @@
 import React from 'react';
+import { formatMoneyFromContext } from '@/lib/dashboardMoney';
 
-const formatCurrency = (value) => {
-  const num = Number(value);
-  if (num === undefined || num === null || Number.isNaN(num)) return '$0';
-  return `$${num.toLocaleString()}`;
-};
+const formatCurrency = (value) => formatMoneyFromContext(value);
 
 export const ActivitiesFooter = ({ activities, selectedActivities, showBudgetColumns, planSummary }) => {
   if (activities.length === 0) return null;

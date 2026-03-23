@@ -1,22 +1,17 @@
 import React from 'react';
 import { StatusBadge } from './StatusBadge';
-import { YEN_MARK } from '@/lib/dashboardMoney';
+import { formatDealerCardMoney } from '@/lib/dashboardMoney';
 
-function formatBudgetAmountDisplay(value, currency, isAdmin) {
-  if (value == null && !currency) return '';
-  if (isAdmin) {
-    const n = Number(value);
-    const body = Number.isFinite(n) ? n.toLocaleString('en-US') : String(value ?? '');
-    return `${YEN_MARK} ${body}`;
-  }
-  return `${value ?? ''} ${currency || ''}`.trim();
+function formatBudgetAmountDisplay(value, isAdmin, appCurrencyCode) {
+  if (value == null) return '';
+  return formatDealerCardMoney(value, isAdmin, appCurrencyCode);
 }
 
 /**
  * Shape used by the table and mobile card.
  * This keeps the rendering layer simple and focused on layout.
  */
-const mapItemToRow = (item, index, isAdmin) => {
+const mapItemToRow = (item, index, isAdmin, appCurrencyCode) => {
   const dealer = {
     name: item.company_name,
     avatar: item.company_logo,
@@ -55,7 +50,7 @@ const mapItemToRow = (item, index, isAdmin) => {
     // Secondary line: status, amount, activity/plan
     actionDescription = [
       item.budget_status && `Status: ${item.budget_status}`,
-      item.value != null && `Amount: ${formatBudgetAmountDisplay(item.value, item.currency, isAdmin)}`,
+      item.value != null && `Amount: ${formatBudgetAmountDisplay(item.value, isAdmin, appCurrencyCode)}`,
       item.activity_name && `Activity: ${item.activity_name}`,
       !item.activity_name && item.plan_name && `Plan: ${item.plan_name}`,
     ]
@@ -64,7 +59,10 @@ const mapItemToRow = (item, index, isAdmin) => {
     status = item.budget_status === 'pending' ? 'pending' : 'approval';
 
     if (item.value != null || item.currency) {
-      cost.single = formatBudgetAmountDisplay(item.value, item.currency, isAdmin);
+      cost.single =
+        item.value != null
+          ? formatBudgetAmountDisplay(item.value, isAdmin, appCurrencyCode)
+          : '';
     }
 
     duration.start = termStartLabel || undefined;
@@ -139,7 +137,7 @@ const DealerCell = ({ dealer }) => (
   </div>
 );
 
-const InfoCell = ({ row, isAdmin }) => (
+const InfoCell = ({ row, isAdmin, appCurrencyCode }) => (
   <div className="px-6 py-6 flex flex-col justify-center border-r border-gray-200 dark:border-gray-700">
     <div className="flex items-center justify-between gap-2 mb-1">
       <div className={`text-sm font-semibold ${row.action.isHighlighted ? 'text-[#E60012]' : 'text-[#1F2937] dark:text-gray-200'}`}>
@@ -182,7 +180,7 @@ const InfoCell = ({ row, isAdmin }) => (
             </span>
           </div>
         )}
-        {(row.meta.value != null || row.meta.currency) && (
+        {row.meta.value != null && (
           <div>
             Amount:{' '}
             <span
@@ -190,13 +188,8 @@ const InfoCell = ({ row, isAdmin }) => (
                 row.meta.budgetType === 'estimated cost' ? 'font-semibold' : 'font-normal'
               }`}
             >
-              {row.meta.value != null
-                ? isAdmin
-                  ? `${YEN_MARK} ${Number.isFinite(Number(row.meta.value)) ? Number(row.meta.value).toLocaleString('en-US') : row.meta.value}`
-                  : row.meta.value
-                : '-'}
+              {formatDealerCardMoney(row.meta.value, isAdmin, appCurrencyCode)}
             </span>
-            {!isAdmin && row.meta.currency && <span className="ml-1">{row.meta.currency}</span>}
           </div>
         )}
         {(row.meta.activityName || row.meta.planName) && (
@@ -251,10 +244,10 @@ const StatusCell = ({ status }) => (
 /**
  * Desktop table row & header
  */
-const TableRow = ({ row, isAdmin }) => (
+const TableRow = ({ row, isAdmin, appCurrencyCode }) => (
   <div className="grid grid-cols-5 border-b border-gray-100/80 dark:border-gray-700 hover:bg-gradient-to-r hover:from-blue-50/30 dark:hover:from-gray-800/50 hover:to-transparent dark:hover:to-gray-800/50 transition-all duration-200">
     <DealerCell dealer={row.dealer} />
-    <InfoCell row={row} isAdmin={isAdmin} />
+    <InfoCell row={row} isAdmin={isAdmin} appCurrencyCode={appCurrencyCode} />
     <UserCell meta={row.meta} />
     <TermCell meta={row.meta} />
     <StatusCell status={row.status} />
@@ -271,13 +264,13 @@ const TableHeader = () => (
   </div>
 );
 
-const DesktopOverviewTable = ({ items, isAdmin }) => (
+const DesktopOverviewTable = ({ items, isAdmin, appCurrencyCode }) => (
   <div className="hidden lg:block bg-white dark:bg-gray-900 overflow-hidden rounded-[24px] shadow-[0px_4px_16px_rgba(0,0,0,0.08)] dark:shadow-[0px_4px_20px_rgba(0,0,0,0.06)] border border-gray-100 dark:border-gray-800">
     <TableHeader />
     <div className="max-h-[600px] overflow-y-auto custom-scrollbar">
       {items.map((item, index) => {
-        const row = mapItemToRow(item, index, isAdmin);
-        return <TableRow key={row.id} row={row} isAdmin={isAdmin} />;
+        const row = mapItemToRow(item, index, isAdmin, appCurrencyCode);
+        return <TableRow key={row.id} row={row} isAdmin={isAdmin} appCurrencyCode={appCurrencyCode} />;
       })}
     </div>
   </div>
@@ -363,10 +356,10 @@ const MobileCard = ({ row }) => (
   </div>
 );
 
-const MobileOverviewList = ({ items, isAdmin }) => (
+const MobileOverviewList = ({ items, isAdmin, appCurrencyCode }) => (
   <div className="lg:hidden max-h-[700px] overflow-y-auto custom-scrollbar space-y-3 pr-1">
     {items.map((item, index) => {
-      const row = mapItemToRow(item, index, isAdmin);
+      const row = mapItemToRow(item, index, isAdmin, appCurrencyCode);
       return <MobileCard key={row.id} row={row} />;
     })}
   </div>
@@ -401,10 +394,10 @@ const CustomScrollbarStyles = () => (
   `}</style>
 );
 
-export const OverviewTable = ({ items, isAdmin = false }) => (
+export const OverviewTable = ({ items, isAdmin = false, appCurrencyCode = 'JPY' }) => (
   <>
-    <DesktopOverviewTable items={items} isAdmin={isAdmin} />
-    <MobileOverviewList items={items} isAdmin={isAdmin} />
+    <DesktopOverviewTable items={items} isAdmin={isAdmin} appCurrencyCode={appCurrencyCode} />
+    <MobileOverviewList items={items} isAdmin={isAdmin} appCurrencyCode={appCurrencyCode} />
     <CustomScrollbarStyles />
   </>
 );

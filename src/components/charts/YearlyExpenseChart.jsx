@@ -16,12 +16,14 @@ import { MarketingChartsTotals } from './MarketingChartsTotals';
 import { MarketingChartsSeriesChart } from './MarketingChartsSeriesChart';
 import { MarketingChartsSkeleton } from './MarketingChartsSkeleton';
 import { toast } from 'sonner';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 const getDefaultYear = () => new Date().getFullYear();
 
 export const YearlyExpenseChart = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
+  const { currency } = useCurrency();
 
   const [year, setYear] = useState(getDefaultYear);
   const [companyId, setCompanyId] = useState(isAdmin ? 'all' : String(user?.id || ''));
@@ -153,6 +155,7 @@ export const YearlyExpenseChart = () => {
             totals={data.totals}
             filename={`yearly-expense-${year}-${companyId}`}
             isAdmin={isAdmin}
+            currencyCode={currency}
           />
         </div>
       )}

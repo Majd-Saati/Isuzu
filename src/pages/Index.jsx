@@ -24,6 +24,7 @@ import { useCompanies } from '@/hooks/api/useCompanies';
 import { format, parseISO } from 'date-fns';
 import { Calendar, ClipboardList, Building2 } from 'lucide-react';
 import { isAdminUser } from '@/lib/permissions';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 
 
@@ -72,6 +73,7 @@ const selectClass =
 const DealerEfficiencyChartByMonth = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
+  const { currency } = useCurrency();
 
   const [month, setMonth] = useState('');
   const [companyId, setCompanyId] = useState(isAdmin ? '' : String(user?.id || ''));
@@ -173,6 +175,7 @@ const DealerEfficiencyChartByMonth = () => {
         isLoading={isLoading}
         showTitle={false}
         isAdmin={isAdmin}
+        currencyCode={currency}
       />
     </div>
   );
@@ -181,6 +184,7 @@ const DealerEfficiencyChartByMonth = () => {
 const DealerEfficiencyChartByTerm = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
+  const { currency } = useCurrency();
   
   const { data: termsData } = useTerms({ perPage: 100 });
   const { data: companiesData } = useCompanies({ perPage: 100 }, { enabled: isAdmin });
@@ -284,6 +288,7 @@ const DealerEfficiencyChartByTerm = () => {
         isLoading={isLoading}
         showTitle={false}
         isAdmin={isAdmin}
+        currencyCode={currency}
       />
     </div>
   );
@@ -294,6 +299,7 @@ const DealerEfficiencyChartByTerm = () => {
 const Index = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = isAdminUser(user);
+  const { currency } = useCurrency();
 
   const { data, isLoading, isError } = useOverview();
 
@@ -349,7 +355,7 @@ const Index = () => {
 
 
 
-    return <OverviewTable items={mappedItems} isAdmin={isAdmin} />;
+    return <OverviewTable items={mappedItems} isAdmin={isAdmin} appCurrencyCode={currency} />;
 
   };
 
@@ -469,7 +475,7 @@ const Index = () => {
 
           {mappedDealers.map((dealer, index) => (
 
-            <DealerCard key={index} {...dealer} isAdmin={isAdmin} />
+            <DealerCard key={index} {...dealer} isAdmin={isAdmin} currencyCode={currency} />
 
           ))}
 

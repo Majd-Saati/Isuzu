@@ -43,7 +43,13 @@ const METRICS = [
   // { key: 'incentive', name: 'Incentive', color: COLORS.incentive },
 ];
 
-export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketing-chart', isAdmin = false }) => {
+export const MarketingChartsSeriesChart = ({
+  series,
+  totals,
+  filename = 'marketing-chart',
+  isAdmin = false,
+  currencyCode = 'JPY',
+}) => {
   const [activeMetric, setActiveMetric] = useState(null);
   const [hoveredBar, setHoveredBar] = useState(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
@@ -80,7 +86,7 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
         toast.error('Export feature unavailable. Please restart the dev server.');
         return;
       }
-      const success = utils.exportToExcel(series, filename, 'Marketing Data');
+      const success = utils.exportToExcel(series, filename, 'Marketing Data', isAdmin, currencyCode);
       if (success) {
         toast.success('Excel file exported successfully');
       } else {
@@ -107,7 +113,9 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
         series,
         totals,
         filename,
-        'Marketing Cost & Incentive Report'
+        'Marketing Cost & Incentive Report',
+        isAdmin,
+        currencyCode
       );
       if (success) {
         toast.success('PDF exported successfully');
@@ -168,14 +176,14 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
                   </span>
                 </div>
                 <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                  {formatChartsCurrency(entry.value, isAdmin)}
+                  {formatChartsCurrency(entry.value, isAdmin, currencyCode)}
                 </span>
               </div>
             ))}
           <div className="flex justify-between gap-4 pt-2 border-t border-gray-200 dark:border-gray-700 mt-2">
             <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Total</span>
             <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
-              {formatChartsCurrency(total, isAdmin)}
+              {formatChartsCurrency(total, isAdmin, currencyCode)}
             </span>
           </div>
         </div>
@@ -210,7 +218,7 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
             </span>
             {stat && (
               <span className="text-xs font-bold text-gray-900 dark:text-gray-100 ml-1">
-                {formatChartsCompact(stat.total, isAdmin)}
+                {formatChartsCompact(stat.total, isAdmin, currencyCode)}
               </span>
             )}
           </button>
@@ -362,7 +370,7 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
               tick={{ fontSize: 11, fill: '#6b7280', fontWeight: 500 }}
               axisLine={false}
               tickLine={false}
-              tickFormatter={(v) => formatChartsCompact(v, isAdmin)}
+              tickFormatter={(v) => formatChartsCompact(v, isAdmin, currencyCode)}
               width={70}
             />
             
@@ -387,7 +395,7 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
             <div key={key} className="text-center">
               <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Avg {name}</div>
               <div className="text-lg font-bold" style={{ color }}>
-                {formatChartsCompact(avg, isAdmin)}
+                {formatChartsCompact(avg, isAdmin, currencyCode)}
               </div>
             </div>
           ))}

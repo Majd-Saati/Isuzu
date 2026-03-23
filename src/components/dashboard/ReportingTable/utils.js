@@ -2,7 +2,8 @@ import { toast } from 'sonner';
 import { formatReportingMoney } from '@/lib/dashboardMoney';
 import { API_BASE_URL, IMAGE_EXTENSIONS } from './constants';
 
-export const formatCurrency = (value, isAdmin = false) => formatReportingMoney(value, isAdmin);
+export const formatCurrency = (value, isAdmin = false, currencyCode = 'JPY') =>
+  formatReportingMoney(value, isAdmin, currencyCode);
 
 export const formatDate = (dateString) => {
   if (!dateString) return '';

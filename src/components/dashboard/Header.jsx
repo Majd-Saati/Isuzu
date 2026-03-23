@@ -61,14 +61,15 @@ export const Header = ({ onMenuClick, sidebarCollapsed = false }) => {
             disabled={isAdmin}
             onClick={() => setShowCurrencyModal(true)}
             className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-md hover:shadow-xl hover:border-[#E60012]/30 transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-100 disabled:shadow-md disabled:hover:scale-100 disabled:hover:shadow-md disabled:active:scale-100 disabled:hover:border-gray-100 dark:disabled:hover:border-gray-700 disabled:cursor-default"
-            title={isAdmin ? 'Jpy' : 'Change currency'}
+            title={isAdmin ? 'JPY (fixed)' : 'Change currency'}
           >
             <MoneyGlyph
               isAdmin={isAdmin}
+              currencyCode={currency}
               className="h-5 w-5 shrink-0 text-base text-[#848E9A] dark:text-gray-400"
             />
             <span className="text-sm font-semibold text-[#344251] dark:text-gray-200">
-              {isAdmin ? 'JPY' : currency || 'Currency'}
+              {isAdmin ? 'JPY' : currency}
             </span>
           </button>
           <DarkModeToggle />

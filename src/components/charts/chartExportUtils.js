@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { formatDealerCardMoney, getEffectiveCurrencyCode } from '@/lib/dashboardMoney';
 
 /**
  * Export chart data to Excel file
@@ -8,20 +9,28 @@ import html2canvas from 'html2canvas';
  * @param {string} filename - Name of the file (without extension)
  * @param {string} sheetName - Name of the Excel sheet
  */
-export const exportToExcel = (data, filename = 'chart-data', sheetName = 'Data') => {
+export const exportToExcel = (
+  data,
+  filename = 'chart-data',
+  sheetName = 'Data',
+  isAdmin = false,
+  currencyCode = 'JPY'
+) => {
   if (!data || !Array.isArray(data) || data.length === 0) {
     console.warn('No data to export');
     return false;
   }
 
   try {
+    const code = getEffectiveCurrencyCode(isAdmin, currencyCode);
+    const mk = (label) => `${label} (${code})`;
     // Transform data for better readability
     const formattedData = data.map((item) => ({
       Period: item.label || item.period,
-      'Actual Cost ($)': item.actual_cost || 0,
-      'Support Cost ($)': item.support_cost || 0,
-      'Total Cost ($)': item.total_cost || 0,
-      'Incentive ($)': item.incentive || 0,
+      [mk('Actual Cost')]: item.actual_cost || 0,
+      [mk('Support Cost')]: item.support_cost || 0,
+      [mk('Total Cost')]: item.total_cost || 0,
+      [mk('Incentive')]: item.incentive || 0,
     }));
 
     // Create workbook and worksheet
@@ -55,30 +64,38 @@ export const exportToExcel = (data, filename = 'chart-data', sheetName = 'Data')
  * @param {Object} totals - Totals object
  * @param {string} filename - Name of the file (without extension)
  */
-export const exportToExcelWithTotals = (series, totals, filename = 'chart-data') => {
+export const exportToExcelWithTotals = (
+  series,
+  totals,
+  filename = 'chart-data',
+  isAdmin = false,
+  currencyCode = 'JPY'
+) => {
   if (!series || !Array.isArray(series) || series.length === 0) {
     console.warn('No data to export');
     return false;
   }
 
   try {
+    const code = getEffectiveCurrencyCode(isAdmin, currencyCode);
+    const mk = (label) => `${label} (${code})`;
     // Transform series data
     const formattedData = series.map((item) => ({
       Period: item.label || item.period,
-      'Actual Cost ($)': item.actual_cost || 0,
-      'Support Cost ($)': item.support_cost || 0,
-      'Total Cost ($)': item.total_cost || 0,
-      'Incentive ($)': item.incentive || 0,
+      [mk('Actual Cost')]: item.actual_cost || 0,
+      [mk('Support Cost')]: item.support_cost || 0,
+      [mk('Total Cost')]: item.total_cost || 0,
+      [mk('Incentive')]: item.incentive || 0,
     }));
 
     // Add totals row
     if (totals) {
       formattedData.push({
         Period: 'TOTAL',
-        'Actual Cost ($)': totals.actual_cost || 0,
-        'Support Cost ($)': totals.support_cost || 0,
-        'Total Cost ($)': totals.total_cost || 0,
-        'Incentive ($)': totals.incentive || 0,
+        [mk('Actual Cost')]: totals.actual_cost || 0,
+        [mk('Support Cost')]: totals.support_cost || 0,
+        [mk('Total Cost')]: totals.total_cost || 0,
+        [mk('Incentive')]: totals.incentive || 0,
       });
     }
 
@@ -263,7 +280,9 @@ export const exportChartWithDataToPDF = async (
   data,
   totals,
   filename = 'chart-report',
-  title = 'Marketing Report'
+  title = 'Marketing Report',
+  isAdmin = false,
+  currencyCode = 'JPY'
 ) => {
   if (!chartElement) {
     console.warn('No chart element to export');
@@ -318,8 +337,15 @@ export const exportChartWithDataToPDF = async (
       pdf.setTextColor(40, 40, 40);
       pdf.text('Data Summary', 14, 20);
 
+      const code = getEffectiveCurrencyCode(isAdmin, currencyCode);
       // Table headers
-      const headers = ['Period', 'Actual Cost', 'Support Cost', 'Total Cost', 'Incentive'];
+      const headers = [
+        'Period',
+        `Actual (${code})`,
+        `Support (${code})`,
+        `Total (${code})`,
+        `Incentive (${code})`,
+      ];
       const colWidths = [50, 40, 40, 40, 40];
       let startY = 30;
 
@@ -339,7 +365,7 @@ export const exportChartWithDataToPDF = async (
       startY += 10;
       pdf.setTextColor(40, 40, 40);
 
-      const formatCurrency = (val) => `$${Number(val || 0).toLocaleString()}`;
+      const formatCurrency = (val) => formatDealerCardMoney(val, isAdmin, currencyCode);
 
       data.forEach((row, index) => {
         if (startY > pageHeight - 20) {
@@ -406,26 +432,33 @@ export const exportChartWithDataToPDF = async (
  * @param {{ years: Array<{ year: number, months: Array<{ period: string, label: string, support_cost_jpy: number }>, total_support_cost_jpy: number }> }} twoYearsData
  * @param {string} filename - Name of the file (without extension)
  */
-export const exportTwoYearsToExcel = (twoYearsData, filename = 'two-years-support-cost') => {
+export const exportTwoYearsToExcel = (
+  twoYearsData,
+  filename = 'two-years-support-cost',
+  isAdmin = false,
+  currencyCode = 'JPY'
+) => {
   if (!twoYearsData?.years || !Array.isArray(twoYearsData.years) || twoYearsData.years.length === 0) {
     console.warn('No two-years data to export');
     return false;
   }
 
   try {
+    const code = getEffectiveCurrencyCode(isAdmin, currencyCode);
+    const supportCol = `Support Cost (${code})`;
     const workbook = XLSX.utils.book_new();
 
     twoYearsData.years.forEach((yearBlock) => {
       const rows = (yearBlock.months || []).map((m) => ({
         Period: m.period || '',
         Label: m.label || '',
-        'Support Cost (JPY)': Number(m.support_cost_jpy) || 0,
+        [supportCol]: Number(m.support_cost_jpy) || 0,
       }));
       if (yearBlock.total_support_cost_jpy != null) {
         rows.push({
           Period: '',
           Label: 'TOTAL',
-          'Support Cost (JPY)': Number(yearBlock.total_support_cost_jpy) || 0,
+          [supportCol]: Number(yearBlock.total_support_cost_jpy) || 0,
         });
       }
       const worksheet = XLSX.utils.json_to_sheet(rows);

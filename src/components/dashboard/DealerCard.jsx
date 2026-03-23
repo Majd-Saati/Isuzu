@@ -28,6 +28,7 @@ export const DealerCard = ({
   estimatedCost = 0,
   totalCost = 0,
   isAdmin = false,
+  currencyCode = 'JPY',
 }) => {
 
   const hasTerms = terms.length > 0;
@@ -147,24 +148,24 @@ export const DealerCard = ({
 
               <div className="text-[#9CA3AF] dark:text-gray-400 font-medium whitespace-nowrap">Support:</div>
               <div className="text-[#1F2937] dark:text-gray-200 text-sm sm:text-base font-bold tabular-nums text-right whitespace-nowrap">
-                {formatDealerCardMoney(support, isAdmin)}
+                {formatDealerCardMoney(support, isAdmin, currencyCode)}
               </div>
 
               <div className="text-[#9CA3AF] dark:text-gray-400 font-medium whitespace-nowrap">Actual:</div>
               <div className="text-[#1F2937] dark:text-gray-200 text-sm sm:text-base font-bold tabular-nums text-right whitespace-nowrap">
-                {formatDealerCardMoney(expense, isAdmin)}
+                {formatDealerCardMoney(expense, isAdmin, currencyCode)}
               </div>
 
               <div className="text-[#9CA3AF] dark:text-gray-400 font-medium whitespace-nowrap">Estimated:</div>
               <div className="text-[#1F2937] dark:text-gray-200 text-sm sm:text-base font-bold tabular-nums text-right whitespace-nowrap">
-                {formatDealerCardMoney(estimatedCost, isAdmin)}
+                {formatDealerCardMoney(estimatedCost, isAdmin, currencyCode)}
               </div>
             </div>
 
             <div className="mt-2.5 pt-2.5 border-t border-amber-200/60 dark:border-amber-800/40 grid grid-cols-[auto_auto] gap-x-3 items-baseline">
               <div className="text-[#9CA3AF] dark:text-gray-400 text-xs sm:text-sm font-bold whitespace-nowrap">Total Cost:</div>
               <div className="text-[#F97316] dark:text-orange-400 text-base sm:text-lg font-bold tabular-nums text-right whitespace-nowrap">
-                {formatDealerCardMoney(totalCost, isAdmin)}
+                {formatDealerCardMoney(totalCost, isAdmin, currencyCode)}
               </div>
             </div>
 

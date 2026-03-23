@@ -18,6 +18,7 @@ import { useCompanies } from '@/hooks/api/useCompanies';
 import { format, parseISO } from 'date-fns';
 import { Calendar, ClipboardList, Building2 } from 'lucide-react';
 import { isAdminUser } from '@/lib/permissions';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 const getDefaultMonth = () => format(new Date(), 'yyyy-MM');
 
@@ -54,6 +55,7 @@ const selectClass =
 const DealerEfficiencyChartByMonth = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
+  const { currency } = useCurrency();
 
   const [month, setMonth] = useState('');
   const [companyId, setCompanyId] = useState(isAdmin ? '' : String(user?.id || ''));
@@ -155,6 +157,7 @@ const DealerEfficiencyChartByMonth = () => {
         isLoading={isLoading}
         showTitle={false}
         isAdmin={isAdmin}
+        currencyCode={currency}
       />
     </div>
   );
@@ -163,8 +166,8 @@ const DealerEfficiencyChartByMonth = () => {
 const DealerEfficiencyChartByTerm = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
-  console.log('user',user?.id);
-  
+  const { currency } = useCurrency();
+
   const { data: termsData } = useTerms({ perPage: 100 });
   const { data: companiesData } = useCompanies({ perPage: 100 }, { enabled: isAdmin });
   const terms = termsData?.terms ?? [];
@@ -267,6 +270,7 @@ const DealerEfficiencyChartByTerm = () => {
         isLoading={isLoading}
         showTitle={false}
         isAdmin={isAdmin}
+        currencyCode={currency}
       />
     </div>
   );
@@ -275,6 +279,7 @@ const DealerEfficiencyChartByTerm = () => {
 const Charts = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = isAdminUser(user);
+  const { currency } = useCurrency();
 
   const [efficiencyChartsState, setEfficiencyChartsState] = useState('loading'); // 'loading' | 'empty' | 'data'
   const [performanceChartState, setPerformanceChartState] = useState('loading'); // 'loading' | 'empty' | 'data'
@@ -315,8 +320,8 @@ const Charts = () => {
       default:
         return (
           <>
-            <DealerEfficiencyChart data={expenseData} isAdmin={isAdmin} />
-            <DealerEfficiencyChart data={budgetData} isAdmin={isAdmin} />
+            <DealerEfficiencyChart data={expenseData} isAdmin={isAdmin} currencyCode={currency} />
+            <DealerEfficiencyChart data={budgetData} isAdmin={isAdmin} currencyCode={currency} />
           </>
         );
     }

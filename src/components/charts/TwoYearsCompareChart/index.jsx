@@ -8,6 +8,8 @@ import { MarketingChartsSkeleton } from '../MarketingChartsSkeleton';
 import { TwoYearsFilters } from './components/TwoYearsFilters';
 import { YearSupportChart } from './components/YearSupportChart';
 import { toast } from 'sonner';
+import { useCurrency } from '@/contexts/CurrencyContext';
+import { getEffectiveCurrencyCode } from '@/lib/dashboardMoney';
 
 let exportUtils = null;
 const loadExportUtils = async () => {
@@ -26,6 +28,8 @@ const currentYear = () => new Date().getFullYear();
 export const TwoYearsCompareChart = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
+  const { currency } = useCurrency();
+  const displayCode = getEffectiveCurrencyCode(isAdmin, currency);
 
   const [year1, setYear1] = useState(currentYear);
   const [year2, setYear2] = useState(currentYear() - 1);
@@ -79,7 +83,7 @@ export const TwoYearsCompareChart = () => {
         toast.error('Export feature unavailable. Please restart the dev server.');
         return;
       }
-      const success = utils.exportTwoYearsToExcel(data, filename);
+      const success = utils.exportTwoYearsToExcel(data, filename, isAdmin, currency);
       if (success) toast.success('Excel file exported successfully');
       else toast.error('Failed to export Excel file');
     } catch (err) {
@@ -102,7 +106,7 @@ export const TwoYearsCompareChart = () => {
       const success = await utils.exportToPDF(
         chartsContainerRef.current,
         filename,
-        `Two years comparison – Support cost (JPY) (${year1} vs ${year2})`
+        `Two years comparison – Support cost (${displayCode}) (${year1} vs ${year2})`
       );
       if (success) toast.success('PDF exported successfully');
       else toast.error('Failed to export PDF');
@@ -137,7 +141,7 @@ export const TwoYearsCompareChart = () => {
   return (
     <div className="space-y-6">
       <SectionHeader
-        title="Two years comparison – Support cost (JPY)"
+        title={`Two years comparison – Support cost (${displayCode})`}
         subtitle={hasData ? `${year1} vs ${year2}` : undefined}
       >
         {hasData && (
@@ -231,7 +235,7 @@ export const TwoYearsCompareChart = () => {
       {!isLoading && !isError && hasData && (
         <div ref={chartsContainerRef} className="flex flex-col gap-6">
           {years.map((yearData) => (
-            <YearSupportChart key={yearData.year} yearData={yearData} isAdmin={isAdmin} />
+            <YearSupportChart key={yearData.year} yearData={yearData} isAdmin={isAdmin} currencyCode={currency} />
           ))}
         </div>
       )}

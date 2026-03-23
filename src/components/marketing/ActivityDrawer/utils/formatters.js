@@ -1,13 +1,7 @@
-// Format currency
-export const formatCurrency = (value) => {
-  const num = parseFloat(value) || 0;
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(num);
-};
+import { formatMoneyFromContext } from '@/lib/dashboardMoney';
+
+/** Display amount using persisted app currency and admin rules. */
+export const formatCurrency = (value) => formatMoneyFromContext(value);
 
 // Format month key (yyyy-MM) to "MMM yyyy" for display
 export const formatMonthLabel = (monthKey) => {

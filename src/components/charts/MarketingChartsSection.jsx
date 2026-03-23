@@ -18,12 +18,14 @@ import { MarketingChartsSeriesChart } from './MarketingChartsSeriesChart';
 import { MarketingChartsSkeleton } from './MarketingChartsSkeleton';
 import { MarketingChartsEmpty } from './MarketingChartsEmpty';
 import { format } from 'date-fns';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 const getDefaultMonth = () => format(new Date(), 'yyyy-MM');
 
 export const MarketingChartsSection = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
+  const { currency } = useCurrency();
 
   const [periodType, setPeriodType] = useState('month');
   const [month, setMonth] = useState(getDefaultMonth);
@@ -161,12 +163,13 @@ export const MarketingChartsSection = () => {
 
       {!isLoading && !isError && hasData && (
         <div className="space-y-6">
-          <MarketingChartsTotals totals={data.totals} isAdmin={isAdmin} />
+          <MarketingChartsTotals totals={data.totals} isAdmin={isAdmin} currencyCode={currency} />
           <MarketingChartsSeriesChart 
             series={data.series} 
             totals={data.totals}
             filename={`marketing-${companyId}-${periodType === 'month' ? month : `term-${termId}`}`}
             isAdmin={isAdmin}
+            currencyCode={currency}
           />
         </div>
       )}

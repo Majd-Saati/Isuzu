@@ -3,7 +3,7 @@ import { Building2, Globe } from 'lucide-react';
 
 const LOGO_BASE = 'https://marketing.5v.ae/';
 
-export const CalendarCompanyCard = ({ company, currency = 'AED' }) => {
+export const CalendarCompanyCard = ({ company, displayCurrencyCode = 'JPY' }) => {
   if (!company) return null;
 
   return (
@@ -46,7 +46,7 @@ export const CalendarCompanyCard = ({ company, currency = 'AED' }) => {
         </div>
         <div className="flex items-center justify-between py-2">
           <span className="text-sm text-gray-600 dark:text-gray-400">Currency</span>
-          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{currency}</span>
+          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{displayCurrencyCode}</span>
         </div>
       </div>
     </div>

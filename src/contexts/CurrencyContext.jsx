@@ -2,38 +2,45 @@ import React, { createContext, useContext, useCallback, useState, useEffect } fr
 
 const STORAGE_KEY = 'app_currency';
 
+/** Default display & API currency for non-admin users */
+export const DEFAULT_CURRENCY = 'JPY';
+
+function readStoredCurrency() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw == null || !String(raw).trim()) return DEFAULT_CURRENCY;
+    return String(raw).trim();
+  } catch {
+    return DEFAULT_CURRENCY;
+  }
+}
+
 const CurrencyContext = createContext({
-  currency: '',
+  currency: DEFAULT_CURRENCY,
   setCurrency: () => {},
 });
 
 /**
- * Currency provider for non-admin users. Persists selected currency in localStorage
- * and exposes it for the header modal and for API client (x-currency header).
+ * Global app currency for non-admin users (persisted). Admins always use JPY in UI/API rules elsewhere.
  */
 export const CurrencyProvider = ({ children }) => {
-  const [currency, setCurrencyState] = useState(() => {
-    try {
-      return localStorage.getItem(STORAGE_KEY) || '';
-    } catch {
-      return '';
-    }
-  });
+  const [currency, setCurrencyState] = useState(readStoredCurrency);
 
   useEffect(() => {
     try {
-      if (currency) {
-        localStorage.setItem(STORAGE_KEY, currency);
-      } else {
-        localStorage.removeItem(STORAGE_KEY);
-      }
+      const toStore = String(currency || '').trim() || DEFAULT_CURRENCY;
+      localStorage.setItem(STORAGE_KEY, toStore);
     } catch {
       // ignore
     }
   }, [currency]);
 
   const setCurrency = useCallback((value) => {
-    setCurrencyState(typeof value === 'function' ? value() : value);
+    setCurrencyState((prev) => {
+      const next = typeof value === 'function' ? value(prev) : value;
+      const normalized = String(next ?? '').trim() || DEFAULT_CURRENCY;
+      return normalized;
+    });
   }, []);
 
   return (
@@ -52,12 +59,6 @@ export const useCurrency = () => {
 };
 
 /**
- * Get current currency from localStorage (for use outside React, e.g. API client).
+ * Current app currency from localStorage (for axios and non-React helpers). Always at least JPY.
  */
-export const getStoredCurrency = () => {
-  try {
-    return localStorage.getItem(STORAGE_KEY) || '';
-  } catch {
-    return '';
-  }
-};
+export const getStoredCurrency = () => readStoredCurrency();

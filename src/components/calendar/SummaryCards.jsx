@@ -1,6 +1,7 @@
 import React from 'react';
+import { formatDealerCardMoney } from '@/lib/dashboardMoney';
 
-export const SummaryCards = ({ totalActualCost, totalSupportCost }) => {
+export const SummaryCards = ({ totalActualCost, totalSupportCost, isAdmin = false, currencyCode = 'JPY' }) => {
   // Only show Actual and Support cards per request. Other cards kept commented for reference.
   const cards = [
     {
@@ -48,7 +49,7 @@ export const SummaryCards = ({ totalActualCost, totalSupportCost }) => {
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{card.label}</p>
               <p className={`text-2xl font-bold ${card.textColor} ${card.darkTextColor}`}>
-                {card.value.toLocaleString()}
+                {formatDealerCardMoney(card.value, isAdmin, currencyCode)}
               </p>
             </div>
             <div className={`w-12 h-12 rounded-full ${card.bgColor} ${card.darkBgColor} flex items-center justify-center`}>
