@@ -16,6 +16,12 @@ import { useCountries } from '@/hooks/api/useCountries';
 // Register FilePond plugins
 registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
 
+const getCompanyLogoUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  return `https://marketing.5v.ae/${path}`;
+};
+
 const companySchema = Yup.object({
   name: Yup.string()
     .required('Company name is required')
@@ -92,6 +98,26 @@ export const AddEditCompanyModal = ({ isOpen, onClose, editData = null }) => {
       if (country) setSelectedCountryName(country.name);
     }
   }, [editData, countries]);
+
+  // Prefill company logo in edit mode using the existing API logo path
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (isEditMode && editData?.logo) {
+      const logoUrl = getCompanyLogoUrl(editData.logo);
+      setLogoFiles([
+        {
+          source: logoUrl,
+          options: {
+            type: 'local',
+          },
+        },
+      ]);
+      return;
+    }
+
+    setLogoFiles([]);
+  }, [isOpen, isEditMode, editData]);
 
   const handleCountrySelect = (country) => {
     formik.setFieldValue('country_id', country.id);
@@ -234,6 +260,29 @@ export const AddEditCompanyModal = ({ isOpen, onClose, editData = null }) => {
               <FilePond
                 files={logoFiles}
                 onupdatefiles={setLogoFiles}
+                server={{
+                  load: (source, load, error, progress, abort) => {
+                    const controller = new AbortController();
+
+                    fetch(source, { signal: controller.signal })
+                      .then(async (res) => {
+                        if (!res.ok) throw new Error('Failed to load image');
+                        const blob = await res.blob();
+                        progress(true, blob.size, blob.size);
+                        load(blob);
+                      })
+                      .catch(() => {
+                        error('Failed to load image');
+                      });
+
+                    return {
+                      abort: () => {
+                        controller.abort();
+                        abort();
+                      },
+                    };
+                  },
+                }}
                 allowMultiple={false}
                 maxFiles={1}
                 acceptedFileTypes={['image/*']}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Plus, Filter, ArrowUpDown, Download, X } from 'lucide-react';
+import { Search, Plus, X } from 'lucide-react';
 
 /**
  * Action bar component for Terms page
@@ -46,23 +46,6 @@ export const TermsActionBar = ({ onAddTerm, search = '', onSearchChange }) => {
             </button>
           )}
         </div>
-
-      <div className="flex items-center gap-3 ml-auto flex-wrap">
-        <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all hover:scale-105 active:scale-95">
-          <Filter className="w-4 h-4" />
-          Filter
-        </button>
-
-        <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all hover:scale-105 active:scale-95">
-          <ArrowUpDown className="w-4 h-4" />
-          Sort
-        </button>
-
-        <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all hover:scale-105 active:scale-95">
-          <Download className="w-4 h-4" />
-          Export
-        </button>
-      </div>
     </div>
   </div>
   );

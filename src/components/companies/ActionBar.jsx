@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Plus, Filter, X } from 'lucide-react';
+import { Search, Plus, X } from 'lucide-react';
 
 /**
  * Action bar component for Companies page
@@ -44,11 +44,6 @@ export const CompaniesActionBar = ({ onAddCompany, search = '', onSearchChange }
             </button>
           )}
         </div>
-
-        <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all hover:scale-105 active:scale-95">
-          <Filter className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-          Filter
-        </button>
       </div>
     </div>
   );

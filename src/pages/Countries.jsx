@@ -5,7 +5,7 @@ import { CountriesTableEmpty } from '@/components/countries/CountriesTableEmpty'
 import { AddEditCountryModal } from '@/components/countries/AddEditCountryModal';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 import { useCountries, useDeleteCountry } from '@/hooks/api/useCountries';
-import { Search, Plus, Filter, ArrowUpDown, Download, X } from 'lucide-react';
+import { Search, Plus, X } from 'lucide-react';
 
 const Countries = () => {
   // Modal state
@@ -149,23 +149,6 @@ const Countries = () => {
                 <X className="w-4 h-4" />
               </button>
             )}
-          </div>
-
-          <div className="flex items-center gap-3 ml-auto flex-wrap">
-            <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all hover:scale-105 active:scale-95">
-              <Filter className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-              Filter
-            </button>
-
-            <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all hover:scale-105 active:scale-95">
-              <ArrowUpDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-              Sort
-            </button>
-
-            <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all hover:scale-105 active:scale-95">
-              <Download className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-              Export
-            </button>
           </div>
         </div>
       </div>
