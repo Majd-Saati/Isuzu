@@ -19,8 +19,8 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
   const [dealersExpanded, setDealersExpanded] = useState(true);
   const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
   
-  // Fetch dealers (companies) from API - data is always cached
-  const { data: dealers = [] } = useDealers();
+  // Fetch dealers only for admin users
+  const { data: dealers = [] } = useDealers({ enabled: isAdmin });
   
   // Filter navigation items based on permissions
   const filteredMainNavigation = mainNavigation.filter((item) => {

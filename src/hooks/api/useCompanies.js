@@ -45,7 +45,9 @@ const transformToDealers = (companies) => {
 };
 
 // Hook for sidebar dealers - uses aggressive caching
-export const useDealers = () => {
+export const useDealers = (options = {}) => {
+  const { enabled = true } = options;
+
   return useQuery({
     queryKey: ['dealers'],
     queryFn: async () => {
@@ -70,6 +72,7 @@ export const useDealers = () => {
       const cached = getCachedDealers();
       return cached.length > 0 ? Date.now() : 0;
     },
+    enabled: Boolean(enabled),
   });
 };
 
