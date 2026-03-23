@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatDealerCardMoney } from '@/lib/dashboardMoney';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 
 /** Visible characters for term name; full text on hover when longer. */
 const TERM_NAME_PREVIEW_MAX = 22;
@@ -97,20 +98,39 @@ export const DealerCard = ({
 
               terms.map((term, index) => {
                 const { preview, full, truncated } = getTermNameDisplay(term.label);
+                const hasName = full.length > 0;
+                const nameBase =
+                  'text-[#9CA3AF] dark:text-gray-400 text-xs leading-snug font-medium truncate w-full text-left';
+                const truncatedHint =
+                  'underline decoration-dotted decoration-[#9CA3AF]/50 dark:decoration-gray-500/50 underline-offset-2';
+                const triggerClass = [
+                  nameBase,
+                  truncated ? truncatedHint : '',
+                  'inline-flex min-h-[1.25rem] max-w-full cursor-default border-0 bg-transparent p-0 font-[inherit] rounded-sm',
+                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E60012]/40 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-gray-900',
+                ]
+                  .filter(Boolean)
+                  .join(' ');
+
                 return (
-                  <div key={index} className="flex items-baseline gap-2 min-w-0">
-                    <div
-                      className={`text-[#9CA3AF] dark:text-gray-400 text-xs leading-snug font-medium min-w-0 flex-1 truncate ${
-                        truncated
-                          ? 'cursor-help underline decoration-dotted decoration-[#9CA3AF]/50 dark:decoration-gray-500/50 underline-offset-2'
-                          : ''
-                      }`}
-                      title={truncated ? full : undefined}
-                      aria-label={truncated ? full : undefined}
-                    >
-                      {preview}
+                  <div key={index} className="flex min-w-0 items-baseline gap-2">
+                    <div className="min-w-0 flex-1">
+                      {hasName ? (
+                        <Tooltip delayDuration={0}>
+                          <TooltipTrigger asChild>
+                            <button type="button" className={triggerClass} aria-label={full}>
+                              {preview}
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" align="start" collisionPadding={12}>
+                            {full}
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <div className={nameBase}>{preview}</div>
+                      )}
                     </div>
-                    <div className="text-[#14B8A6] dark:text-teal-400 text-base sm:text-lg leading-none font-bold tabular-nums shrink-0">
+                    <div className="shrink-0 text-base font-bold tabular-nums leading-none text-[#14B8A6] dark:text-teal-400 sm:text-lg">
                       {term.plans}
                     </div>
                   </div>
