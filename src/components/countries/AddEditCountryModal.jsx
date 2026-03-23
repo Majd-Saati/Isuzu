@@ -13,8 +13,11 @@ const countrySchema = Yup.object({
     .max(100, 'Country name must be less than 100 characters'),
   currency: Yup.string()
     .required('Currency code is required')
-    .matches(/^[A-Z]{3}$/, 'Currency must be a 3-letter code (e.g., USD, EUR)')
-    .length(3, 'Currency must be exactly 3 characters'),
+    .test(
+      'non-blank',
+      'Currency code is required',
+      (value) => String(value ?? '').trim().length > 0
+    ),
   exchange_rate: Yup.number()
     .required('Exchange rate is required')
     .positive('Exchange rate must be a positive number')
@@ -41,7 +44,12 @@ export const AddEditCountryModal = ({ isOpen, onClose, editData = null }) => {
     validateOnBlur: false,
     onSubmit: (values, { resetForm }) => {
       const mutation = isEditMode ? updateMutation : createMutation;
-      const data = isEditMode ? { id: editData.id, ...values } : values;
+      const payload = {
+        ...values,
+        name: values.name.trim(),
+        currency: values.currency.trim(),
+      };
+      const data = isEditMode ? { id: editData.id, ...payload } : payload;
 
       mutation.mutate(data, {
         onSuccess: () => {
@@ -117,16 +125,16 @@ export const AddEditCountryModal = ({ isOpen, onClose, editData = null }) => {
               <Input
                 label="Currency Code"
                 name="currency"
-                placeholder="e.g., USD, AED, SAR"
+                placeholder="e.g., USD, AED, أو درهم"
                 value={formik.values.currency}
                 onChange={(e) => {
-                  const upperValue = e.target.value.toUpperCase();
-                  formik.setFieldValue('currency', upperValue);
+                  const raw = e.target.value;
+                  const normalized = raw.replace(/[a-z]/g, (ch) => ch.toUpperCase());
+                  formik.setFieldValue('currency', normalized);
                 }}
                 onBlur={formik.handleBlur}
                 error={formik.errors.currency}
                 touched={formik.submitCount > 0}
-                maxLength={3}
                 disabled={isLoading}
               />
               {formik.submitCount > 0 && (
@@ -169,7 +177,7 @@ export const AddEditCountryModal = ({ isOpen, onClose, editData = null }) => {
             </button>
             <button
               type="submit"
-              disabled={isLoading || !formik.isValid || !formik.dirty}
+              disabled={isLoading  }
               className="px-6 py-3 rounded-xl text-sm font-semibold text-white bg-[#E60012] hover:bg-[#C00010] transition-all shadow-md hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-[#E60012] disabled:hover:scale-100 flex items-center gap-2"
             >
               {isLoading ? (
