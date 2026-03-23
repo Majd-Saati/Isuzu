@@ -34,9 +34,17 @@ export const CurrencyModal = ({ isOpen, onClose }) => {
   }, [isOpen, storedCurrency, currencyOptions]);
 
   const handleConfirm = () => {
+    const hasCurrencyChanged = Boolean(selectedCurrency) && selectedCurrency !== storedCurrency;
+
     if (selectedCurrency) {
       setCurrency(selectedCurrency);
     }
+
+    if (hasCurrencyChanged && typeof window !== 'undefined') {
+      window.location.reload();
+      return;
+    }
+
     onClose();
   };
 
