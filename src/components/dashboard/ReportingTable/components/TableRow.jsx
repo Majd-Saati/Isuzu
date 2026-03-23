@@ -1,8 +1,12 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { FileText } from 'lucide-react';
 import { formatCurrency } from '../utils';
+import { isAdminUser } from '@/lib/permissions';
 
 export const TableRow = ({ row, monthLabel, isFirstInMonth, onOpenEvidences }) => {
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = isAdminUser(user);
   return (
     <tr className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200">
       {/* Month column - only show for first row of each month */}
@@ -41,14 +45,14 @@ export const TableRow = ({ row, monthLabel, isFirstInMonth, onOpenEvidences }) =
       {/* Actual Cost */}
       <td className="py-4 px-4 text-right">
         <div className="text-[#1F2937] dark:text-gray-200 text-sm font-semibold">
-          {formatCurrency(row.actual_cost)}
+          {formatCurrency(row.actual_cost, isAdmin)}
         </div>
       </td>
 
       {/* Support Cost */}
       <td className="py-4 px-4 text-right">
         <div className="text-[#1F2937] dark:text-gray-200 text-sm font-semibold">
-          {formatCurrency(row.support_cost)}
+          {formatCurrency(row.support_cost, isAdmin)}
         </div>
       </td>
 

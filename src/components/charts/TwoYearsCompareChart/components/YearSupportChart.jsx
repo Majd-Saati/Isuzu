@@ -10,15 +10,9 @@ import {
 } from 'recharts';
 import { formatSupportCost } from '../utils';
 import { SUPPORT_COST_COLOR } from '../constants';
+import { formatJpyAxisCompact } from '@/lib/dashboardMoney';
 
-const formatCompact = (value) => {
-  const num = Number(value) || 0;
-  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-  if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
-  return String(num);
-};
-
-export const YearSupportChart = ({ yearData }) => {
+export const YearSupportChart = ({ yearData, isAdmin = false }) => {
   if (!yearData?.months?.length) return null;
 
   const chartData = yearData.months.map((m) => ({
@@ -35,7 +29,7 @@ export const YearSupportChart = ({ yearData }) => {
       <div className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl shadow-xl px-4 py-3">
         <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-1">{label}</p>
         <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
-          Support cost (JPY): {formatSupportCost(value)}
+          Support cost (JPY): {formatSupportCost(value, isAdmin)}
         </p>
       </div>
     );
@@ -49,7 +43,7 @@ export const YearSupportChart = ({ yearData }) => {
         </h3>
         <div className="px-2 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
           <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">
-            Total: {formatSupportCost(total)}
+            Total: {formatSupportCost(total, isAdmin)}
           </span>
         </div>
       </div>
@@ -74,7 +68,7 @@ export const YearSupportChart = ({ yearData }) => {
               interval="preserveStartEnd"
             />
             <YAxis
-              tickFormatter={formatCompact}
+              tickFormatter={(v) => formatJpyAxisCompact(v, isAdmin)}
               tick={{ fontSize: 10, fill: 'currentColor' }}
               className="text-gray-600 dark:text-gray-400"
               tickLine={false}

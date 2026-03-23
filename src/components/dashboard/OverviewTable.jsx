@@ -1,11 +1,22 @@
 import React from 'react';
 import { StatusBadge } from './StatusBadge';
+import { YEN_MARK } from '@/lib/dashboardMoney';
+
+function formatBudgetAmountDisplay(value, currency, isAdmin) {
+  if (value == null && !currency) return '';
+  if (isAdmin) {
+    const n = Number(value);
+    const body = Number.isFinite(n) ? n.toLocaleString('en-US') : String(value ?? '');
+    return `${YEN_MARK} ${body}`;
+  }
+  return `${value ?? ''} ${currency || ''}`.trim();
+}
 
 /**
  * Shape used by the table and mobile card.
  * This keeps the rendering layer simple and focused on layout.
  */
-const mapItemToRow = (item, index) => {
+const mapItemToRow = (item, index, isAdmin) => {
   const dealer = {
     name: item.company_name,
     avatar: item.company_logo,
@@ -44,7 +55,7 @@ const mapItemToRow = (item, index) => {
     // Secondary line: status, amount, activity/plan
     actionDescription = [
       item.budget_status && `Status: ${item.budget_status}`,
-      item.value != null && `Amount: ${item.value} ${item.currency || ''}`.trim(),
+      item.value != null && `Amount: ${formatBudgetAmountDisplay(item.value, item.currency, isAdmin)}`,
       item.activity_name && `Activity: ${item.activity_name}`,
       !item.activity_name && item.plan_name && `Plan: ${item.plan_name}`,
     ]
@@ -53,7 +64,7 @@ const mapItemToRow = (item, index) => {
     status = item.budget_status === 'pending' ? 'pending' : 'approval';
 
     if (item.value != null || item.currency) {
-      cost.single = `${item.value ?? ''} ${item.currency || ''}`.trim();
+      cost.single = formatBudgetAmountDisplay(item.value, item.currency, isAdmin);
     }
 
     duration.start = termStartLabel || undefined;
@@ -128,7 +139,7 @@ const DealerCell = ({ dealer }) => (
   </div>
 );
 
-const InfoCell = ({ row }) => (
+const InfoCell = ({ row, isAdmin }) => (
   <div className="px-6 py-6 flex flex-col justify-center border-r border-gray-200 dark:border-gray-700">
     <div className="flex items-center justify-between gap-2 mb-1">
       <div className={`text-sm font-semibold ${row.action.isHighlighted ? 'text-[#E60012]' : 'text-[#1F2937] dark:text-gray-200'}`}>
@@ -179,9 +190,13 @@ const InfoCell = ({ row }) => (
                 row.meta.budgetType === 'estimated cost' ? 'font-semibold' : 'font-normal'
               }`}
             >
-              {row.meta.value != null ? row.meta.value : '-'}
+              {row.meta.value != null
+                ? isAdmin
+                  ? `${YEN_MARK} ${Number.isFinite(Number(row.meta.value)) ? Number(row.meta.value).toLocaleString('en-US') : row.meta.value}`
+                  : row.meta.value
+                : '-'}
             </span>
-            {row.meta.currency && <span className="ml-1">{row.meta.currency}</span>}
+            {!isAdmin && row.meta.currency && <span className="ml-1">{row.meta.currency}</span>}
           </div>
         )}
         {(row.meta.activityName || row.meta.planName) && (
@@ -236,10 +251,10 @@ const StatusCell = ({ status }) => (
 /**
  * Desktop table row & header
  */
-const TableRow = ({ row }) => (
+const TableRow = ({ row, isAdmin }) => (
   <div className="grid grid-cols-5 border-b border-gray-100/80 dark:border-gray-700 hover:bg-gradient-to-r hover:from-blue-50/30 dark:hover:from-gray-800/50 hover:to-transparent dark:hover:to-gray-800/50 transition-all duration-200">
     <DealerCell dealer={row.dealer} />
-    <InfoCell row={row} />
+    <InfoCell row={row} isAdmin={isAdmin} />
     <UserCell meta={row.meta} />
     <TermCell meta={row.meta} />
     <StatusCell status={row.status} />
@@ -256,13 +271,13 @@ const TableHeader = () => (
   </div>
 );
 
-const DesktopOverviewTable = ({ items }) => (
+const DesktopOverviewTable = ({ items, isAdmin }) => (
   <div className="hidden lg:block bg-white dark:bg-gray-900 overflow-hidden rounded-[24px] shadow-[0px_4px_16px_rgba(0,0,0,0.08)] dark:shadow-[0px_4px_20px_rgba(0,0,0,0.06)] border border-gray-100 dark:border-gray-800">
     <TableHeader />
     <div className="max-h-[600px] overflow-y-auto custom-scrollbar">
       {items.map((item, index) => {
-        const row = mapItemToRow(item, index);
-        return <TableRow key={row.id} row={row} />;
+        const row = mapItemToRow(item, index, isAdmin);
+        return <TableRow key={row.id} row={row} isAdmin={isAdmin} />;
       })}
     </div>
   </div>
@@ -348,10 +363,10 @@ const MobileCard = ({ row }) => (
   </div>
 );
 
-const MobileOverviewList = ({ items }) => (
+const MobileOverviewList = ({ items, isAdmin }) => (
   <div className="lg:hidden max-h-[700px] overflow-y-auto custom-scrollbar space-y-3 pr-1">
     {items.map((item, index) => {
-      const row = mapItemToRow(item, index);
+      const row = mapItemToRow(item, index, isAdmin);
       return <MobileCard key={row.id} row={row} />;
     })}
   </div>
@@ -386,10 +401,10 @@ const CustomScrollbarStyles = () => (
   `}</style>
 );
 
-export const OverviewTable = ({ items }) => (
+export const OverviewTable = ({ items, isAdmin = false }) => (
   <>
-    <DesktopOverviewTable items={items} />
-    <MobileOverviewList items={items} />
+    <DesktopOverviewTable items={items} isAdmin={isAdmin} />
+    <MobileOverviewList items={items} isAdmin={isAdmin} />
     <CustomScrollbarStyles />
   </>
 );

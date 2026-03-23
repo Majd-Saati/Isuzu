@@ -1,25 +1,32 @@
 import React from 'react';
+import { formatDealerCardMoney } from '@/lib/dashboardMoney';
 
+/** Visible characters for term name; full text on hover when longer. */
+const TERM_NAME_PREVIEW_MAX = 22;
 
+function getTermNameDisplay(label) {
+  const full = label != null ? String(label).trim() : '';
+  if (!full) return { preview: '—', full: '', truncated: false };
+  if (full.length <= TERM_NAME_PREVIEW_MAX) {
+    return { preview: full, full, truncated: false };
+  }
+  return {
+    preview: `${full.slice(0, TERM_NAME_PREVIEW_MAX)}…`,
+    full,
+    truncated: true,
+  };
+}
 
 export const DealerCard = ({
-
   name,
-
   avatar,
-
   flag,
-
   terms = [],
-
   support = 0,
-
   expense = 0,
-
   estimatedCost = 0,
-
   totalCost = 0,
-
+  isAdmin = false,
 }) => {
 
   const hasTerms = terms.length > 0;
@@ -74,13 +81,13 @@ export const DealerCard = ({
 
 
 
-        <div className="flex w-full items-stretch gap-4 sm:gap-5 font-normal">
+        <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-start sm:gap-5 font-normal min-w-0">
 
-          <div className="flex-1 space-y-3 py-2">
+          <div className="w-full min-w-0 sm:flex-1 space-y-3 py-1 sm:py-2">
 
             {!hasTerms ? (
 
-              <div className="h-full flex items-center text-[#9CA3AF] dark:text-gray-500 text-xs leading-4 font-medium">
+              <div className="flex items-center min-h-[3rem] text-[#9CA3AF] dark:text-gray-500 text-xs leading-4 font-medium">
 
                 No terms yet
 
@@ -88,90 +95,57 @@ export const DealerCard = ({
 
             ) : (
 
-              terms.map((term, index) => (
-
-                <div
-
-                  key={index}
-
-                  className="flex items-center justify-between gap-2"
-
-                >
-
-                  <div className="text-[#9CA3AF] dark:text-gray-400 text-xs leading-4 font-medium whitespace-nowrap">
-
-                    {term.label}
-
+              terms.map((term, index) => {
+                const { preview, full, truncated } = getTermNameDisplay(term.label);
+                return (
+                  <div key={index} className="flex items-baseline gap-2 min-w-0">
+                    <div
+                      className={`text-[#9CA3AF] dark:text-gray-400 text-xs leading-snug font-medium min-w-0 flex-1 truncate ${
+                        truncated
+                          ? 'cursor-help underline decoration-dotted decoration-[#9CA3AF]/50 dark:decoration-gray-500/50 underline-offset-2'
+                          : ''
+                      }`}
+                      title={truncated ? full : undefined}
+                      aria-label={truncated ? full : undefined}
+                    >
+                      {preview}
+                    </div>
+                    <div className="text-[#14B8A6] dark:text-teal-400 text-base sm:text-lg leading-none font-bold tabular-nums shrink-0">
+                      {term.plans}
+                    </div>
                   </div>
-
-                  <div className="text-[#14B8A6] dark:text-teal-400 text-lg leading-4 font-bold">
-
-                    {term.plans}
-
-                  </div>
-
-                </div>
-
-              ))
+                );
+              })
 
             )}
 
           </div>
 
+          <div className="w-full sm:w-auto sm:shrink-0 sm:self-stretch bg-gradient-to-br from-amber-50/80 dark:from-amber-900/20 via-amber-50/60 dark:via-amber-900/15 to-amber-100/60 dark:to-amber-900/20 flex flex-col justify-center px-3 sm:px-4 py-3.5 sm:py-4 rounded-xl border border-amber-100/50 dark:border-amber-800/30 shadow-sm min-w-0 sm:min-w-[11rem]">
 
+            <div className="grid grid-cols-[auto_auto] gap-x-3 gap-y-2.5 items-center text-xs sm:text-sm">
 
-          <div className="bg-gradient-to-br from-amber-50/80 dark:from-amber-900/20 via-amber-50/60 dark:via-amber-900/15 to-amber-100/60 dark:to-amber-900/20 flex flex-col items-stretch justify-center flex-1 px-4 py-4 rounded-xl border border-amber-100/50 dark:border-amber-800/30 shadow-sm">
-
-            <div className="space-y-3">
-
-              <div className="flex items-center justify-between gap-2">
-
-                <div className="text-[#9CA3AF] dark:text-gray-400 text-xs leading-4 font-medium whitespace-nowrap">Support:</div>
-
-                <div className="text-[#1F2937] dark:text-gray-200 text-base leading-4 font-bold">
-
-                  {Number(support).toLocaleString()}
-
-                </div>
-
+              <div className="text-[#9CA3AF] dark:text-gray-400 font-medium whitespace-nowrap">Support:</div>
+              <div className="text-[#1F2937] dark:text-gray-200 text-sm sm:text-base font-bold tabular-nums text-right whitespace-nowrap">
+                {formatDealerCardMoney(support, isAdmin)}
               </div>
 
-              <div className="flex items-center justify-between gap-2">
-
-                <div className="text-[#9CA3AF] dark:text-gray-400 text-xs leading-4 font-medium whitespace-nowrap">Actual:</div>
-
-                <div className="text-[#1F2937] dark:text-gray-200 text-base leading-4 font-bold">
-
-                  {Number(expense).toLocaleString()}
-
-                </div>
-
+              <div className="text-[#9CA3AF] dark:text-gray-400 font-medium whitespace-nowrap">Actual:</div>
+              <div className="text-[#1F2937] dark:text-gray-200 text-sm sm:text-base font-bold tabular-nums text-right whitespace-nowrap">
+                {formatDealerCardMoney(expense, isAdmin)}
               </div>
 
-              <div className="flex items-center justify-between gap-2">
-
-                <div className="text-[#9CA3AF] dark:text-gray-400 text-xs leading-4 font-medium whitespace-nowrap">Estimated:</div>
-
-                <div className="text-[#1F2937] dark:text-gray-200 text-base leading-4 font-bold">
-
-                  {Number(estimatedCost).toLocaleString()}
-
-                </div>
-
+              <div className="text-[#9CA3AF] dark:text-gray-400 font-medium whitespace-nowrap">Estimated:</div>
+              <div className="text-[#1F2937] dark:text-gray-200 text-sm sm:text-base font-bold tabular-nums text-right whitespace-nowrap">
+                {formatDealerCardMoney(estimatedCost, isAdmin)}
               </div>
+            </div>
 
-              <div className="flex items-center justify-between gap-2 pt-1">
-
-                <div className="text-[#9CA3AF] dark:text-gray-400 text-xs leading-4 font-bold whitespace-nowrap">Total Cost:</div>
-
-                <div className="text-[#F97316] dark:text-orange-400 text-lg leading-4 font-bold">
-
-                  {Number(totalCost).toLocaleString()}
-
-                </div>
-
+            <div className="mt-2.5 pt-2.5 border-t border-amber-200/60 dark:border-amber-800/40 grid grid-cols-[auto_auto] gap-x-3 items-baseline">
+              <div className="text-[#9CA3AF] dark:text-gray-400 text-xs sm:text-sm font-bold whitespace-nowrap">Total Cost:</div>
+              <div className="text-[#F97316] dark:text-orange-400 text-base sm:text-lg font-bold tabular-nums text-right whitespace-nowrap">
+                {formatDealerCardMoney(totalCost, isAdmin)}
               </div>
-
             </div>
 
           </div>

@@ -231,7 +231,7 @@ export const TwoYearsCompareChart = () => {
       {!isLoading && !isError && hasData && (
         <div ref={chartsContainerRef} className="flex flex-col gap-6">
           {years.map((yearData) => (
-            <YearSupportChart key={yearData.year} yearData={yearData} />
+            <YearSupportChart key={yearData.year} yearData={yearData} isAdmin={isAdmin} />
           ))}
         </div>
       )}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatEfficiencyMoney } from '@/lib/dashboardMoney';
 
 const BUDGET_STYLE = {
   title: 'Budget Vs Support Amount',
@@ -24,13 +25,7 @@ const CHART = {
   valueBelowArc: 28,
 };
 
-const formatVal = (v) => {
-  const num = Number(v);
-  if (isNaN(num)) return '0.00';
-  return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-};
-
-export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTitle = true }) => {
+export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTitle = true, isAdmin = false }) => {
   const uniqueId = chartId ?? React.useId().replace(/:/g, '-');
   const d = { ...DEFAULT_DATA, ...data };
   const { color, gradientEnd, legendLabel } = BUDGET_STYLE;
@@ -130,7 +125,7 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
               textAnchor="middle"
               className="text-sm font-semibold fill-gray-500 dark:fill-gray-400 tabular-nums"
             >
-              {formatVal(startVal)}
+              {formatEfficiencyMoney(startVal, isAdmin)}
             </text>
             <text
               x={end.x}
@@ -138,7 +133,7 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
               textAnchor="middle"
               className="text-sm font-semibold fill-gray-500 dark:fill-gray-400 tabular-nums"
             >
-              {formatVal(endVal)}
+              {formatEfficiencyMoney(endVal, isAdmin)}
             </text>
 
             {/* Center: soft circle + percentage */}
@@ -170,7 +165,7 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
         <div className="flex items-center gap-3">
           <div className="w-8 h-4 rounded-md bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-500 shrink-0" />
           <span className="text-[#4A5568] dark:text-gray-300 text-sm font-medium">
-            Actual Cost: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatVal(amount)}</span>
+            Actual Cost: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatEfficiencyMoney(amount, isAdmin)}</span>
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -179,7 +174,7 @@ export const DealerEfficiencyChart = ({ data, chartId, filter, isLoading, showTi
             style={{ background: `linear-gradient(135deg, ${color}, ${gradientEnd})` }}
           />
           <span className="text-[#4A5568] dark:text-gray-300 text-sm font-medium">
-            {legendLabel}: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatVal(valueAtEnd)}</span>
+            {legendLabel}: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatEfficiencyMoney(valueAtEnd, isAdmin)}</span>
           </span>
         </div>
       </div>

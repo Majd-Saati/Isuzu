@@ -17,6 +17,7 @@ import { useTerms } from '@/hooks/api/useTerms';
 import { useCompanies } from '@/hooks/api/useCompanies';
 import { format, parseISO } from 'date-fns';
 import { Calendar, ClipboardList, Building2 } from 'lucide-react';
+import { isAdminUser } from '@/lib/permissions';
 
 const getDefaultMonth = () => format(new Date(), 'yyyy-MM');
 
@@ -153,6 +154,7 @@ const DealerEfficiencyChartByMonth = () => {
         filter={monthFilter}
         isLoading={isLoading}
         showTitle={false}
+        isAdmin={isAdmin}
       />
     </div>
   );
@@ -264,12 +266,16 @@ const DealerEfficiencyChartByTerm = () => {
         filter={termFilter}
         isLoading={isLoading}
         showTitle={false}
+        isAdmin={isAdmin}
       />
     </div>
   );
 };
 
 const Charts = () => {
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = isAdminUser(user);
+
   const [efficiencyChartsState, setEfficiencyChartsState] = useState('loading'); // 'loading' | 'empty' | 'data'
   const [performanceChartState, setPerformanceChartState] = useState('loading'); // 'loading' | 'empty' | 'data'
   const [reportingState, setReportingState] = useState('loading'); // 'loading' | 'empty' | 'data'
@@ -309,8 +315,8 @@ const Charts = () => {
       default:
         return (
           <>
-            <DealerEfficiencyChart data={expenseData} />
-            <DealerEfficiencyChart data={budgetData} />
+            <DealerEfficiencyChart data={expenseData} isAdmin={isAdmin} />
+            <DealerEfficiencyChart data={budgetData} isAdmin={isAdmin} />
           </>
         );
     }

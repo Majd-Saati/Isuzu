@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 import { TrendingUp, Download, FileSpreadsheet, FileText, Image, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatChartsCurrency, formatChartsCompact } from '@/lib/dashboardMoney';
 
 // Dynamic import of export utils to avoid breaking the app during hot reload
 let exportUtils = null;
@@ -25,21 +26,6 @@ const loadExportUtils = async () => {
     }
   }
   return exportUtils;
-};
-
-const formatCurrency = (value) =>
-  new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(Number(value) || 0);
-
-const formatCompact = (value) => {
-  const num = Number(value) || 0;
-  if (num >= 1000000) return `$${(num / 1000000).toFixed(1)}M`;
-  if (num >= 1000) return `$${(num / 1000).toFixed(0)}K`;
-  return formatCurrency(num);
 };
 
 // Only keep actual and support costs for this chart. Other metrics commented out intentionally.
@@ -57,7 +43,7 @@ const METRICS = [
   // { key: 'incentive', name: 'Incentive', color: COLORS.incentive },
 ];
 
-export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketing-chart' }) => {
+export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketing-chart', isAdmin = false }) => {
   const [activeMetric, setActiveMetric] = useState(null);
   const [hoveredBar, setHoveredBar] = useState(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
@@ -182,14 +168,14 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
                   </span>
                 </div>
                 <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                  {formatCurrency(entry.value)}
+                  {formatChartsCurrency(entry.value, isAdmin)}
                 </span>
               </div>
             ))}
           <div className="flex justify-between gap-4 pt-2 border-t border-gray-200 dark:border-gray-700 mt-2">
             <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Total</span>
             <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
-              {formatCurrency(total)}
+              {formatChartsCurrency(total, isAdmin)}
             </span>
           </div>
         </div>
@@ -224,7 +210,7 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
             </span>
             {stat && (
               <span className="text-xs font-bold text-gray-900 dark:text-gray-100 ml-1">
-                {formatCompact(stat.total)}
+                {formatChartsCompact(stat.total, isAdmin)}
               </span>
             )}
           </button>
@@ -376,7 +362,7 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
               tick={{ fontSize: 11, fill: '#6b7280', fontWeight: 500 }}
               axisLine={false}
               tickLine={false}
-              tickFormatter={formatCompact}
+              tickFormatter={(v) => formatChartsCompact(v, isAdmin)}
               width={70}
             />
             
@@ -401,7 +387,7 @@ export const MarketingChartsSeriesChart = ({ series, totals, filename = 'marketi
             <div key={key} className="text-center">
               <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Avg {name}</div>
               <div className="text-lg font-bold" style={{ color }}>
-                {formatCompact(avg)}
+                {formatChartsCompact(avg, isAdmin)}
               </div>
             </div>
           ))}

@@ -1,11 +1,8 @@
 import { toast } from 'sonner';
+import { formatReportingMoney } from '@/lib/dashboardMoney';
 import { API_BASE_URL, IMAGE_EXTENSIONS } from './constants';
 
-export const formatCurrency = (value) =>
-  new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3,
-  }).format(Number(value) || 0);
+export const formatCurrency = (value, isAdmin = false) => formatReportingMoney(value, isAdmin);
 
 export const formatDate = (dateString) => {
   if (!dateString) return '';

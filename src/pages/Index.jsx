@@ -23,6 +23,7 @@ import { useTerms } from '@/hooks/api/useTerms';
 import { useCompanies } from '@/hooks/api/useCompanies';
 import { format, parseISO } from 'date-fns';
 import { Calendar, ClipboardList, Building2 } from 'lucide-react';
+import { isAdminUser } from '@/lib/permissions';
 
 
 
@@ -171,6 +172,7 @@ const DealerEfficiencyChartByMonth = () => {
         filter={monthFilter}
         isLoading={isLoading}
         showTitle={false}
+        isAdmin={isAdmin}
       />
     </div>
   );
@@ -281,6 +283,7 @@ const DealerEfficiencyChartByTerm = () => {
         filter={termFilter}
         isLoading={isLoading}
         showTitle={false}
+        isAdmin={isAdmin}
       />
     </div>
   );
@@ -289,6 +292,8 @@ const DealerEfficiencyChartByTerm = () => {
 
 
 const Index = () => {
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = isAdminUser(user);
 
   const { data, isLoading, isError } = useOverview();
 
@@ -344,7 +349,7 @@ const Index = () => {
 
 
 
-    return <OverviewTable items={mappedItems} />;
+    return <OverviewTable items={mappedItems} isAdmin={isAdmin} />;
 
   };
 
@@ -464,7 +469,7 @@ const Index = () => {
 
           {mappedDealers.map((dealer, index) => (
 
-            <DealerCard key={index} {...dealer} />
+            <DealerCard key={index} {...dealer} isAdmin={isAdmin} />
 
           ))}
 

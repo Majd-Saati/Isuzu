@@ -1,7 +1,11 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { formatCurrency } from '../utils';
+import { isAdminUser } from '@/lib/permissions';
 
 export const TableSummary = ({ term, summary }) => {
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = isAdminUser(user);
   if (!term) return null;
 
   return (
@@ -24,14 +28,14 @@ export const TableSummary = ({ term, summary }) => {
         <div>
           <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Actual Cost</div>
           <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-            {formatCurrency(summary?.term_total_actual_cost || 0)}
+            {formatCurrency(summary?.term_total_actual_cost || 0, isAdmin)}
           </div>
         </div>
         
         <div>
           <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Support Cost</div>
           <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
-            {formatCurrency(summary?.term_total_support_cost || 0)}
+            {formatCurrency(summary?.term_total_support_cost || 0, isAdmin)}
           </div>
         </div>
       </div>

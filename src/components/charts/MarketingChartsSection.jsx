@@ -161,11 +161,12 @@ export const MarketingChartsSection = () => {
 
       {!isLoading && !isError && hasData && (
         <div className="space-y-6">
-          <MarketingChartsTotals totals={data.totals} />
+          <MarketingChartsTotals totals={data.totals} isAdmin={isAdmin} />
           <MarketingChartsSeriesChart 
             series={data.series} 
             totals={data.totals}
             filename={`marketing-${companyId}-${periodType === 'month' ? month : `term-${termId}`}`}
+            isAdmin={isAdmin}
           />
         </div>
       )}

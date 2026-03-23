@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { DollarSign, TrendingUp, Award, Wallet, TrendingDown } from 'lucide-react';
-
-const formatCurrency = (value) =>
-  new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(Number(value) || 0);
+import { MoneyGlyph } from '@/components/dashboard/MoneyGlyph';
+import { formatChartsCurrency } from '@/lib/dashboardMoney';
 
 const formatCompact = (value) => {
   const num = Number(value) || 0;
@@ -21,6 +15,7 @@ const cards = [
     key: 'actual_cost',
     label: 'Actual cost',
     icon: DollarSign,
+    useMoneyGlyph: true,
     gradient: 'bg-gradient-to-br from-emerald-500 to-teal-600',
     bg: 'bg-emerald-50 dark:bg-emerald-900/20',
     border: 'border-emerald-200 dark:border-emerald-800',
@@ -59,7 +54,7 @@ const cards = [
   },
 ];
 
-export const MarketingChartsTotals = ({ totals }) => {
+export const MarketingChartsTotals = ({ totals, isAdmin = false }) => {
   const [hoveredCard, setHoveredCard] = useState(null);
 
   if (!totals || typeof totals !== 'object') return null;
@@ -69,7 +64,7 @@ export const MarketingChartsTotals = ({ totals }) => {
       {cards
         // Only render actual_cost and support_cost cards per request; keep others defined but hidden
         .filter((c) => c.key === 'actual_cost' || c.key === 'support_cost')
-        .map(({ key, label, icon: Icon, gradient, bg, border, text, iconBg }, index) => {
+        .map(({ key, label, icon: Icon, useMoneyGlyph, gradient, bg, border, text, iconBg }, index) => {
         const value = totals[key];
         const isHovered = hoveredCard === key;
         
@@ -88,7 +83,11 @@ export const MarketingChartsTotals = ({ totals }) => {
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-3">
                 <div className={`p-2.5 rounded-xl ${iconBg} transition-transform duration-300 ${isHovered ? 'scale-110 rotate-6' : ''}`}>
-                  <Icon className={`w-5 h-5 ${text}`} />
+                  {useMoneyGlyph ? (
+                    <MoneyGlyph isAdmin={isAdmin} className={`w-5 h-5 ${text}`} />
+                  ) : (
+                    <Icon className={`w-5 h-5 ${text}`} />
+                  )}
                 </div>
                 <div className="text-right">
                   <div className={`text-xs font-semibold uppercase tracking-wider ${text} opacity-70`}>
@@ -99,7 +98,7 @@ export const MarketingChartsTotals = ({ totals }) => {
               
               <div className="space-y-1">
                 <p className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 transition-all duration-300">
-                  {formatCurrency(value)}
+                  {formatChartsCurrency(value, isAdmin)}
                 </p>
                 <p className={`text-xs font-medium ${text} opacity-60`}>
                   {formatCompact(value)} total

@@ -152,6 +152,7 @@ export const YearlyExpenseChart = () => {
             series={data.series} 
             totals={data.totals}
             filename={`yearly-expense-${year}-${companyId}`}
+            isAdmin={isAdmin}
           />
         </div>
       )}
