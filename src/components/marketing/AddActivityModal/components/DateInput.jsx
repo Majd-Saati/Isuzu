@@ -19,8 +19,12 @@ export const DateInput = ({
     formik.setFieldTouched(name, true);
     // Validate immediately so errors clear on change
     formik.validateField(name);
-    
-    // If this is endsAt, also re-validate startsAt since end change can affect start-related rules
+
+    // Re-validate paired date field so cross-field errors clear immediately.
+    if (name === 'startsAt') {
+      formik.validateField('endsAt');
+    }
+
     if (name === 'endsAt') {
       formik.validateField('startsAt');
     }
