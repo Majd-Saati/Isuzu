@@ -40,8 +40,15 @@ export const ActivityDrawer = ({
   const updateActivityMutation = useUpdateActivity();
 
   // Custom hooks
-  const { metaData, isLoadingMeta, isErrorMeta, budgetListData, isLoadingBudget, isErrorBudget } =
-    useActivityDrawerData({
+  const {
+    metaData,
+    isLoadingMeta,
+    isErrorMeta,
+    refetchActivityMeta,
+    budgetListData,
+    isLoadingBudget,
+    isErrorBudget,
+  } = useActivityDrawerData({
       isOpen,
       activity,
       planId,
@@ -254,6 +261,7 @@ export const ActivityDrawer = ({
               onClearFilter={handleClearBudgetFilter}
               metaType={metaType}
               onClearMetaFilter={handleClearMetaFilter}
+              onMetaCreated={refetchActivityMeta}
             />
           ) : (
             <BudgetListTab

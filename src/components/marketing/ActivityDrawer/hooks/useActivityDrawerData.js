@@ -29,16 +29,14 @@ export const useActivityDrawerData = ({
   }), [activity?.id, planId, companyId, metaType]);
 
   // Fetch activity meta data - only when drawer is open
-  const { 
-    data: metaData, 
-    isLoading: isLoadingMeta, 
-    isError: isErrorMeta 
-  } = useActivityMeta(
-    metaQueryParams,
-    {
-      enabled: isOpen && !!activity?.id && !!planId && !!companyId,
-    }
-  );
+  const {
+    data: metaData,
+    isLoading: isLoadingMeta,
+    isError: isErrorMeta,
+    refetch: refetchActivityMeta,
+  } = useActivityMeta(metaQueryParams, {
+    enabled: isOpen && !!activity?.id && !!planId && !!companyId,
+  });
 
   // Fetch activity budget list - only when budget tab is active
   const { 
@@ -53,6 +51,7 @@ export const useActivityDrawerData = ({
     metaData,
     isLoadingMeta,
     isErrorMeta,
+    refetchActivityMeta,
     budgetListData,
     isLoadingBudget,
     isErrorBudget,

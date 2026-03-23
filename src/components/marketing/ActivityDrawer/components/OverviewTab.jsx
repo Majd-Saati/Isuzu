@@ -22,6 +22,7 @@ export const OverviewTab = ({
   onClearFilter,
   metaType,
   onClearMetaFilter,
+  onMetaCreated,
 }) => {
   const [showAddCommentForm, setShowAddCommentForm] = useState(false);
   const [showAddEvidenceForm, setShowAddEvidenceForm] = useState(false);
@@ -231,7 +232,10 @@ export const OverviewTab = ({
                     activityId={activityId}
                     planId={planId}
                     companyId={companyId}
-                    onSuccess={() => setShowAddCommentForm(false)}
+                    onSuccess={() => {
+                      void onMetaCreated?.();
+                      setShowAddCommentForm(false);
+                    }}
                     onCancel={() => setShowAddCommentForm(false)}
                   />
                 </div>
@@ -292,7 +296,10 @@ export const OverviewTab = ({
                   activityId={activityId}
                   planId={planId}
                   companyId={companyId}
-                  onSuccess={() => setShowAddEvidenceForm(false)}
+                  onSuccess={() => {
+                    void onMetaCreated?.();
+                    setShowAddEvidenceForm(false);
+                  }}
                   onCancel={() => setShowAddEvidenceForm(false)}
                 />
               </div>

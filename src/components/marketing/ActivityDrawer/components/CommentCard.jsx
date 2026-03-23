@@ -61,6 +61,7 @@ const isImageFile = (url) => {
 export const CommentCard = ({ item, onDelete, icon: Icon = MessageSquare }) => {
   const mediaUrl = getMediaUrl(item.media);
   const isImage = isImageFile(mediaUrl);
+  const itemType = item?.type || item?.meta_type;
 
   return (
     <div className="p-4 rounded-xl border-2 bg-slate-50/50 dark:bg-gray-800/50 border-slate-200 dark:border-gray-700">
@@ -75,7 +76,7 @@ export const CommentCard = ({ item, onDelete, icon: Icon = MessageSquare }) => {
               <button
                 onClick={() => onDelete(item)}
                 className="flex-shrink-0 p-1.5 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/60 transition-all"
-                title={item?.type === 'evidence' ? 'Delete Evidence' : 'Delete Comment'}
+                title={itemType === 'evidence' ? 'Delete Evidence' : 'Delete Comment'}
               >
                 <Trash2 className="w-4 h-4" />
               </button>

@@ -76,16 +76,49 @@ export const useActivityMeta = (params = {}, options = {}) => {
   return useQuery({
     queryKey: ['activityMeta', String(activityId || ''), String(planId || ''), String(companyId || ''), type || ''],
     queryFn: () => activitiesService.getActivityMeta(params),
-    select: (data) => ({
-      meta: data?.body?.meta || [],
-      budget: data?.body?.budget || [],
-      pagination: data?.body?.pagination || {
-        page: 1,
-        per_page: 20,
-        total: 0,
-        total_pages: 0,
-      },
-    }),
+    select: (data) => {
+      const body = data?.body || {};
+      const rawItems = Array.isArray(body.items) ? body.items : [];
+      const rawMeta = Array.isArray(body.meta) ? body.meta : [];
+      const rawBudget = Array.isArray(body.budget) ? body.budget : [];
+
+      const normalizedItems = rawItems.map((item) => ({
+        ...item,
+        id: item?.id ?? item?.meta_id ?? item?.budget_id,
+        type: item?.type || item?.meta_type || item?.budget_type || '',
+      }));
+
+      const normalizedMeta = (
+        rawMeta.length > 0
+          ? rawMeta.map((item) => ({
+              ...item,
+              id: item?.id ?? item?.meta_id,
+              type: item?.type || item?.meta_type || '',
+            }))
+          : normalizedItems.filter((item) => item?.item_type === 'meta')
+      );
+
+      const normalizedBudget = (
+        rawBudget.length > 0
+          ? rawBudget.map((item) => ({
+              ...item,
+              id: item?.id ?? item?.budget_id,
+              type: item?.type || item?.budget_type || '',
+            }))
+          : normalizedItems.filter((item) => item?.item_type === 'budget')
+      );
+
+      return {
+        meta: normalizedMeta,
+        budget: normalizedBudget,
+        pagination: body?.pagination || {
+          page: 1,
+          per_page: 20,
+          total: 0,
+          total_pages: 0,
+        },
+      };
+    },
     enabled: !!activityId && !!planId && !!companyId,
     staleTime: 30 * 1000, // 30 seconds
     refetchOnWindowFocus: false,
@@ -207,14 +240,23 @@ export const useCreateActivityMeta = () => {
   return useMutation({
     mutationFn: activitiesService.createActivityMeta,
     onSettled: (_, __, variables) => {
-      const actId = String(variables.activity_id);
-      const plnId = String(variables.plan_id);
-      const cmpId = String(variables.company_id);
-      
-      // Invalidate activity meta query (without exact: true to match all type filters)
-      queryClient.invalidateQueries({ 
-        queryKey: ['activityMeta', actId, plnId, cmpId], 
-        refetchType: 'active'
+      const actId = String(variables?.activity_id ?? '');
+      const plnId = String(variables?.plan_id ?? '');
+      const cmpId = String(variables?.company_id ?? '');
+      if (!actId || !plnId || !cmpId) return;
+
+      // Match all activityMeta queries for this activity (any type filter / 4th key segment)
+      queryClient.invalidateQueries({
+        predicate: (query) => {
+          const key = query.queryKey;
+          return (
+            key[0] === 'activityMeta' &&
+            String(key[1] ?? '') === actId &&
+            String(key[2] ?? '') === plnId &&
+            String(key[3] ?? '') === cmpId
+          );
+        },
+        refetchType: 'active',
       });
     },
   });
