@@ -10,6 +10,7 @@ import { isAuthenticated } from '@/hooks/api/useAuth';
 import { AppRouter } from './router/AppRouter';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { CurrencyProvider } from './contexts/CurrencyContext';
+import { CurrencyBootstrap } from './components/CurrencyBootstrap';
 import { TooltipProvider } from '@/components/ui/Tooltip';
 
 // Component to prefetch dealers when authenticated and user is admin
@@ -34,6 +35,7 @@ const App = () => (
       <ThemeProvider>
         <CurrencyProvider>
         <TooltipProvider>
+        <CurrencyBootstrap />
         <DealersPrefetcher />
         <Toaster
           position="top-right"

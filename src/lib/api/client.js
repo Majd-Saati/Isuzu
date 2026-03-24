@@ -55,7 +55,8 @@ apiClient.interceptors.request.use(
     }
     // Add x-currency only for non-admin users on specific endpoints
     if (!isCurrentUserAdmin() && urlNeedsCurrencyHeader(config)) {
-      config.headers['x-currency'] = getStoredCurrency();
+      const code = getStoredCurrency();
+      if (code) config.headers['x-currency'] = code;
     }
     return config;
   },

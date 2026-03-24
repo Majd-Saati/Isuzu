@@ -3,6 +3,7 @@ import { MessageCircle, FileText, PlusCircle, ChevronDown } from 'lucide-react';
 import { Checkbox } from '../../../ui/Checkbox';
 import logo from '../../../../asstes/images/logo.png';
 import { getAmountColorByStatus } from '../utils';
+import { formatMoneyFromContext } from '@/lib/dashboardMoney';
 import { statusStyles, statusOptions } from '../constants';
 import { StatusDropdown } from './StatusDropdown';
 
@@ -163,7 +164,7 @@ export const ActivityTableRow = ({
                 activity.estimatedStatus
               )} ${activity.estimatedCost === 0 ? 'dark:text-white' : ''} hover:underline`}
             >
-              ${activity.estimatedCost.toLocaleString()}
+              {formatMoneyFromContext(activity.estimatedCost)}
             </button>
           </td>
           <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-32">
@@ -174,7 +175,7 @@ export const ActivityTableRow = ({
                 activity.actualStatus
               )} ${activity.actualCost === 0 ? 'dark:text-white' : ''} hover:underline`}
             >
-              ${activity.actualCost.toLocaleString()}
+              {formatMoneyFromContext(activity.actualCost)}
             </button>
           </td>
           <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-32">
@@ -185,7 +186,7 @@ export const ActivityTableRow = ({
                 activity.supportStatus
               )} ${activity.supportCost === 0 ? 'dark:text-white' : ''} hover:underline`}
             >
-              ${activity.supportCost.toLocaleString()}
+              {formatMoneyFromContext(activity.supportCost)}
             </button>
           </td>
         </>

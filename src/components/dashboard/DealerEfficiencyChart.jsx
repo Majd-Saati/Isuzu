@@ -32,7 +32,7 @@ export const DealerEfficiencyChart = ({
   isLoading,
   showTitle = true,
   isAdmin = false,
-  currencyCode = 'JPY',
+  currencyCode = '',
 }) => {
   const uniqueId = chartId ?? React.useId().replace(/:/g, '-');
   const d = { ...DEFAULT_DATA, ...data };

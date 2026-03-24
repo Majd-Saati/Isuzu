@@ -12,8 +12,9 @@ import { formatSupportCost } from '../utils';
 import { SUPPORT_COST_COLOR } from '../constants';
 import { formatJpyAxisCompact, getEffectiveCurrencyCode } from '@/lib/dashboardMoney';
 
-export const YearSupportChart = ({ yearData, isAdmin = false, currencyCode = 'JPY' }) => {
+export const YearSupportChart = ({ yearData, isAdmin = false, currencyCode = '' }) => {
   const displayCode = getEffectiveCurrencyCode(isAdmin, currencyCode);
+  const supportTitle = displayCode ? `Support cost (${displayCode})` : 'Support cost';
   if (!yearData?.months?.length) return null;
 
   const chartData = yearData.months.map((m) => ({
@@ -30,7 +31,7 @@ export const YearSupportChart = ({ yearData, isAdmin = false, currencyCode = 'JP
       <div className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl shadow-xl px-4 py-3">
         <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-1">{label}</p>
         <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
-          Support cost ({displayCode}): {formatSupportCost(value, isAdmin, currencyCode)}
+          {supportTitle}: {formatSupportCost(value, isAdmin, currencyCode)}
         </p>
       </div>
     );
@@ -40,7 +41,7 @@ export const YearSupportChart = ({ yearData, isAdmin = false, currencyCode = 'JP
     <div className="rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 md:p-6 shadow-sm hover:shadow-lg transition-shadow duration-300">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base md:text-lg font-bold text-gray-900 dark:text-gray-100">
-          {yearData.year} – Support cost ({displayCode})
+          {yearData.year} – {supportTitle}
         </h3>
         <div className="px-2 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
           <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">
@@ -79,7 +80,7 @@ export const YearSupportChart = ({ yearData, isAdmin = false, currencyCode = 'JP
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
             <Bar
               dataKey="support_cost_jpy"
-              name={`Support cost (${displayCode})`}
+              name={supportTitle}
               fill={SUPPORT_COST_COLOR}
               radius={[6, 6, 0, 0]}
               maxBarSize={48}

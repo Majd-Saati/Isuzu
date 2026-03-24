@@ -48,7 +48,7 @@ export const MarketingChartsSeriesChart = ({
   totals,
   filename = 'marketing-chart',
   isAdmin = false,
-  currencyCode = 'JPY',
+  currencyCode = '',
 }) => {
   const [activeMetric, setActiveMetric] = useState(null);
   const [hoveredBar, setHoveredBar] = useState(null);

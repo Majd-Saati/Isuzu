@@ -30,6 +30,7 @@ export const TwoYearsCompareChart = () => {
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
   const { currency } = useCurrency();
   const displayCode = getEffectiveCurrencyCode(isAdmin, currency);
+  const supportCostLabel = displayCode ? `Support cost (${displayCode})` : 'Support cost';
 
   const [year1, setYear1] = useState(currentYear);
   const [year2, setYear2] = useState(currentYear() - 1);
@@ -106,7 +107,7 @@ export const TwoYearsCompareChart = () => {
       const success = await utils.exportToPDF(
         chartsContainerRef.current,
         filename,
-        `Two years comparison – Support cost (${displayCode}) (${year1} vs ${year2})`
+        `Two years comparison – ${supportCostLabel} (${year1} vs ${year2})`
       );
       if (success) toast.success('PDF exported successfully');
       else toast.error('Failed to export PDF');
@@ -141,7 +142,7 @@ export const TwoYearsCompareChart = () => {
   return (
     <div className="space-y-6">
       <SectionHeader
-        title={`Two years comparison – Support cost (${displayCode})`}
+        title={`Two years comparison – ${supportCostLabel}`}
         subtitle={hasData ? `${year1} vs ${year2}` : undefined}
       >
         {hasData && (

@@ -15,12 +15,11 @@ function readAdminFromStorage() {
 }
 
 /**
- * Effective ISO / app currency: admins always JPY; others use stored choice (default JPY).
+ * Effective ISO / app currency: admins always JPY; others use stored / context choice (no static default).
  */
 export function getEffectiveCurrencyCode(isAdmin, currencyCode) {
   if (isAdmin) return 'JPY';
-  const c = String(currencyCode ?? '').trim();
-  return c || 'JPY';
+  return String(currencyCode ?? '').trim();
 }
 
 function formatNumber(value, options) {
@@ -33,6 +32,7 @@ function formatAmountWithCode(value, code, minFrac, maxFrac) {
     minimumFractionDigits: minFrac,
     maximumFractionDigits: maxFrac,
   });
+  if (!code) return numFormatted;
   if (code === 'JPY') {
     return `${YEN_MARK}\u00A0${numFormatted}`;
   }
@@ -62,11 +62,13 @@ export function formatEfficiencyMoney(value, isAdmin, currencyCode) {
   const code = getEffectiveCurrencyCode(isAdmin, currencyCode);
   const num = Number(value);
   if (Number.isNaN(num)) {
+    if (!code) return '0.00';
     return code === 'JPY'
       ? `${YEN_MARK}\u00A00.00`
       : formatAmountWithCode(0, code, 2, 2);
   }
   const formatted = num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  if (!code) return formatted;
   if (code === 'JPY') {
     return `${YEN_MARK}\u00A0${formatted}`;
   }
@@ -92,10 +94,12 @@ export function formatChartsCompact(value, isAdmin, currencyCode) {
   const code = getEffectiveCurrencyCode(isAdmin, currencyCode);
   if (num >= 1000000) {
     const s = `${(num / 1000000).toFixed(1)}M`;
+    if (!code) return s;
     return code === 'JPY' ? `${YEN_MARK}\u00A0${s}` : `${code}\u00A0${s}`;
   }
   if (num >= 1000) {
     const s = `${(num / 1000).toFixed(0)}K`;
+    if (!code) return s;
     return code === 'JPY' ? `${YEN_MARK}\u00A0${s}` : `${code}\u00A0${s}`;
   }
   return formatChartsCurrency(num, isAdmin, currencyCode);
@@ -113,6 +117,7 @@ export function formatJpyAxisCompact(value, isAdmin, currencyCode) {
   if (num >= 1000000) s = `${(num / 1000000).toFixed(1)}M`;
   else if (num >= 1000) s = `${(num / 1000).toFixed(0)}K`;
   else s = String(num);
+  if (!code) return s;
   return code === 'JPY' ? `${YEN_MARK}\u00A0${s}` : `${code}\u00A0${s}`;
 }
 

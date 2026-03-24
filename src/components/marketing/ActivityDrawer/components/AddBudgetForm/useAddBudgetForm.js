@@ -3,6 +3,7 @@ import { useCreateActivityBudget } from '@/hooks/api/useActivities';
 import { getAvailableBudgetTypes, canAddBudgetType } from '../../utils/budgetValidation';
 import { getTermMonths } from './utils';
 import { getAddBudgetSchema } from './addBudgetSchema';
+import { formatMoneyFromContext } from '@/lib/dashboardMoney';
 
 export function useAddBudgetForm({
   activityId,
@@ -74,13 +75,13 @@ export function useAddBudgetForm({
     if (breakdownTotal > totalValue) {
       return {
         isValid: false,
-        message: `Monthly values total (${breakdownTotal.toLocaleString()}) exceeds budget value (${totalValue.toLocaleString()})`,
+        message: `Monthly values total (${formatMoneyFromContext(breakdownTotal)}) exceeds budget value (${formatMoneyFromContext(totalValue)})`,
       };
     }
     if (showMonthsBreakdown && breakdownTotal < totalValue) {
       return {
         isValid: true,
-        warning: `Monthly total: ${breakdownTotal.toLocaleString()} of ${totalValue.toLocaleString()}`,
+        warning: `Monthly total: ${formatMoneyFromContext(breakdownTotal)} of ${formatMoneyFromContext(totalValue)}`,
       };
     }
     return { isValid: true, message: '' };

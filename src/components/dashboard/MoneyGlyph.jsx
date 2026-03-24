@@ -5,7 +5,7 @@ import { getEffectiveCurrencyCode } from '@/lib/dashboardMoney';
 /**
  * Currency glyph: ¥ when effective display currency is JPY (admin always JPY; users default JPY).
  */
-export function MoneyGlyph({ isAdmin, currencyCode = 'JPY', className }) {
+export function MoneyGlyph({ isAdmin, currencyCode = '', className }) {
   const code = getEffectiveCurrencyCode(isAdmin, currencyCode);
   if (code === 'JPY') {
     return (

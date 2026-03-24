@@ -1,7 +1,7 @@
 import React from 'react';
 import { formatDealerCardMoney } from '@/lib/dashboardMoney';
 
-export const SummaryCards = ({ totalActualCost, totalSupportCost, isAdmin = false, currencyCode = 'JPY' }) => {
+export const SummaryCards = ({ totalActualCost, totalSupportCost, isAdmin = false, currencyCode = '' }) => {
   // Only show Actual and Support cards per request. Other cards kept commented for reference.
   const cards = [
     {

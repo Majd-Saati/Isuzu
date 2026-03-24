@@ -1,12 +1,5 @@
 const LOGO_BASE = 'https://marketing.5v.ae/';
 
-export const formatNumber = (num) => {
-  if (num == null || num === '') return '—';
-  const n = Number(num);
-  if (Number.isNaN(n)) return '—';
-  return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(n);
-};
-
 export const formatDate = (dateString) => {
   if (!dateString) return '—';
   const d = new Date(dateString);

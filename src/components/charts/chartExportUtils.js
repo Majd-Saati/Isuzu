@@ -3,6 +3,8 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { formatDealerCardMoney, getEffectiveCurrencyCode } from '@/lib/dashboardMoney';
 
+const columnLabelWithCode = (label, code) => (code ? `${label} (${code})` : label);
+
 /**
  * Export chart data to Excel file
  * @param {Array} data - Array of data objects
@@ -14,7 +16,7 @@ export const exportToExcel = (
   filename = 'chart-data',
   sheetName = 'Data',
   isAdmin = false,
-  currencyCode = 'JPY'
+  currencyCode = ''
 ) => {
   if (!data || !Array.isArray(data) || data.length === 0) {
     console.warn('No data to export');
@@ -23,7 +25,7 @@ export const exportToExcel = (
 
   try {
     const code = getEffectiveCurrencyCode(isAdmin, currencyCode);
-    const mk = (label) => `${label} (${code})`;
+    const mk = (label) => columnLabelWithCode(label, code);
     // Transform data for better readability
     const formattedData = data.map((item) => ({
       Period: item.label || item.period,
@@ -69,7 +71,7 @@ export const exportToExcelWithTotals = (
   totals,
   filename = 'chart-data',
   isAdmin = false,
-  currencyCode = 'JPY'
+  currencyCode = ''
 ) => {
   if (!series || !Array.isArray(series) || series.length === 0) {
     console.warn('No data to export');
@@ -78,7 +80,7 @@ export const exportToExcelWithTotals = (
 
   try {
     const code = getEffectiveCurrencyCode(isAdmin, currencyCode);
-    const mk = (label) => `${label} (${code})`;
+    const mk = (label) => columnLabelWithCode(label, code);
     // Transform series data
     const formattedData = series.map((item) => ({
       Period: item.label || item.period,
@@ -282,7 +284,7 @@ export const exportChartWithDataToPDF = async (
   filename = 'chart-report',
   title = 'Marketing Report',
   isAdmin = false,
-  currencyCode = 'JPY'
+  currencyCode = ''
 ) => {
   if (!chartElement) {
     console.warn('No chart element to export');
@@ -341,10 +343,10 @@ export const exportChartWithDataToPDF = async (
       // Table headers
       const headers = [
         'Period',
-        `Actual (${code})`,
-        `Support (${code})`,
-        `Total (${code})`,
-        `Incentive (${code})`,
+        columnLabelWithCode('Actual', code),
+        columnLabelWithCode('Support', code),
+        columnLabelWithCode('Total', code),
+        columnLabelWithCode('Incentive', code),
       ];
       const colWidths = [50, 40, 40, 40, 40];
       let startY = 30;
@@ -436,7 +438,7 @@ export const exportTwoYearsToExcel = (
   twoYearsData,
   filename = 'two-years-support-cost',
   isAdmin = false,
-  currencyCode = 'JPY'
+  currencyCode = ''
 ) => {
   if (!twoYearsData?.years || !Array.isArray(twoYearsData.years) || twoYearsData.years.length === 0) {
     console.warn('No two-years data to export');
@@ -445,7 +447,7 @@ export const exportTwoYearsToExcel = (
 
   try {
     const code = getEffectiveCurrencyCode(isAdmin, currencyCode);
-    const supportCol = `Support Cost (${code})`;
+    const supportCol = columnLabelWithCode('Support Cost', code);
     const workbook = XLSX.utils.book_new();
 
     twoYearsData.years.forEach((yearBlock) => {

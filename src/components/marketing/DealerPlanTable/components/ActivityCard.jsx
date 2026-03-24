@@ -2,6 +2,7 @@ import React from 'react';
 import { MessageCircle, ChevronDown } from 'lucide-react';
 import { Checkbox } from '../../../ui/Checkbox';
 import { getAmountColorByStatus } from '../utils';
+import { formatMoneyFromContext } from '@/lib/dashboardMoney';
 import { statusStyles, statusOptions } from '../constants';
 import { StatusDropdown } from './StatusDropdown';
 
@@ -165,7 +166,7 @@ export const ActivityCard = ({
                     activity.estimatedStatus
                   )} ${activity.estimatedCost === 0 ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
               >
-                ${activity.estimatedCost.toLocaleString()}
+                {formatMoneyFromContext(activity.estimatedCost)}
               </button>
             </div>
 
@@ -179,7 +180,7 @@ export const ActivityCard = ({
                   activity.actualStatus
                 )} ${activity.actualCost === 0 ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
               >
-                ${activity.actualCost.toLocaleString()}
+                {formatMoneyFromContext(activity.actualCost)}
               </button>
             </div>
 
@@ -193,7 +194,7 @@ export const ActivityCard = ({
                   activity.supportStatus
                 )} ${activity.supportCost === 0 ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
               >
-                ${activity.supportCost.toLocaleString()}
+                {formatMoneyFromContext(activity.supportCost)}
               </button>
             </div>
           </>

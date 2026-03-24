@@ -2,34 +2,34 @@ import React, { createContext, useContext, useCallback, useState, useEffect } fr
 
 const STORAGE_KEY = 'app_currency';
 
-/** Default display & API currency for non-admin users */
-export const DEFAULT_CURRENCY = 'JPY';
-
 function readStoredCurrency() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw == null || !String(raw).trim()) return DEFAULT_CURRENCY;
+    if (raw == null || !String(raw).trim()) return '';
     return String(raw).trim();
   } catch {
-    return DEFAULT_CURRENCY;
+    return '';
   }
 }
 
 const CurrencyContext = createContext({
-  currency: DEFAULT_CURRENCY,
+  currency: '',
   setCurrency: () => {},
 });
 
 /**
- * Global app currency for non-admin users (persisted). Admins always use JPY in UI/API rules elsewhere.
+ * Global app currency for non-admin users (persisted).
+ * Initial value comes from localStorage; if empty or invalid, CurrencyBootstrap sets the first
+ * currency from the countries list. Admins use JPY in UI/API via permissions, not this value.
  */
 export const CurrencyProvider = ({ children }) => {
   const [currency, setCurrencyState] = useState(readStoredCurrency);
 
   useEffect(() => {
     try {
-      const toStore = String(currency || '').trim() || DEFAULT_CURRENCY;
-      localStorage.setItem(STORAGE_KEY, toStore);
+      const trimmed = String(currency || '').trim();
+      if (trimmed) localStorage.setItem(STORAGE_KEY, trimmed);
+      else localStorage.removeItem(STORAGE_KEY);
     } catch {
       // ignore
     }
@@ -38,8 +38,7 @@ export const CurrencyProvider = ({ children }) => {
   const setCurrency = useCallback((value) => {
     setCurrencyState((prev) => {
       const next = typeof value === 'function' ? value(prev) : value;
-      const normalized = String(next ?? '').trim() || DEFAULT_CURRENCY;
-      return normalized;
+      return String(next ?? '').trim();
     });
   }, []);
 
@@ -59,6 +58,7 @@ export const useCurrency = () => {
 };
 
 /**
- * Current app currency from localStorage (for axios and non-React helpers). Always at least JPY.
+ * Current app currency from localStorage (for axios and non-React helpers).
+ * May be empty until CurrencyBootstrap resolves the first available currency for non-admins.
  */
 export const getStoredCurrency = () => readStoredCurrency();

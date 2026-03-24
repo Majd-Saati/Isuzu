@@ -1,5 +1,6 @@
 import React from 'react';
 import { Calendar, ChevronDown, AlertCircle } from 'lucide-react';
+import { formatMoneyFromContext } from '@/lib/dashboardMoney';
 
 const MONTH_INPUT_CLASS =
   'w-full px-2.5 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#E60012]/50 focus:ring-1 focus:ring-[#E60012]/30 transition-all';
@@ -52,7 +53,7 @@ export function MonthlyBreakdownSection({
         <div className="bg-white dark:bg-gray-900 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-3 space-y-3">
           <p className="text-xs text-gray-500 dark:text-gray-400">
             Allocate the budget across each month of the activity period. Total must not
-            exceed {valueNum.toLocaleString()}.
+            exceed {formatMoneyFromContext(valueNum)}.
           </p>
 
           <div className="grid grid-cols-2 gap-2">
@@ -94,7 +95,7 @@ export function MonthlyBreakdownSection({
           >
             <span>Monthly Total:</span>
             <span className="font-semibold">
-              {breakdownTotal.toLocaleString()} / {valueNum.toLocaleString()}
+              {formatMoneyFromContext(breakdownTotal)} / {formatMoneyFromContext(valueNum)}
             </span>
           </div>
 

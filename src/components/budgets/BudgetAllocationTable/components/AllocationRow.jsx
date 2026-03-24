@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Building2, Trash2 } from 'lucide-react';
-import { formatNumber, formatDate, getCompanyLogoUrl } from '../utils';
+import { formatDate, getCompanyLogoUrl } from '../utils';
+import { formatMoneyFromContext } from '@/lib/dashboardMoney';
 
 export const AllocationRow = ({ allocation, onDelete }) => {
   const [logoError, setLogoError] = useState(false);
@@ -39,11 +40,11 @@ export const AllocationRow = ({ allocation, onDelete }) => {
       </td>
       <td className="py-3.5 px-4 md:px-6 text-right tabular-nums">
         <span className="text-sm font-semibold text-[#1F2937] dark:text-gray-200">
-          {formatNumber(allocation.value)}
+          {formatMoneyFromContext(allocation.value)}
         </span>
       </td>
       <td className="py-3.5 px-4 md:px-6 text-right text-sm text-gray-600 dark:text-gray-400 hidden md:table-cell tabular-nums">
-        {formatNumber(allocation.support_used)}
+        {formatMoneyFromContext(allocation.support_used)}
       </td>
       <td className="py-3.5 px-4 md:px-6 text-sm text-gray-500 dark:text-gray-400 hidden lg:table-cell">
         {formatDate(allocation.creation_date)}

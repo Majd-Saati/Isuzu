@@ -394,7 +394,7 @@ const CustomScrollbarStyles = () => (
   `}</style>
 );
 
-export const OverviewTable = ({ items, isAdmin = false, appCurrencyCode = 'JPY' }) => (
+export const OverviewTable = ({ items, isAdmin = false, appCurrencyCode = '' }) => (
   <>
     <DesktopOverviewTable items={items} isAdmin={isAdmin} appCurrencyCode={appCurrencyCode} />
     <MobileOverviewList items={items} isAdmin={isAdmin} appCurrencyCode={appCurrencyCode} />

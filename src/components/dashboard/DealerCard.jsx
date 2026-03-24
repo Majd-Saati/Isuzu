@@ -28,7 +28,7 @@ export const DealerCard = ({
   estimatedCost = 0,
   totalCost = 0,
   isAdmin = false,
-  currencyCode = 'JPY',
+  currencyCode = '',
 }) => {
 
   const hasTerms = terms.length > 0;

@@ -54,7 +54,7 @@ const cards = [
   },
 ];
 
-export const MarketingChartsTotals = ({ totals, isAdmin = false, currencyCode = 'JPY' }) => {
+export const MarketingChartsTotals = ({ totals, isAdmin = false, currencyCode = '' }) => {
   const [hoveredCard, setHoveredCard] = useState(null);
 
   if (!totals || typeof totals !== 'object') return null;

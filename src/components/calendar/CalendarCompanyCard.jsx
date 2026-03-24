@@ -3,7 +3,7 @@ import { Building2, Globe } from 'lucide-react';
 
 const LOGO_BASE = 'https://marketing.5v.ae/';
 
-export const CalendarCompanyCard = ({ company, displayCurrencyCode = 'JPY' }) => {
+export const CalendarCompanyCard = ({ company, displayCurrencyCode = '' }) => {
   if (!company) return null;
 
   return (

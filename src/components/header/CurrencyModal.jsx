@@ -2,46 +2,30 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Loader2, DollarSign } from 'lucide-react';
 import { useCountries } from '@/hooks/api/useCountries';
-import { useCurrency, DEFAULT_CURRENCY } from '@/contexts/CurrencyContext';
-
-/**
- * Build unique currency options from countries list (body.countries with id, name, currency, exchange_rate).
- */
-const JPY_OPTION = { code: 'JPY', name: 'Japanese Yen' };
-
-const getUniqueCurrencies = (countries) => {
-  const byCode = new Map();
-  byCode.set(JPY_OPTION.code, JPY_OPTION);
-  if (!Array.isArray(countries) || countries.length === 0) {
-    return Array.from(byCode.values()).sort((a, b) => a.code.localeCompare(b.code));
-  }
-  countries.forEach((c) => {
-    const code = c?.currency?.trim();
-    if (code && !byCode.has(code)) {
-      byCode.set(code, { code, name: c.name || code });
-    }
-  });
-  return Array.from(byCode.values()).sort((a, b) => a.code.localeCompare(b.code));
-};
+import { useCurrency } from '@/contexts/CurrencyContext';
+import { getSortedUniqueCurrenciesFromCountries } from '@/lib/currencyOptions';
 
 export const CurrencyModal = ({ isOpen, onClose }) => {
   const { currency: storedCurrency, setCurrency } = useCurrency();
-  const [selectedCurrency, setSelectedCurrency] = useState(storedCurrency || DEFAULT_CURRENCY);
+  const [selectedCurrency, setSelectedCurrency] = useState(storedCurrency || '');
 
   const { data, isLoading, isError } = useCountries({ perPage: 500 });
   const countries = data?.countries ?? [];
-  const currencyOptions = useMemo(() => getUniqueCurrencies(countries), [countries]);
+  const currencyOptions = useMemo(() => getSortedUniqueCurrenciesFromCountries(countries), [countries]);
+  const firstCode = currencyOptions[0]?.code ?? '';
 
   useEffect(() => {
     if (isOpen) {
-      setSelectedCurrency(storedCurrency?.trim() || DEFAULT_CURRENCY);
+      const fromStore = storedCurrency?.trim();
+      setSelectedCurrency(fromStore && currencyOptions.some((o) => o.code === fromStore) ? fromStore : firstCode);
     }
-  }, [isOpen, storedCurrency, currencyOptions]);
+  }, [isOpen, storedCurrency, currencyOptions, firstCode]);
 
   const handleConfirm = () => {
+    if (!selectedCurrency) return;
     const hasCurrencyChanged = selectedCurrency !== storedCurrency;
 
-    setCurrency(selectedCurrency || DEFAULT_CURRENCY);
+    setCurrency(selectedCurrency);
 
     if (hasCurrencyChanged && typeof window !== 'undefined') {
       window.location.reload();
@@ -108,7 +92,12 @@ export const CurrencyModal = ({ isOpen, onClose }) => {
               Failed to load currencies. Please try again.
             </p>
           )}
-          {!isLoading && !isError && (
+          {!isLoading && !isError && currencyOptions.length === 0 && (
+            <p className="text-sm text-amber-700 dark:text-amber-300 py-2">
+              No currencies found. Add a currency on each country in Countries, then try again.
+            </p>
+          )}
+          {!isLoading && !isError && currencyOptions.length > 0 && (
             <select
               id="currency-select"
               value={selectedCurrency}
@@ -135,7 +124,7 @@ export const CurrencyModal = ({ isOpen, onClose }) => {
           <button
             type="button"
             onClick={handleConfirm}
-            disabled={isLoading}
+            disabled={isLoading || !selectedCurrency || currencyOptions.length === 0}
             className="flex-1 px-4 py-3 rounded-xl text-sm font-semibold text-white bg-[#E60012] hover:bg-[#C00010] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Confirm

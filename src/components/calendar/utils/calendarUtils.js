@@ -1,7 +1,7 @@
 import { formatDealerCardMoney } from '@/lib/dashboardMoney';
 
 /** Calendar amounts use the same display rules as the rest of the app. */
-export const formatCurrency = (amount, isAdmin, currencyCode = 'JPY') => {
+export const formatCurrency = (amount, isAdmin, currencyCode = '') => {
   return formatDealerCardMoney(amount, isAdmin, currencyCode);
 };
 

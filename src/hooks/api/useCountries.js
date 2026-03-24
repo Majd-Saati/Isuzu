@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { countriesService } from '@/lib/api/services/countriesService';
 
-export const useCountries = (params = {}) => {
+export const useCountries = (params = {}, { enabled = true, ...queryOptions } = {}) => {
   return useQuery({
     queryKey: ['countries', params],
     queryFn: () => countriesService.getCountries(params),
@@ -14,6 +14,8 @@ export const useCountries = (params = {}) => {
         total_pages: 1,
       },
     }),
+    enabled,
+    ...queryOptions,
   });
 };
 
