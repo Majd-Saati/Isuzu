@@ -1,12 +1,14 @@
 /**
  * Unique currencies from API countries, sorted by code (same order as currency picker).
+ * We use country `currency` as the app/header currency value,
+ * and fallback to `name` when currency is unavailable.
  * No static default currency — first option is options[0] after sort.
  */
 export function getSortedUniqueCurrenciesFromCountries(countries) {
   if (!Array.isArray(countries) || countries.length === 0) return [];
   const byCode = new Map();
   countries.forEach((c) => {
-    const code = c?.currency?.trim();
+    const code = String(c?.currency ?? c?.name ?? '').trim();
     if (code && !byCode.has(code)) {
       byCode.set(code, { code, name: c.name || code });
     }
@@ -30,7 +32,9 @@ export function getDealerCurrencyOptions(countries, userCountryId) {
 
   const userCountryCurrencyCode = normalizedCountryId
     ? String(
-        countries?.find((country) => String(country?.id ?? '').trim() === normalizedCountryId)?.currency ?? ''
+        countries?.find((country) => String(country?.id ?? '').trim() === normalizedCountryId)?.currency ??
+          countries?.find((country) => String(country?.id ?? '').trim() === normalizedCountryId)?.name ??
+          ''
       ).trim()
     : '';
 

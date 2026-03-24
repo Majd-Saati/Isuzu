@@ -5,26 +5,6 @@ import { getStoredCurrency } from '@/contexts/CurrencyContext';
 // API Base URL - Change this to update all API calls
 const API_BASE_URL = 'https://marketing.5v.ae/api/';
 
-// Endpoints that require x-currency header (for non-admin currency selection)
-const CURRENCY_HEADER_ENDPOINTS = [
-  'activity_budget_add',
-  'activity_budget_list',
-  'activity_meta_list',
-  'activities_list',
-  'overview',
-  'calendar_view',
-  'charts',
-  'report',
-];
-
-const urlNeedsCurrencyHeader = (config) => {
-  const url = config?.url || '';
-  const path = typeof url === 'string' ? url.replace(/^\//, '').split('?')[0] : '';
-  return CURRENCY_HEADER_ENDPOINTS.some(
-    (endpoint) => path === endpoint || path.endsWith('/' + endpoint)
-  );
-};
-
 /** Only non-admin users get x-currency; admin requests must not send it. */
 const isCurrentUserAdmin = () => {
   try {
@@ -54,8 +34,8 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    // Add x-currency only for non-admin users on specific endpoints
-    if (!isCurrentUserAdmin() && urlNeedsCurrencyHeader(config)) {
+    // Add x-currency for all non-admin requests
+    if (!isCurrentUserAdmin()) {
       const code = getStoredCurrency();
       if (code) config.headers['x-currency'] = code;
     }
