@@ -10,6 +10,7 @@ const CURRENCY_HEADER_ENDPOINTS = [
   'activity_budget_add',
   'activity_budget_list',
   'activity_meta_list',
+  'activities_list',
   'overview',
   'calendar_view',
   'charts',

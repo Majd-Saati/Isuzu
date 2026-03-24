@@ -18,3 +18,32 @@ export function getFirstCurrencyFromCountries(countries) {
   const list = getSortedUniqueCurrenciesFromCountries(countries);
   return list[0]?.code ?? '';
 }
+
+/**
+ * Dealer currency options:
+ * - user country currency (first/default when available)
+ * - JPY
+ */
+export function getDealerCurrencyOptions(countries, userCountryId) {
+  const list = getSortedUniqueCurrenciesFromCountries(countries);
+  const normalizedCountryId = String(userCountryId ?? '').trim();
+
+  const userCountryCurrencyCode = normalizedCountryId
+    ? String(
+        countries?.find((country) => String(country?.id ?? '').trim() === normalizedCountryId)?.currency ?? ''
+      ).trim()
+    : '';
+
+  const userOption = userCountryCurrencyCode ? list.find((item) => item.code === userCountryCurrencyCode) : null;
+  const jpyOption = list.find((item) => item.code === 'JPY') ?? { code: 'JPY', name: 'JPY' };
+
+  if (userOption && userOption.code === jpyOption.code) {
+    return [jpyOption];
+  }
+
+  if (userOption) {
+    return [userOption, jpyOption];
+  }
+
+  return [jpyOption];
+}

@@ -1,17 +1,22 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Loader2, DollarSign } from 'lucide-react';
+import { useSelector } from 'react-redux';
 import { useCountries } from '@/hooks/api/useCountries';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { getSortedUniqueCurrenciesFromCountries } from '@/lib/currencyOptions';
+import { getDealerCurrencyOptions } from '@/lib/currencyOptions';
 
 export const CurrencyModal = ({ isOpen, onClose }) => {
+  const user = useSelector((state) => state.auth.user);
   const { currency: storedCurrency, setCurrency } = useCurrency();
   const [selectedCurrency, setSelectedCurrency] = useState(storedCurrency || '');
 
   const { data, isLoading, isError } = useCountries({ perPage: 500 });
   const countries = data?.countries ?? [];
-  const currencyOptions = useMemo(() => getSortedUniqueCurrenciesFromCountries(countries), [countries]);
+  const currencyOptions = useMemo(
+    () => getDealerCurrencyOptions(countries, user?.country_id),
+    [countries, user?.country_id]
+  );
   const firstCode = currencyOptions[0]?.code ?? '';
 
   useEffect(() => {

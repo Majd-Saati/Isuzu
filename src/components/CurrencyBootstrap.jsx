@@ -3,11 +3,11 @@ import { useSelector } from 'react-redux';
 import { useCountries } from '@/hooks/api/useCountries';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { isAdminUser } from '@/lib/permissions';
-import { getSortedUniqueCurrenciesFromCountries } from '@/lib/currencyOptions';
+import { getDealerCurrencyOptions } from '@/lib/currencyOptions';
 
 /**
- * For non-admin users: persist first available currency from the countries API when none
- * is stored or when the stored code is no longer in the list.
+ * For non-admin users: persist dealer currency default/options from countries API.
+ * Dealer options are [user country currency, JPY].
  */
 export function CurrencyBootstrap() {
   const user = useSelector((state) => state.auth.user);
@@ -21,7 +21,7 @@ export function CurrencyBootstrap() {
     const countries = data?.countries;
     if (!countries) return;
 
-    const options = getSortedUniqueCurrenciesFromCountries(countries);
+    const options = getDealerCurrencyOptions(countries, user?.country_id);
     if (options.length === 0) return;
 
     const codes = new Set(options.map((o) => o.code));
