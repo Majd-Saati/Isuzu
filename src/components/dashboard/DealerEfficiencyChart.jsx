@@ -36,7 +36,7 @@ export const DealerEfficiencyChart = ({
 }) => {
   const uniqueId = chartId ?? React.useId().replace(/:/g, '-');
   const d = { ...DEFAULT_DATA, ...data };
-  const { color, gradientEnd, legendLabel } = BUDGET_STYLE;
+  const { color, gradientEnd } = BUDGET_STYLE;
   const {
     title,
     startValue,
@@ -44,6 +44,8 @@ export const DealerEfficiencyChart = ({
     amount,
     percentage: rawPercent,
     support_cost,
+    amountLabel = 'Actual Cost',
+    legendLabel = BUDGET_STYLE.legendLabel,
   } = d;
 
   const percentage = Math.min(100, Math.max(0, Number(rawPercent) ?? 0));
@@ -173,7 +175,7 @@ export const DealerEfficiencyChart = ({
         <div className="flex items-center gap-3">
           <div className="w-8 h-4 rounded-md bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-500 shrink-0" />
           <span className="text-[#4A5568] dark:text-gray-300 text-sm font-medium">
-            Actual Cost: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatEfficiencyMoney(amount, isAdmin, currencyCode)}</span>
+            {amountLabel}: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatEfficiencyMoney(amount, isAdmin, currencyCode)}</span>
           </span>
         </div>
         <div className="flex items-center gap-3">
