@@ -55,9 +55,9 @@ const buildDealerChartData = (totals, title) => {
   };
 };
 
-const buildSupportVsAllocationChartData = (totals, monthTermBudgetAllocation, title) => {
+const buildSupportVsAllocationChartData = (totals, allocationSource, title) => {
   if (!totals) return null;
-  const allocatedBudget = Number(monthTermBudgetAllocation?.allocated_budget_total_jpy) || 0;
+  const allocatedBudget = Number(allocationSource?.allocated_budget_total_jpy) || 0;
   const support = Number(totals.support_cost) || 0;
   const percentage = allocatedBudget > 0 ? Math.min(100, (support / allocatedBudget) * 100) : 0;
   return {
@@ -451,7 +451,7 @@ const SupportAllocationChartByTerm = () => {
   const termLabel = selectedTerm?.name || (termId ? `Term ${termId}` : 'Select term');
   const chartData = buildSupportVsAllocationChartData(
     data?.totals,
-    data?.month_term_budget_allocation,
+    data?.term_budget_vs_support,
     `By Term (${termLabel})`
   );
 
