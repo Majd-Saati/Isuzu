@@ -9,6 +9,7 @@ export const AddActivityModal = ({
   onClose, 
   onSubmit, 
   isSubmitting = false, 
+  isAdmin = true,
   companies = [],
   terms = [],
   planStartDate,
@@ -38,6 +39,7 @@ export const AddActivityModal = ({
     onClose,
     onSubmit,
     isSubmitting,
+    isAdmin,
     companies,
     terms,
     planStartDate,
@@ -76,6 +78,7 @@ export const AddActivityModal = ({
         <form onSubmit={formik.handleSubmit}>
           <ActivityFormFields
             isEditMode={isEditMode}
+            isAdmin={isAdmin}
             formik={formik}
             isSubmitting={isSubmitting}
             formikIsSubmitting={formik.isSubmitting}

@@ -8,6 +8,7 @@ export const useAddActivityModal = ({
   onClose,
   onSubmit,
   isSubmitting = false,
+  isAdmin = true,
   companies = [],
   terms = [],
   planStartDate,
@@ -61,7 +62,12 @@ export const useAddActivityModal = ({
     validateOnBlur: true,
     enableReinitialize: true,
     onSubmit: async (values, { setSubmitting }) => {
-      const payload = prepareFormPayload(values, isEditMode, initialActivity);
+      // Non-admins: always send company_id from the opened plan (preselectedCompanyId / plans_list)
+      const valuesForPayload =
+        !isEditMode && !isAdmin && preselectedCompanyId != null && preselectedCompanyId !== ''
+          ? { ...values, companyId: String(preselectedCompanyId) }
+          : values;
+      const payload = prepareFormPayload(valuesForPayload, isEditMode, initialActivity);
       setSubmitting(true);
       onSubmit(payload);
     },

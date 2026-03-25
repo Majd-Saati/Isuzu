@@ -137,6 +137,7 @@ export const DealerPlanTable = ({
         onClose={() => setShowAddActivityModal(false)}
         onSubmit={handleAddActivity}
         isSubmitting={createActivityMutation.isPending}
+        isAdmin={isAdmin}
         companies={companies}
         terms={terms}
         planStartDate={plan.start_date}

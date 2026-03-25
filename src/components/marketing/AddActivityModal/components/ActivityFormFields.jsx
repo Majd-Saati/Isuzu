@@ -7,6 +7,7 @@ import { PlanTermInfo } from './PlanTermInfo';
 
 export const ActivityFormFields = ({
   isEditMode,
+  isAdmin = true,
   formik,
   isSubmitting,
   formikIsSubmitting,
@@ -41,8 +42,8 @@ export const ActivityFormFields = ({
         Enter a descriptive name for your marketing activity
       </p>
 
-      {/* Dealer Dropdown - Only show in create mode */}
-      {!isEditMode && (
+      {/* Dealer dropdown: admins only; dealers use company_id from the plan (plans list) */}
+      {!isEditMode && isAdmin && (
         <CompanyDropdown
           companies={companies}
           selectedCompanyName={selectedCompanyName}
