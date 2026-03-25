@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { BarChart3, List } from 'lucide-react';
+import { isAdminUser } from '@/lib/permissions';
 import { DeleteConfirmationModal } from '../../ui/DeleteConfirmationModal';
 import { formatCurrency } from './utils/formatters';
 import { TabButton } from './components/TabButton';
@@ -35,6 +37,8 @@ export const ActivityDrawer = ({
   const [metaType, setMetaType] = useState(initialMetaType || null);
   const [showEditModal, setShowEditModal] = useState(false);
   const drawerRef = useRef(null);
+  const currentUser = useSelector((state) => state.auth.user);
+  const isAdmin = isAdminUser(currentUser);
 
   // Update activity mutation
   const updateActivityMutation = useUpdateActivity();
@@ -271,6 +275,7 @@ export const ActivityDrawer = ({
               activityId={activity?.id}
               planId={planId}
               companyId={companyId}
+              isAdmin={isAdmin}
               onAcceptBudget={handleAcceptBudget}
               onDeclineBudget={handleDeclineBudget}
               onDeleteBudget={handleDeleteBudget}

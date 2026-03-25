@@ -10,6 +10,7 @@ export function useAddBudgetForm({
   planId,
   companyId,
   existingBudgets = [],
+  isAdmin = true,
   onSuccess,
   onCancel,
   activityStartDate,
@@ -88,8 +89,8 @@ export function useAddBudgetForm({
   }, [value, breakdownTotal, showMonthsBreakdown]);
 
   const typeOptions = useMemo(
-    () => getAvailableBudgetTypes(existingBudgets),
-    [existingBudgets]
+    () => getAvailableBudgetTypes(existingBudgets, { isAdmin }),
+    [existingBudgets, isAdmin]
   );
 
   const defaultType = useMemo(() => {
@@ -130,7 +131,7 @@ export function useAddBudgetForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const validation = canAddBudgetType(type, existingBudgets);
+    const validation = canAddBudgetType(type, existingBudgets, { isAdmin });
     if (!validation.canAdd) {
       setValidationError(validation.reason);
       setBreakdownErrors({});

@@ -11,6 +11,7 @@ export const BudgetListTab = ({
   activityId,
   planId,
   companyId,
+  isAdmin = true,
   onAcceptBudget,
   onDeclineBudget,
   onDeleteBudget,
@@ -76,6 +77,7 @@ export const BudgetListTab = ({
           planId={planId}
           companyId={companyId}
           existingBudgets={budget}
+          isAdmin={isAdmin}
           onSuccess={() => setShowAddForm(false)}
           onCancel={() => setShowAddForm(false)}
           activityStartDate={activityStartDate}
