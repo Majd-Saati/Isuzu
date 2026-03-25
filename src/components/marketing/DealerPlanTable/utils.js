@@ -14,11 +14,18 @@ export const formatDate = (dateString) => {
   }
 };
 
+/** Budget row amounts: treat API "denied" (and legacy "rejected") as red in light and dark mode */
+export const isDeniedBudgetStatus = (status) => {
+  const s = (status || '').toLowerCase();
+  return s === 'denied' || s === 'rejected';
+};
+
 // Map budget status (accepted/pending/other) to color classes used in the table
 export const getAmountColorByStatus = (status) => {
   const s = (status || '').toLowerCase();
   if (s === 'accepted') return 'text-emerald-600';
   if (s === 'pending') return 'text-amber-600';
+  if (isDeniedBudgetStatus(status)) return 'text-red-600 dark:text-red-400';
   return 'text-gray-900';
 };
 

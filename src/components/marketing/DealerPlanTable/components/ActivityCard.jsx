@@ -1,7 +1,7 @@
 import React from 'react';
 import { MessageCircle, ChevronDown } from 'lucide-react';
 import { Checkbox } from '../../../ui/Checkbox';
-import { getAmountColorByStatus } from '../utils';
+import { getAmountColorByStatus, isDeniedBudgetStatus } from '../utils';
 import { formatMoneyFromContext } from '@/lib/dashboardMoney';
 import { statusStyles, statusOptions } from '../constants';
 import { StatusDropdown } from './StatusDropdown';
@@ -164,7 +164,7 @@ export const ActivityCard = ({
                 onClick={() => onOpenDrawer(activity, 'estimated cost', activity.estimatedStatus)}
                 className={`${getAmountColorByStatus(
                     activity.estimatedStatus
-                  )} ${activity.estimatedCost === 0 ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
+                  )} ${activity.estimatedCost === 0 && !isDeniedBudgetStatus(activity.estimatedStatus) ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
               >
                 {formatMoneyFromContext(activity.estimatedCost)}
               </button>
@@ -178,7 +178,7 @@ export const ActivityCard = ({
                 onClick={() => onOpenDrawer(activity, 'actual cost', activity.actualStatus)}
                 className={`${getAmountColorByStatus(
                   activity.actualStatus
-                )} ${activity.actualCost === 0 ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
+                )} ${activity.actualCost === 0 && !isDeniedBudgetStatus(activity.actualStatus) ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
               >
                 {formatMoneyFromContext(activity.actualCost)}
               </button>
@@ -192,7 +192,7 @@ export const ActivityCard = ({
                 onClick={() => onOpenDrawer(activity, 'support cost', activity.supportStatus)}
                 className={`${getAmountColorByStatus(
                   activity.supportStatus
-                )} ${activity.supportCost === 0 ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
+                )} ${activity.supportCost === 0 && !isDeniedBudgetStatus(activity.supportStatus) ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
               >
                 {formatMoneyFromContext(activity.supportCost)}
               </button>
