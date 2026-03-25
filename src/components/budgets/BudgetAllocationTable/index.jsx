@@ -42,7 +42,7 @@ export const BudgetAllocationTable = () => {
 
   const filtersAndAction = (
     <div className="flex flex-wrap items-center gap-3 md:gap-4">
-        {isAdmin && (
+      {isAdmin && (
         <button
           type="button"
           onClick={() => {
@@ -62,18 +62,22 @@ export const BudgetAllocationTable = () => {
         onCompanyChange={setCompanyId}
         isAdmin={isAdmin}
       />
-    
     </div>
   );
+
+  /** Dealers have no toolbar controls (company scope is implicit); avoid an empty card. */
+  const showBudgetToolbar = isAdmin;
 
   if (!hasTerms || !hasAnyAllocations) {
     return (
       <div className="space-y-6 animate-fade-in">
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-5">
-          <div className="flex flex-wrap items-center justify-end gap-3 md:gap-4">
-            {filtersAndAction}
+        {showBudgetToolbar && (
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-5">
+            <div className="flex flex-wrap items-center justify-end gap-3 md:gap-4">
+              {filtersAndAction}
+            </div>
           </div>
-        </div>
+        )}
         <BudgetAllocationEmptyState />
         <SetBudgetAllocationModal
           isOpen={showSetModal}
@@ -93,17 +97,24 @@ export const BudgetAllocationTable = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-5">
-        <div className="flex flex-wrap items-center justify-start gap-3 md:gap-4">
-          {filtersAndAction}
+      {showBudgetToolbar && (
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-5">
+          <div className="flex flex-wrap items-center justify-start gap-3 md:gap-4">
+            {filtersAndAction}
+          </div>
         </div>
-      </div>
+      )}
       <div className="space-y-6">
         {terms.map((term) => (
           <TermSection
             key={term.term_id}
             term={term}
-            onDeleteAllocation={(allocation) => setAllocationToDelete({ id: allocation.id, company_name: allocation.company_name })}
+            showDeleteAllocation={isAdmin}
+            onDeleteAllocation={
+              isAdmin
+                ? (allocation) => setAllocationToDelete({ id: allocation.id, company_name: allocation.company_name })
+                : undefined
+            }
             onAddAllocation={isAdmin ? (t) => { setPreselectedTermId(t.term_id); setPreselectedTermName(t.term_name || ''); setShowSetModal(true); } : undefined}
           />
         ))}

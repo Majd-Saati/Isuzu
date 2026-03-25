@@ -3,7 +3,7 @@ import { Building2, Trash2 } from 'lucide-react';
 import { formatDate, getCompanyLogoUrl } from '../utils';
 import { formatMoneyFromContext } from '@/lib/dashboardMoney';
 
-export const AllocationRow = ({ allocation, onDelete }) => {
+export const AllocationRow = ({ allocation, onDelete, showDelete = true }) => {
   const [logoError, setLogoError] = useState(false);
   const logoUrl = getCompanyLogoUrl(allocation.company_logo);
   const showLogo = logoUrl && !logoError;
@@ -49,17 +49,19 @@ export const AllocationRow = ({ allocation, onDelete }) => {
       <td className="py-3.5 px-4 md:px-6 text-sm text-gray-500 dark:text-gray-400 hidden lg:table-cell">
         {formatDate(allocation.creation_date)}
       </td>
-      <td className="py-3.5 px-4 md:px-6 text-center">
-        <button
-          type="button"
-          onClick={() => onDelete?.(allocation)}
-          disabled={allocation.can_delete === false}
-          title={allocation.can_delete === false ? 'Cannot delete this allocation' : 'Delete allocation'}
-          className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-gray-400 dark:disabled:hover:text-gray-500 disabled:hover:bg-transparent"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
-      </td>
+      {showDelete && (
+        <td className="py-3.5 px-4 md:px-6 text-center">
+          <button
+            type="button"
+            onClick={() => onDelete?.(allocation)}
+            disabled={allocation.can_delete === false}
+            title={allocation.can_delete === false ? 'Cannot delete this allocation' : 'Delete allocation'}
+            className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-gray-400 dark:disabled:hover:text-gray-500 disabled:hover:bg-transparent"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </td>
+      )}
     </tr>
   );
 };

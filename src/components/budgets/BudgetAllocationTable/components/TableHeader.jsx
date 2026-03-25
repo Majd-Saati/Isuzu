@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const BudgetAllocationTableHeader = () => (
+export const BudgetAllocationTableHeader = ({ showActions = true }) => (
   <thead>
     <tr className="bg-gray-50 dark:bg-gray-800/80">
       <th className="text-left py-3.5 px-4 md:px-6 text-[#4A5568] dark:text-gray-400 text-xs font-semibold uppercase tracking-wider">
@@ -21,9 +21,11 @@ export const BudgetAllocationTableHeader = () => (
       <th className="text-left py-3.5 px-4 md:px-6 text-[#4A5568] dark:text-gray-400 text-xs font-semibold uppercase tracking-wider hidden lg:table-cell">
         Created
       </th>
-      <th className="text-center py-3.5 px-4 md:px-6 text-[#4A5568] dark:text-gray-400 text-xs font-semibold uppercase tracking-wider w-14">
-        Actions
-      </th>
+      {showActions && (
+        <th className="text-center py-3.5 px-4 md:px-6 text-[#4A5568] dark:text-gray-400 text-xs font-semibold uppercase tracking-wider w-14">
+          Actions
+        </th>
+      )}
     </tr>
   </thead>
 );

@@ -4,7 +4,7 @@ import { BudgetAllocationTableHeader } from './TableHeader';
 import { AllocationRow } from './AllocationRow';
 import { formatDate } from '../utils';
 
-export const TermSection = ({ term, onDeleteAllocation, onAddAllocation }) => {
+export const TermSection = ({ term, onDeleteAllocation, onAddAllocation, showDeleteAllocation = true }) => {
   const allocations = term.allocations ?? [];
   const hasAllocations = allocations.length > 0;
 
@@ -41,13 +41,14 @@ export const TermSection = ({ term, onDeleteAllocation, onAddAllocation }) => {
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full border-collapse min-w-[600px]">
-            <BudgetAllocationTableHeader />
+            <BudgetAllocationTableHeader showActions={showDeleteAllocation} />
             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
               {allocations.map((allocation) => (
                 <AllocationRow
                   key={allocation.id}
                   allocation={allocation}
                   onDelete={onDeleteAllocation}
+                  showDelete={showDeleteAllocation}
                 />
               ))}
             </tbody>
