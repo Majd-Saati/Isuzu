@@ -9,13 +9,10 @@ export const AddEditUserModal = ({ isOpen, onClose, editData = null }) => {
     isEditMode,
     isLoading,
     isLoadingCompanies,
-    isLoadingCountries,
     showPassword,
     setShowPassword,
     showCompanyDropdown,
     setShowCompanyDropdown,
-    showCountryDropdown,
-    setShowCountryDropdown,
     showGenderDropdown,
     setShowGenderDropdown,
     showRoleDropdown,
@@ -23,15 +20,12 @@ export const AddEditUserModal = ({ isOpen, onClose, editData = null }) => {
     showStatusDropdown,
     setShowStatusDropdown,
     selectedCompanyName,
-    selectedCountryName,
     selectedGenderName,
     selectedRoleName,
     selectedStatusName,
     dealers,
-    countries,
     formik,
     handleCompanySelect,
-    handleCountrySelect,
     handleGenderSelect,
     handleRoleSelect,
     handleStatusSelect,
@@ -70,24 +64,18 @@ export const AddEditUserModal = ({ isOpen, onClose, editData = null }) => {
             setShowGenderDropdown={setShowGenderDropdown}
             showCompanyDropdown={showCompanyDropdown}
             setShowCompanyDropdown={setShowCompanyDropdown}
-            showCountryDropdown={showCountryDropdown}
-            setShowCountryDropdown={setShowCountryDropdown}
             showRoleDropdown={showRoleDropdown}
             setShowRoleDropdown={setShowRoleDropdown}
             showStatusDropdown={showStatusDropdown}
             setShowStatusDropdown={setShowStatusDropdown}
             selectedGenderName={selectedGenderName}
             selectedCompanyName={selectedCompanyName}
-            selectedCountryName={selectedCountryName}
             selectedRoleName={selectedRoleName}
             selectedStatusName={selectedStatusName}
             dealers={dealers}
-            countries={countries}
             isLoadingCompanies={isLoadingCompanies}
-            isLoadingCountries={isLoadingCountries}
             handleGenderSelect={handleGenderSelect}
             handleCompanySelect={handleCompanySelect}
-            handleCountrySelect={handleCountrySelect}
             handleRoleSelect={handleRoleSelect}
             handleStatusSelect={handleStatusSelect}
             showPassword={showPassword}

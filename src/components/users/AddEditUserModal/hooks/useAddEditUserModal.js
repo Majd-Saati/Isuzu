@@ -1,27 +1,27 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { useCreateUser, useUpdateUser } from '@/hooks/api/useUsers';
 import { useDealers } from '@/hooks/api/useCompanies';
-import { useCountries } from '@/hooks/api/useCountries';
 import { createUserSchema } from '../validation';
 import { formatGenderLabel, formatRoleLabel, formatStatusLabel } from '../constants';
 import { prepareFormData, resetSelectedNames } from '../utils';
 
 export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
   const isEditMode = !!editData;
+  const currentUser = useSelector((state) => state.auth.user);
+  const loggedInCountryId = String(currentUser?.country_id ?? '').trim();
   const createMutation = useCreateUser();
   const updateMutation = useUpdateUser();
 
   // Dropdown visibility states
   const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
-  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [showGenderDropdown, setShowGenderDropdown] = useState(false);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
 
   // Selected display names
   const [selectedCompanyName, setSelectedCompanyName] = useState(editData?.company_name || '');
-  const [selectedCountryName, setSelectedCountryName] = useState(editData?.country_name || '');
   const [selectedGenderName, setSelectedGenderName] = useState(
     editData?.gender ? formatGenderLabel(editData.gender) : ''
   );
@@ -33,10 +33,7 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
   );
   const [showPassword, setShowPassword] = useState(false);
 
-  // Fetch companies and countries
   const { data: dealers = [], isLoading: isLoadingCompanies } = useDealers();
-  const { data: countriesData, isLoading: isLoadingCountries } = useCountries({ page: 1, perPage: 100 });
-  const countries = countriesData?.countries || [];
 
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
@@ -47,7 +44,7 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
       mobile: editData?.mobile || '',
       gender: editData?.gender || '',
       company_id: editData?.company_id || '',
-      country_id: editData?.country_id || '',
+      country_id: isEditMode ? editData?.country_id || '' : loggedInCountryId,
       password: '',
       is_admin: editData?.is_admin ?? '',
       status: editData?.status ?? '',
@@ -58,14 +55,16 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
     validateOnBlur: false,
     onSubmit: (values, { resetForm }) => {
       const mutation = isEditMode ? updateMutation : createMutation;
-      const data = prepareFormData(values, isEditMode, editData);
+      const valuesForApi = isEditMode
+        ? values
+        : { ...values, country_id: loggedInCountryId || String(values.country_id ?? '').trim() };
+      const data = prepareFormData(valuesForApi, isEditMode, editData);
 
       mutation.mutate(data, {
         onSuccess: () => {
           resetForm();
           const resetNames = resetSelectedNames();
           setSelectedCompanyName(resetNames.selectedCompanyName);
-          setSelectedCountryName(resetNames.selectedCountryName);
           setSelectedGenderName(resetNames.selectedGenderName);
           setSelectedRoleName(resetNames.selectedRoleName);
           setSelectedStatusName(resetNames.selectedStatusName);
@@ -75,17 +74,17 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
     },
   });
 
+  useEffect(() => {
+    if (!isEditMode && isOpen && loggedInCountryId) {
+      formik.setFieldValue('country_id', loggedInCountryId);
+    }
+  }, [isOpen, isEditMode, loggedInCountryId]);
+
   // Handlers for dropdown selections
   const handleCompanySelect = (company) => {
     formik.setFieldValue('company_id', company.id);
     setSelectedCompanyName(company.label);
     setShowCompanyDropdown(false);
-  };
-
-  const handleCountrySelect = (country) => {
-    formik.setFieldValue('country_id', country.id);
-    setSelectedCountryName(country.name);
-    setShowCountryDropdown(false);
   };
 
   const handleGenderSelect = (gender) => {
@@ -99,15 +98,11 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
     setSelectedRoleName(formatRoleLabel(role));
     setShowRoleDropdown(false);
     
-    // Clear company and country when admin is selected
+    // Clear company when admin is selected (country stays from logged-in user for create)
     if (role === '1') {
       await formik.setFieldValue('company_id', '');
-      await formik.setFieldValue('country_id', '');
       setSelectedCompanyName('');
-      setSelectedCountryName('');
-      // Clear validation errors for these fields
       formik.setFieldError('company_id', undefined);
-      formik.setFieldError('country_id', undefined);
     }
     
     // Force re-validation with updated values
@@ -126,10 +121,6 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
       const company = dealers.find(c => String(c.id) === String(editData.company_id));
       if (company) setSelectedCompanyName(company.label);
     }
-    if (editData?.country_id && countries.length > 0) {
-      const country = countries.find(c => String(c.id) === String(editData.country_id));
-      if (country) setSelectedCountryName(country.name);
-    }
     if (editData?.gender) {
       setSelectedGenderName(formatGenderLabel(editData.gender));
     }
@@ -139,14 +130,13 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
     if (editData?.status !== undefined) {
       setSelectedStatusName(formatStatusLabel(editData.status));
     }
-  }, [editData, dealers, countries]);
+  }, [editData, dealers]);
 
   const handleClose = () => {
     if (!isLoading) {
       formik.resetForm();
       const resetNames = resetSelectedNames();
       setSelectedCompanyName(resetNames.selectedCompanyName);
-      setSelectedCountryName(resetNames.selectedCountryName);
       setSelectedGenderName(resetNames.selectedGenderName);
       setSelectedRoleName(resetNames.selectedRoleName);
       setSelectedStatusName(resetNames.selectedStatusName);
@@ -159,15 +149,12 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
     isEditMode,
     isLoading,
     isLoadingCompanies,
-    isLoadingCountries,
     showPassword,
     setShowPassword,
     
     // Dropdown states
     showCompanyDropdown,
     setShowCompanyDropdown,
-    showCountryDropdown,
-    setShowCountryDropdown,
     showGenderDropdown,
     setShowGenderDropdown,
     showRoleDropdown,
@@ -177,21 +164,18 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
     
     // Selected names
     selectedCompanyName,
-    selectedCountryName,
     selectedGenderName,
     selectedRoleName,
     selectedStatusName,
     
     // Data
     dealers,
-    countries,
     
     // Formik
     formik,
     
     // Handlers
     handleCompanySelect,
-    handleCountrySelect,
     handleGenderSelect,
     handleRoleSelect,
     handleStatusSelect,

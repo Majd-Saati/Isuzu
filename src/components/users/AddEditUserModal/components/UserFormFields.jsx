@@ -14,8 +14,6 @@ export const UserFormFields = ({
   setShowGenderDropdown,
   showCompanyDropdown,
   setShowCompanyDropdown,
-  showCountryDropdown,
-  setShowCountryDropdown,
   showRoleDropdown,
   setShowRoleDropdown,
   showStatusDropdown,
@@ -23,18 +21,14 @@ export const UserFormFields = ({
   // Selected names
   selectedGenderName,
   selectedCompanyName,
-  selectedCountryName,
   selectedRoleName,
   selectedStatusName,
   // Data
   dealers,
-  countries,
   isLoadingCompanies,
-  isLoadingCountries,
   // Handlers
   handleGenderSelect,
   handleCompanySelect,
-  handleCountrySelect,
   handleRoleSelect,
   handleStatusSelect,
   // Password
@@ -44,11 +38,6 @@ export const UserFormFields = ({
   const companyOptions = dealers.map(company => ({
     value: company.id,
     label: company.label,
-  }));
-
-  const countryOptions = countries.map(country => ({
-    value: country.id,
-    label: country.name,
   }));
 
   return (
@@ -139,28 +128,6 @@ export const UserFormFields = ({
           touched={formik.submitCount > 0 && formik.values.is_admin !== '1'}
           disabled={isLoading}
           isLoading={isLoadingCompanies}
-          optionalLabel={formik.values.is_admin === '1' ? '(Optional)' : null}
-        />
-      )}
-
-      {/* Country Dropdown - Only show in create mode */}
-      {!isEditMode && (
-        <CustomDropdown
-          label="Country"
-          placeholder="Select country"
-          selectedValue={selectedCountryName}
-          isOpen={showCountryDropdown}
-          onToggle={() => setShowCountryDropdown(!showCountryDropdown)}
-          onClose={() => setShowCountryDropdown(false)}
-          options={countryOptions}
-          onSelect={(option) => {
-            const country = countries.find(c => c.id === option.value);
-            if (country) handleCountrySelect(country);
-          }}
-          error={formik.errors.country_id}
-          touched={formik.submitCount > 0 && formik.values.is_admin !== '1'}
-          disabled={isLoading}
-          isLoading={isLoadingCountries}
           optionalLabel={formik.values.is_admin === '1' ? '(Optional)' : null}
         />
       )}

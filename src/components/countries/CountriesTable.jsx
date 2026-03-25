@@ -10,6 +10,18 @@ export const CountriesTable = ({
   onPageChange,
   onItemsPerPageChange 
 }) => {
+  const safePagination = pagination || {
+    page: 1,
+    per_page: 20,
+    total: 0,
+    total_pages: 1,
+  };
+
+  const currentPage = Number(safePagination.page ?? 1);
+  const totalPages = Number(safePagination.total_pages ?? 1);
+  const totalItems = Number(safePagination.total ?? 0);
+  const itemsPerPage = Number(safePagination.per_page ?? 20);
+
   const formatExchangeRate = (rate) => {
     if (!rate) return '—';
     const numRate = parseFloat(rate);
@@ -89,10 +101,10 @@ export const CountriesTable = ({
       
       {/* Pagination */}
       <CustomPagination
-        currentPage={pagination.page}
-        totalPages={pagination.total_pages}
-        totalItems={pagination.total}
-        itemsPerPage={pagination.per_page}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        itemsPerPage={itemsPerPage}
         onPageChange={onPageChange}
         onItemsPerPageChange={onItemsPerPageChange}
       />

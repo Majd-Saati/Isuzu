@@ -20,13 +20,8 @@ export const createUserSchema = (isEditMode) => Yup.object({
         then: (schema) => schema.notRequired(),
         otherwise: (schema) => schema.required('Company is required'),
       }),
-  country_id: isEditMode
-    ? Yup.string().notRequired()
-    : Yup.string().when('is_admin', {
-        is: '1',
-        then: (schema) => schema.notRequired(),
-        otherwise: (schema) => schema.required('Country is required'),
-      }),
+  // Create: country comes from logged-in admin user, not the form
+  country_id: Yup.string().notRequired(),
   password: isEditMode
     ? Yup.string().notRequired()
     : Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),

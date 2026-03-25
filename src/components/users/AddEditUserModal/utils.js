@@ -25,7 +25,6 @@ export const prepareFormData = (values, isEditMode, editData) => {
  */
 export const resetSelectedNames = () => ({
   selectedCompanyName: '',
-  selectedCountryName: '',
   selectedGenderName: '',
   selectedRoleName: '',
   selectedStatusName: '',
