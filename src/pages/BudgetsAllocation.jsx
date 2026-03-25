@@ -1,7 +1,11 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { BudgetAllocationTable } from '@/components/budgets/BudgetAllocationTable';
 
 const BudgetsAllocation = () => {
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
+
   return (
     <>
       <div className="pt-6 pb-8 mb-8 border-b-2 border-gray-100 dark:border-gray-800">
@@ -9,7 +13,9 @@ const BudgetsAllocation = () => {
           Budgets Allocation
         </h1>
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">
-          View and manage budget allocations by term and company
+          {isAdmin
+            ? 'View and manage budget allocations by term and company.'
+            : 'View budget allocations by term.'}
         </p>
       </div>
       <BudgetAllocationTable />
