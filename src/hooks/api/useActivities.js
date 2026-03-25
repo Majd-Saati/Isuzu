@@ -171,8 +171,12 @@ export const useCreateActivityBudget = () => {
       });
       queryClient.invalidateQueries({ 
         queryKey: ['activityMeta', actId, plnId, cmpId], 
-        exact: true,
         refetchType: 'active'
+      });
+      // Marketing plans table (and anywhere else) uses useActivities(planIds) for per-activity budget columns
+      queryClient.invalidateQueries({
+        queryKey: ['activities'],
+        refetchType: 'active',
       });
     },
   });
@@ -198,8 +202,11 @@ export const useUpdateBudgetStatus = (activityContext = {}) => {
         });
         queryClient.invalidateQueries({ 
           queryKey: ['activityMeta', actId, plnId, cmpId], 
-          exact: true,
           refetchType: 'active'
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['activities'],
+          refetchType: 'active',
         });
       }
     },
@@ -226,8 +233,11 @@ export const useDeleteBudget = (activityContext = {}) => {
         });
         queryClient.invalidateQueries({ 
           queryKey: ['activityMeta', actId, plnId, cmpId], 
-          exact: true,
           refetchType: 'active'
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['activities'],
+          refetchType: 'active',
         });
       }
     },
