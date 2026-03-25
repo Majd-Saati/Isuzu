@@ -26,7 +26,11 @@ const formatTermDate = (dateString) => {
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 };
 
-export const AddTermExchangeModal = ({ isOpen, onClose }) => {
+/**
+ * @param {{ isOpen: boolean, onClose: () => void, defaultTermId?: string | number }} props
+ * defaultTermId — term selected in Term exchange rates (table filter); pre-fills the Term field when opening.
+ */
+export const AddTermExchangeModal = ({ isOpen, onClose, defaultTermId = '' }) => {
   const [showTermDropdown, setShowTermDropdown] = useState(false);
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [termDropdownPosition, setTermDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
@@ -41,6 +45,8 @@ export const AddTermExchangeModal = ({ isOpen, onClose }) => {
   const terms = termsData?.terms || [];
   const countries = countriesData?.countries || [];
   const isLoading = addMutation.isPending;
+
+  const prevIsOpenRef = useRef(false);
 
   const formik = useFormik({
     initialValues: {
@@ -69,6 +75,40 @@ export const AddTermExchangeModal = ({ isOpen, onClose }) => {
       );
     },
   });
+
+  const resolveDefaultTermId = () => {
+    const raw = defaultTermId != null ? String(defaultTermId).trim() : '';
+    if (!raw || !terms.some((t) => String(t.id) === raw)) return '';
+    return raw;
+  };
+
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      prevIsOpenRef.current = false;
+      return;
+    }
+
+    const termId = resolveDefaultTermId();
+    const justOpened = !prevIsOpenRef.current;
+    prevIsOpenRef.current = true;
+
+    if (justOpened) {
+      formik.resetForm({
+        values: {
+          term_id: termId,
+          country_id: '',
+          rate: '',
+          note: '',
+        },
+      });
+      return;
+    }
+
+    if (terms.length && termId && !String(formik.values.term_id || '').trim()) {
+      formik.setFieldValue('term_id', termId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- sync open/term list with formik; avoid loops
+  }, [isOpen, defaultTermId, terms]);
 
   const selectedTerm = terms.find((t) => String(t.id) === String(formik.values.term_id));
   const selectedCountry = countries.find((c) => String(c.id) === String(formik.values.country_id));

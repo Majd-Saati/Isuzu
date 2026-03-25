@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useLayoutEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Plus } from 'lucide-react';
 import { TermsTable } from '@/components/terms/TermsTable';
@@ -17,6 +17,31 @@ import { EditTermExchangeModal } from '@/components/terms/EditTermExchangeModal'
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 import { useTerms, useDeleteTerm, useTermExchange } from '@/hooks/api/useTerms';
 import { hasPermission } from '@/lib/permissions';
+
+/** Pick the term with the latest start date (fallback: end date, then first item). */
+const getLatestTermId = (terms) => {
+  if (!Array.isArray(terms) || terms.length === 0) return '';
+  const toTime = (d) => {
+    if (!d) return NaN;
+    const t = new Date(d).getTime();
+    return Number.isFinite(t) ? t : NaN;
+  };
+  let bestId = String(terms[0].id ?? '');
+  let bestStart = -Infinity;
+  let bestEnd = -Infinity;
+  for (const t of terms) {
+    const s = toTime(t.start_date);
+    const e = toTime(t.end_date);
+    const startScore = Number.isFinite(s) ? s : Number.isFinite(e) ? e : -Infinity;
+    const endScore = Number.isFinite(e) ? e : startScore;
+    if (startScore > bestStart || (startScore === bestStart && endScore > bestEnd)) {
+      bestStart = startScore;
+      bestEnd = endScore;
+      bestId = String(t.id ?? '');
+    }
+  }
+  return bestId;
+};
 
 const Terms = () => {
   // Get current user from Redux
@@ -39,7 +64,7 @@ const Terms = () => {
   const [perPage, setPerPage] = useState(20);
   const [exchangePage, setExchangePage] = useState(1);
   const [exchangePerPage, setExchangePerPage] = useState(20);
-  const [exchangeTermId, setExchangeTermId] = useState(''); // '' = last term
+  const [exchangeTermId, setExchangeTermId] = useState('');
 
   // Search
   const [search, setSearch] = useState('');
@@ -48,15 +73,34 @@ const Terms = () => {
   const { data, isLoading, isError } = useTerms({ page, perPage, search });
   const { data: termsListData } = useTerms({ page: 1, perPage: 100 }); // for exchange filter dropdown
   const termsList = termsListData?.terms || [];
+  const defaultExchangeTermId = useMemo(() => getLatestTermId(termsList), [termsList]);
+
+  useLayoutEffect(() => {
+    if (!termsList.length) {
+      setExchangeTermId('');
+      return;
+    }
+    setExchangeTermId((prev) => {
+      const stillValid = prev && termsList.some((t) => String(t.id) === String(prev));
+      if (stillValid) return prev;
+      return defaultExchangeTermId || String(termsList[0].id ?? '');
+    });
+  }, [termsList, defaultExchangeTermId]);
+
+  const exchangeQueryEnabled = termsList.length > 0 && exchangeTermId !== '';
+
   const {
     data: exchangeData,
     isLoading: exchangeLoading,
     isError: exchangeError,
-  } = useTermExchange({
-    page: exchangePage,
-    perPage: exchangePerPage,
-    termId: exchangeTermId || undefined,
-  });
+  } = useTermExchange(
+    {
+      page: exchangePage,
+      perPage: exchangePerPage,
+      termId: exchangeTermId,
+    },
+    { enabled: exchangeQueryEnabled }
+  );
   const deleteMutation = useDeleteTerm();
 
   const terms = data?.terms || [];
@@ -170,6 +214,16 @@ const Terms = () => {
   };
 
   const renderExchangeContent = () => {
+    if (!exchangeQueryEnabled) {
+      if (!termsList.length) {
+        return (
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 shadow-sm p-8 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Add a term first to manage exchange rates.</p>
+          </div>
+        );
+      }
+      return <TermExchangeTableSkeleton />;
+    }
     if (exchangeLoading) return <TermExchangeTableSkeleton />;
     if (exchangeError) {
       return (
@@ -218,9 +272,9 @@ const Terms = () => {
                 id="exchange-term-filter"
                 value={exchangeTermId}
                 onChange={handleExchangeTermFilterChange}
-                className="px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012] focus:border-transparent transition-all min-w-[200px]"
+                disabled={!termsList.length}
+                className="px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012] focus:border-transparent transition-all min-w-[200px] disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <option value="">Last term</option>
                 {termsList.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.name}
@@ -245,6 +299,7 @@ const Terms = () => {
       <AddTermExchangeModal
         isOpen={showAddExchangeModal}
         onClose={() => setShowAddExchangeModal(false)}
+        defaultTermId={exchangeTermId}
       />
 
       {/* Edit term exchange rate modal */}
