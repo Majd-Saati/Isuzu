@@ -5,7 +5,7 @@ import { BudgetAllocationTable } from '@/components/budgets/BudgetAllocationTabl
 const BudgetsAllocation = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
-
+console.log(user);
   return (
     <>
       <div className="pt-6 pb-8 mb-8 border-b-2 border-gray-100 dark:border-gray-800">

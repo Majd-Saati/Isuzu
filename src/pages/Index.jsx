@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { PerformanceChart } from '@/components/dashboard/PerformanceChart';
-import { OverviewTable } from '@/components/dashboard/OverviewTable';
-import { OverviewTableSkeleton } from '@/components/dashboard/OverviewTableSkeleton';
-import { OverviewTableEmpty } from '@/components/dashboard/OverviewTableEmpty';
+import { OverviewRecentlySection } from '@/components/dashboard/OverviewRecentlySection';
 import { DealerCard } from '@/components/dashboard/DealerCard';
 import { DealerCardSkeleton } from '@/components/dashboard/DealerCardSkeleton';
 import { DealerCardsEmpty } from '@/components/dashboard/DealerCardsEmpty';
@@ -555,61 +553,7 @@ const Index = () => {
 
 
 
-  const recentItems = data?.recentOperations || [];
-
   const dealers = data?.dealersSummary || [];
-
-
-
-  const renderOverviewSection = () => {
-
-    if (isLoading) {
-
-      return <OverviewTableSkeleton />;
-
-    }
-
-
-
-    if (isError) {
-
-      return (
-
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-red-200 dark:border-red-800 shadow-sm p-8 text-center">
-
-          <p className="text-red-600 dark:text-red-400 font-medium">Failed to load overview. Please try again.</p>
-
-        </div>
-
-      );
-
-    }
-
-
-
-    if (!recentItems.length) {
-
-      return <OverviewTableEmpty />;
-
-    }
-
-
-
-    const mappedItems = recentItems.map((item) => ({
-
-      ...item,
-
-      company_logo: getLogoUrl(item.company_logo),
-
-    }));
-
-
-
-    return <OverviewTable items={mappedItems} isAdmin={isAdmin} appCurrencyCode={currency} />;
-
-  };
-
-
 
   const renderDealersSection = () => {
 
@@ -823,7 +767,7 @@ const Index = () => {
 
       <div className="mt-6 md:mt-8">
 
-        {renderOverviewSection()}
+        <OverviewRecentlySection />
 
         </div>
 

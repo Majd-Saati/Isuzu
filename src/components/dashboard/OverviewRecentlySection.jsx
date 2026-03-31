@@ -1,0 +1,404 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Filter, Calendar } from 'lucide-react';
+import { OverviewTable } from '@/components/dashboard/OverviewTable';
+import { OverviewTableSkeleton } from '@/components/dashboard/OverviewTableSkeleton';
+import { OverviewTableEmpty } from '@/components/dashboard/OverviewTableEmpty';
+import { useRecentOperations } from '@/hooks/api/useRecentOperations';
+import { useCompanies } from '@/hooks/api/useCompanies';
+import { useTerms } from '@/hooks/api/useTerms';
+import { usePlans } from '@/hooks/api/usePlans';
+import { useActivities } from '@/hooks/api/useActivities';
+import { isAdminUser } from '@/lib/permissions';
+import { useCurrency } from '@/contexts/CurrencyContext';
+
+const getLogoUrl = (path) => {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `https://marketing.5v.ae/${path}`;
+};
+
+const selectClass =
+  'px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-0 w-full cursor-pointer';
+
+const inputClass =
+  'px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] w-full';
+
+const KIND_OPTIONS = [
+  { value: '', label: 'All kinds' },
+  { value: 'plan_created', label: 'Plan created' },
+  { value: 'budget', label: 'Budget' },
+  { value: 'meta', label: 'Meta' },
+];
+
+const BUDGET_TYPE_OPTIONS = [
+  { value: '', label: 'Any' },
+  { value: 'actual cost', label: 'Actual cost' },
+  { value: 'estimated cost', label: 'Estimated cost' },
+];
+
+const BUDGET_STATUS_OPTIONS = [
+  { value: '', label: 'Any' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'accepted', label: 'Accepted' },
+  { value: 'denied', label: 'Denied' },
+];
+
+export const OverviewRecentlySection = () => {
+  const user = useSelector((state) => state.auth.user);
+  const isAdmin = isAdminUser(user);
+  const { currency } = useCurrency();
+
+  const [page, setPage] = useState(1);
+  const [companyId, setCompanyId] = useState(isAdmin ? '' : String(user?.id || ''));
+  const [kind, setKind] = useState('');
+  const [termId, setTermId] = useState('');
+  const [planId, setPlanId] = useState('');
+  const [activityId, setActivityId] = useState('');
+  const [budgetType, setBudgetType] = useState('');
+  const [budgetStatus, setBudgetStatus] = useState('');
+  const [metaType, setMetaType] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+
+  useEffect(() => {
+    if (!isAdmin && user?.id) setCompanyId(String(user.id));
+  }, [isAdmin, user]);
+
+  const effectiveCompanyId = isAdmin ? companyId : String(user?.id || '');
+
+  const bumpPageReset = () => setPage(1);
+
+  const { data: companiesData } = useCompanies({ page: 1, perPage: 100 }, { enabled: isAdmin });
+  const companies = companiesData?.companies ?? [];
+
+  const { data: termsData } = useTerms({ page: 1, perPage: 100 });
+  const terms = termsData?.terms ?? [];
+
+  const { data: plansData } = usePlans(
+    {
+      page: 1,
+      perPage: 100,
+      companyId: effectiveCompanyId || undefined,
+      termId: termId || undefined,
+    },
+    { enabled: Boolean(effectiveCompanyId) }
+  );
+  const plans = plansData?.plans ?? [];
+
+  const { data: activitiesData } = useActivities({
+    planIds: planId ? [planId] : [],
+    page: 1,
+    perPage: 200,
+  });
+  const activities = activitiesData?.activities ?? [];
+
+  const apiParams = useMemo(() => {
+    const p = {
+      page,
+      per_page: 20,
+    };
+    if (effectiveCompanyId) p.company_id = effectiveCompanyId;
+    if (kind) p.kind = kind;
+    if (termId) p.term_id = termId;
+    if (planId) p.plan_id = planId;
+    if (activityId) p.activity_id = activityId;
+    if (budgetType) p.budget_type = budgetType;
+    if (budgetStatus) p.budget_status = budgetStatus;
+    if (metaType.trim()) p.meta_type = metaType.trim();
+    if (dateFrom) p.date_from = dateFrom;
+    if (dateTo) p.date_to = dateTo;
+    return p;
+  }, [
+    page,
+    effectiveCompanyId,
+    kind,
+    termId,
+    planId,
+    activityId,
+    budgetType,
+    budgetStatus,
+    metaType,
+    dateFrom,
+    dateTo,
+  ]);
+
+  const queryEnabled = isAdmin ? true : Boolean(effectiveCompanyId);
+
+  const { data, isLoading, isError } = useRecentOperations(apiParams, {
+    enabled: queryEnabled,
+  });
+
+  const recentItems = data?.recentOperations || [];
+  const pagination = data?.pagination || {};
+  const kindOptionsFromApi = data?.filters?.kind;
+
+  const mergedKindOptions = useMemo(() => {
+    if (!Array.isArray(kindOptionsFromApi) || !kindOptionsFromApi.length) {
+      return KIND_OPTIONS;
+    }
+    const fromApi = kindOptionsFromApi.map((k) => ({
+      value: k,
+      label: k.replace(/_/g, ' '),
+    }));
+    return [{ value: '', label: 'All kinds' }, ...fromApi];
+  }, [kindOptionsFromApi]);
+
+  const onTermChange = (e) => {
+    bumpPageReset();
+    setTermId(e.target.value);
+    setPlanId('');
+    setActivityId('');
+  };
+
+  const onPlanChange = (e) => {
+    bumpPageReset();
+    setPlanId(e.target.value);
+    setActivityId('');
+  };
+
+  const onCompanyChange = (e) => {
+    bumpPageReset();
+    setCompanyId(e.target.value);
+    setTermId('');
+    setPlanId('');
+    setActivityId('');
+  };
+
+  const renderTable = () => {
+    if (isLoading) {
+      return <OverviewTableSkeleton />;
+    }
+
+    if (isError) {
+      return (
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border-2 border-red-200 dark:border-red-800 shadow-sm p-8 text-center">
+          <p className="text-red-600 dark:text-red-400 font-medium">
+            Failed to load recent operations. Please try again.
+          </p>
+        </div>
+      );
+    }
+
+    if (!recentItems.length) {
+      return <OverviewTableEmpty />;
+    }
+
+    const mappedItems = recentItems.map((item) => ({
+      ...item,
+      company_logo: getLogoUrl(item.company_logo),
+    }));
+
+    return <OverviewTable items={mappedItems} isAdmin={isAdmin} appCurrencyCode={currency} />;
+  };
+
+  const totalPages = Math.max(1, Number(pagination.total_pages) || 1);
+  const currentPage = Math.min(Number(pagination.page) || 1, totalPages);
+  const total = Number(pagination.total) || 0;
+
+  return (
+    <div className="space-y-4 md:space-y-6">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 md:p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Filter className="w-4 h-4 text-[#E60012]" />
+          <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">Filters</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {isAdmin && (
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Company</span>
+              <select value={companyId} onChange={onCompanyChange} className={selectClass}>
+                <option value="">All companies</option>
+                {companies.map((c) => (
+                  <option key={c.id} value={String(c.id)}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Kind</span>
+            <select
+              value={kind}
+              onChange={(e) => {
+                bumpPageReset();
+                setKind(e.target.value);
+              }}
+              className={selectClass}
+            >
+              {mergedKindOptions.map((opt) => (
+                <option key={opt.value || 'all'} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Term</span>
+            <select value={termId} onChange={onTermChange} className={selectClass}>
+              <option value="">Any term</option>
+              {terms.map((t) => (
+                <option key={t.id} value={String(t.id)}>
+                  {t.term_name || t.name || t.id}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Plan</span>
+            <select
+              value={planId}
+              onChange={onPlanChange}
+              className={selectClass}
+              disabled={!effectiveCompanyId}
+            >
+              <option value="">Any plan</option>
+              {plans.map((pl) => (
+                <option key={pl.id} value={String(pl.id)}>
+                  {pl.plan_name || pl.name || pl.id}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Activity</span>
+            <select
+              value={activityId}
+              onChange={(e) => {
+                bumpPageReset();
+                setActivityId(e.target.value);
+              }}
+              className={selectClass}
+              disabled={!planId}
+            >
+              <option value="">Any activity</option>
+              {activities.map((a) => (
+                <option key={a.id} value={String(a.id)}>
+                  {a.name || a.activity_name || a.id}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Budget type</span>
+            <select
+              value={budgetType}
+              onChange={(e) => {
+                bumpPageReset();
+                setBudgetType(e.target.value);
+              }}
+              className={selectClass}
+            >
+              {BUDGET_TYPE_OPTIONS.map((opt) => (
+                <option key={opt.value || 'any'} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Budget status</span>
+            <select
+              value={budgetStatus}
+              onChange={(e) => {
+                bumpPageReset();
+                setBudgetStatus(e.target.value);
+              }}
+              className={selectClass}
+            >
+              {BUDGET_STATUS_OPTIONS.map((opt) => (
+                <option key={opt.value || 'any'} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Meta type</span>
+            <input
+              type="text"
+              value={metaType}
+              onChange={(e) => setMetaType(e.target.value)}
+              placeholder="e.g. comment"
+              className={inputClass}
+            />
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400 flex items-center gap-1">
+              <Calendar className="w-3.5 h-3.5" />
+              Date from
+            </span>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => {
+                bumpPageReset();
+                setDateFrom(e.target.value);
+              }}
+              className={inputClass}
+            />
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400 flex items-center gap-1">
+              <Calendar className="w-3.5 h-3.5" />
+              Date to
+            </span>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => {
+                bumpPageReset();
+                setDateTo(e.target.value);
+              }}
+              className={inputClass}
+            />
+          </label>
+        </div>
+      </div>
+
+      {renderTable()}
+
+      {!isLoading && !isError && totalPages > 1 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 px-1">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {total > 0 ? (
+              <>
+                Page {currentPage} of {totalPages}
+                <span className="text-gray-400 dark:text-gray-500"> · {total} total</span>
+              </>
+            ) : null}
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              disabled={currentPage <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800"
+            >
+              Previous
+            </button>
+            <button
+              type="button"
+              disabled={currentPage >= totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

@@ -42,7 +42,8 @@ export const useActivityDrawerData = ({
   const { 
     data: budgetListData, 
     isLoading: isLoadingBudget, 
-    isError: isErrorBudget 
+    isError: isErrorBudget,
+    refetch: refetchBudgetList,
   } = useActivityBudgetList(budgetQueryParams, {
     enabled: isOpen && !!activity?.id && !!planId && !!companyId && activeTab === 'budget',
   });
@@ -55,5 +56,6 @@ export const useActivityDrawerData = ({
     budgetListData,
     isLoadingBudget,
     isErrorBudget,
+    refetchBudgetList,
   };
 };

@@ -26,7 +26,7 @@ export const OverviewTab = ({
 }) => {
   const [showAddCommentForm, setShowAddCommentForm] = useState(false);
   const [showAddEvidenceForm, setShowAddEvidenceForm] = useState(false);
-  const [isBudgetExpanded, setIsBudgetExpanded] = useState(false);
+  const [isBudgetExpanded, setIsBudgetExpanded] = useState(true);
   const [isCommentsExpanded, setIsCommentsExpanded] = useState(false);
   const [isEvidencesExpanded, setIsEvidencesExpanded] = useState(false);
   const { meta = [], budget = [] } = data || {};

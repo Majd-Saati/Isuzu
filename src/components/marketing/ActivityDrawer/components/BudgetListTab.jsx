@@ -20,6 +20,7 @@ export const BudgetListTab = ({
   onClearFilter,
   activityStartDate,
   activityEndDate,
+  onBudgetCreated,
 }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [isBudgetItemsExpanded, setIsBudgetItemsExpanded] = useState(true);
@@ -78,7 +79,10 @@ export const BudgetListTab = ({
           companyId={companyId}
           existingBudgets={budget}
           isAdmin={isAdmin}
-          onSuccess={() => setShowAddForm(false)}
+          onSuccess={() => {
+            setShowAddForm(false);
+            void onBudgetCreated?.();
+          }}
           onCancel={() => setShowAddForm(false)}
           activityStartDate={activityStartDate}
           activityEndDate={activityEndDate}

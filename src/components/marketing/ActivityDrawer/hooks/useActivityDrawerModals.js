@@ -1,6 +1,15 @@
 import { useState, useCallback, useEffect } from 'react';
 
-export const useActivityDrawerModals = ({ isOpen, activity, updateBudgetStatusMutation, deleteActivityMutation, deleteBudgetMutation, deleteMetaMutation, onClose }) => {
+export const useActivityDrawerModals = ({
+  isOpen,
+  activity,
+  updateBudgetStatusMutation,
+  deleteActivityMutation,
+  deleteBudgetMutation,
+  deleteMetaMutation,
+  onClose,
+  onBudgetUpdated,
+}) => {
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [selectedBudget, setSelectedBudget] = useState(null);
   const [showDeclineModal, setShowDeclineModal] = useState(false);
@@ -28,10 +37,11 @@ export const useActivityDrawerModals = ({ isOpen, activity, updateBudgetStatusMu
         onSuccess: () => {
           setShowAcceptModal(false);
           setSelectedBudget(null);
+          void onBudgetUpdated?.();
         },
       }
     );
-  }, [selectedBudget, updateBudgetStatusMutation]);
+  }, [selectedBudget, updateBudgetStatusMutation, onBudgetUpdated]);
 
   const handleDeclineBudget = useCallback((budget) => {
     setBudgetToDecline(budget);
@@ -50,10 +60,11 @@ export const useActivityDrawerModals = ({ isOpen, activity, updateBudgetStatusMu
         onSuccess: () => {
           setShowDeclineModal(false);
           setBudgetToDecline(null);
+          void onBudgetUpdated?.();
         },
       }
     );
-  }, [budgetToDecline, updateBudgetStatusMutation]);
+  }, [budgetToDecline, updateBudgetStatusMutation, onBudgetUpdated]);
 
   const handleCloseDeclineModal = useCallback(() => {
     if (!updateBudgetStatusMutation.isPending) {
@@ -95,9 +106,10 @@ export const useActivityDrawerModals = ({ isOpen, activity, updateBudgetStatusMu
       onSuccess: () => {
         setShowDeleteBudgetModal(false);
         setBudgetToDelete(null);
+        void onBudgetUpdated?.();
       },
     });
-  }, [budgetToDelete, deleteBudgetMutation]);
+  }, [budgetToDelete, deleteBudgetMutation, onBudgetUpdated]);
 
   const handleCloseDeleteBudgetModal = useCallback(() => {
     if (!deleteBudgetMutation.isPending) {

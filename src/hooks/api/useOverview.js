@@ -6,7 +6,6 @@ export const useOverview = () => {
     queryKey: ['overview'],
     queryFn: overviewService.getOverview,
     select: (data) => ({
-      recentOperations: data?.body?.recent_operations || [],
       dealersSummary: data?.body?.dealers_summary || [],
     }),
   });

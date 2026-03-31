@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { BarChart3, List } from 'lucide-react';
 import { isAdminUser } from '@/lib/permissions';
+import { useQueryClient } from '@tanstack/react-query';
 import { DeleteConfirmationModal } from '../../ui/DeleteConfirmationModal';
 import { formatCurrency } from './utils/formatters';
 import { TabButton } from './components/TabButton';
@@ -39,6 +40,7 @@ export const ActivityDrawer = ({
   const drawerRef = useRef(null);
   const currentUser = useSelector((state) => state.auth.user);
   const isAdmin = isAdminUser(currentUser);
+  const queryClient = useQueryClient();
 
   // Update activity mutation
   const updateActivityMutation = useUpdateActivity();
@@ -52,6 +54,7 @@ export const ActivityDrawer = ({
     budgetListData,
     isLoadingBudget,
     isErrorBudget,
+    refetchBudgetList,
   } = useActivityDrawerData({
       isOpen,
       activity,
@@ -69,6 +72,33 @@ export const ActivityDrawer = ({
     deleteBudgetMutation, 
     deleteMetaMutation 
   } = useActivityDrawerActions({ activity, planId, companyId, onClose });
+
+  const handleBudgetDataRefresh = useCallback(async () => {
+    const activityId = String(activity?.id || '');
+    const currentPlanId = String(planId || '');
+    const currentCompanyId = String(companyId || '');
+
+    await Promise.allSettled([
+      refetchActivityMeta?.(),
+      refetchBudgetList?.(),
+      queryClient.invalidateQueries({
+        queryKey: ['activityMeta', activityId, currentPlanId, currentCompanyId],
+        refetchType: 'active',
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ['activityBudgetList', activityId, currentPlanId, currentCompanyId],
+        refetchType: 'active',
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ['activities'],
+        refetchType: 'active',
+      }),
+      queryClient.refetchQueries({
+        queryKey: ['activities'],
+        type: 'active',
+      }),
+    ]);
+  }, [activity?.id, planId, companyId, refetchActivityMeta, refetchBudgetList, queryClient]);
 
   const {
     showAcceptModal,
@@ -103,6 +133,7 @@ export const ActivityDrawer = ({
     deleteBudgetMutation,
     deleteMetaMutation,
     onClose,
+    onBudgetUpdated: handleBudgetDataRefresh,
   });
 
   const { drawerWidth, isDragging, handleMouseDown } = useDrawerResize({ isOpen });
@@ -253,6 +284,7 @@ export const ActivityDrawer = ({
               data={metaData}
               isLoading={isLoadingMeta}
               isError={isErrorMeta}
+              isAdmin={isAdmin}
               onAcceptBudget={handleAcceptBudget}
               onDeclineBudget={handleDeclineBudget}
               onDeleteBudget={handleDeleteBudget}
@@ -282,6 +314,7 @@ export const ActivityDrawer = ({
               filterType={budgetFilterType}
               filterStatus={budgetFilterStatus}
               onClearFilter={handleClearBudgetFilter}
+              onBudgetCreated={handleBudgetDataRefresh}
               activityStartDate={activity?.starts_at ?? activity?.duration?.start}
               activityEndDate={activity?.ends_at ?? activity?.duration?.end}
             />
