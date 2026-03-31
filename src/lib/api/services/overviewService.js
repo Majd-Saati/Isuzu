@@ -25,9 +25,12 @@ export const overviewService = {
     const query = {};
     for (const key of RECENT_OPS_PARAM_KEYS) {
       const v = params[key];
-      if (v !== undefined && v !== null && String(v).trim() !== '') {
+      if (v === undefined || v === null) continue;
+      if (typeof v === 'number' && Number.isFinite(v)) {
         query[key] = v;
+        continue;
       }
+      if (String(v).trim() !== '') query[key] = v;
     }
     return apiClient.get('/recent_operations', { params: query });
   },

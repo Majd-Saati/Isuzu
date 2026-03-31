@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Filter, Calendar, ChevronDown, RotateCcw } from 'lucide-react';
 import { OverviewTable } from '@/components/dashboard/OverviewTable';
@@ -172,35 +172,62 @@ export const OverviewRecentlySection = () => {
 
   const queryEnabled = isAdmin ? true : Boolean(effectiveCompanyId);
 
-  const { data, isLoading, isError } = useRecentOperations(apiParams, {
+  const { data, isError, isPending } = useRecentOperations(apiParams, {
     enabled: queryEnabled,
   });
 
   const recentItems = data?.recentOperations || [];
-  const pagination = data?.pagination || {};
-  const totalPages = Math.max(1, Number(pagination.total_pages) || 1);
-  const total = Number(pagination.total) || 0;
+  const pagination = data?.pagination;
+  const totalRaw =
+    pagination != null && pagination.total != null && pagination.total !== ''
+      ? Number(pagination.total)
+      : 0;
+  const total = Number.isFinite(totalRaw) ? totalRaw : 0;
+  const totalPagesNum =
+    pagination != null &&
+    pagination.total_pages != null &&
+    pagination.total_pages !== '' &&
+    Number.isFinite(Number(pagination.total_pages))
+      ? Math.max(1, Math.floor(Number(pagination.total_pages)))
+      : null;
+  const totalPages = totalPagesNum ?? 1;
   const currentPage = Math.min(page, totalPages);
-  const perPageFromApi = Number(pagination.per_page) || perPage;
+  const perPageFromApi =
+    pagination != null && pagination.per_page != null && pagination.per_page !== ''
+      ? Number(pagination.per_page)
+      : perPage;
+
+  const pageInputFocusedRef = useRef(false);
 
   useEffect(() => {
+    if (pageInputFocusedRef.current) return;
     setPageInput(String(page));
   }, [page]);
 
   useEffect(() => {
-    if (page > totalPages) setPage(totalPages);
-  }, [totalPages, page]);
+    if (totalPagesNum == null) return;
+    if (page > totalPagesNum) setPage(totalPagesNum);
+  }, [totalPagesNum, page]);
 
-  const applyPageInput = () => {
-    const n = parseInt(pageInput, 10);
+  const applyPageInput = useCallback(() => {
+    if (totalPagesNum == null) {
+      setPageInput(String(page));
+      return;
+    }
+    const raw = String(pageInput).trim();
+    if (raw === '') {
+      setPageInput(String(page));
+      return;
+    }
+    const n = parseInt(raw, 10);
     if (Number.isNaN(n)) {
       setPageInput(String(page));
       return;
     }
-    const clamped = Math.min(Math.max(1, n), totalPages);
+    const clamped = Math.min(Math.max(1, n), totalPagesNum);
     setPage(clamped);
     setPageInput(String(clamped));
-  };
+  }, [totalPagesNum, page, pageInput]);
 
   const onPerPageChange = (e) => {
     const v = Number(e.target.value);
@@ -232,7 +259,7 @@ export const OverviewRecentlySection = () => {
   };
 
   const renderTable = () => {
-    if (isLoading) {
+    if (queryEnabled && isPending && !isError) {
       return <OverviewTableSkeleton />;
     }
 
@@ -464,7 +491,7 @@ export const OverviewRecentlySection = () => {
 
       {renderTable()}
 
-      {!isLoading && !isError && total > 0 && (
+      {!isPending && !isError && total > 0 && (
         <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-between gap-4 px-1 py-1">
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
             <label className="flex items-center gap-2">
@@ -493,22 +520,33 @@ export const OverviewRecentlySection = () => {
             <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <span className="whitespace-nowrap">Page</span>
               <input
-                type="number"
-                min={1}
-                max={totalPages}
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
                 value={pageInput}
-                onChange={(e) => setPageInput(e.target.value)}
-                onBlur={applyPageInput}
+                onFocus={() => {
+                  pageInputFocusedRef.current = true;
+                }}
+                onChange={(e) => {
+                  const next = e.target.value.replace(/\D/g, '');
+                  setPageInput(next);
+                }}
+                onBlur={() => {
+                  pageInputFocusedRef.current = false;
+                  applyPageInput();
+                }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
-                    applyPageInput();
+                    e.currentTarget.blur();
                   }
                 }}
                 className={pageInputClass}
                 aria-label="Go to page"
               />
-              <span className="text-gray-500 dark:text-gray-500 whitespace-nowrap">/ {totalPages}</span>
+              <span className="text-gray-500 dark:text-gray-500 whitespace-nowrap">
+                / {totalPagesNum != null ? totalPagesNum : '—'}
+              </span>
             </label>
             <button
               type="button"
