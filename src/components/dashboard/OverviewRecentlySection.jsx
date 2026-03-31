@@ -52,12 +52,19 @@ const BUDGET_STATUS_OPTIONS = [
   { value: 'denied', label: 'Denied' },
 ];
 
+const PER_PAGE_OPTIONS = [10, 20, 50, 100];
+
+const pageInputClass =
+  'w-14 px-2 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-center text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none';
+
 export const OverviewRecentlySection = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = isAdminUser(user);
   const { currency } = useCurrency();
 
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(20);
+  const [pageInput, setPageInput] = useState('1');
   const [companyId, setCompanyId] = useState(isAdmin ? '' : String(user?.id || ''));
   const [kind, setKind] = useState('');
   const [termId, setTermId] = useState('');
@@ -106,7 +113,9 @@ export const OverviewRecentlySection = () => {
       metaType ||
       dateFrom ||
       dateTo ||
-      (isAdmin && companyId)
+      (isAdmin && companyId) ||
+      perPage !== 20 ||
+      page !== 1
   );
 
   const { data: companiesData } = useCompanies({ page: 1, perPage: 100 }, { enabled: isAdmin });
@@ -133,7 +142,7 @@ export const OverviewRecentlySection = () => {
   const apiParams = useMemo(() => {
     const p = {
       page,
-      per_page: 20,
+      per_page: perPage,
     };
     if (effectiveCompanyId) p.company_id = effectiveCompanyId;
     if (kind) p.kind = kind;
@@ -148,6 +157,7 @@ export const OverviewRecentlySection = () => {
     return p;
   }, [
     page,
+    perPage,
     effectiveCompanyId,
     kind,
     termId,
@@ -168,6 +178,37 @@ export const OverviewRecentlySection = () => {
 
   const recentItems = data?.recentOperations || [];
   const pagination = data?.pagination || {};
+  const totalPages = Math.max(1, Number(pagination.total_pages) || 1);
+  const total = Number(pagination.total) || 0;
+  const currentPage = Math.min(page, totalPages);
+  const perPageFromApi = Number(pagination.per_page) || perPage;
+
+  useEffect(() => {
+    setPageInput(String(page));
+  }, [page]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [totalPages, page]);
+
+  const applyPageInput = () => {
+    const n = parseInt(pageInput, 10);
+    if (Number.isNaN(n)) {
+      setPageInput(String(page));
+      return;
+    }
+    const clamped = Math.min(Math.max(1, n), totalPages);
+    setPage(clamped);
+    setPageInput(String(clamped));
+  };
+
+  const onPerPageChange = (e) => {
+    const v = Number(e.target.value);
+    if (!Number.isFinite(v) || v < 1) return;
+    setPerPage(v);
+    setPage(1);
+    setPageInput('1');
+  };
 
   const onTermChange = (e) => {
     bumpPageReset();
@@ -217,9 +258,8 @@ export const OverviewRecentlySection = () => {
     return <OverviewTable items={mappedItems} isAdmin={isAdmin} appCurrencyCode={currency} />;
   };
 
-  const totalPages = Math.max(1, Number(pagination.total_pages) || 1);
-  const currentPage = Math.min(Number(pagination.page) || 1, totalPages);
-  const total = Number(pagination.total) || 0;
+  const rangeStart = total === 0 ? 0 : (currentPage - 1) * perPageFromApi + 1;
+  const rangeEnd = total === 0 ? 0 : Math.min(currentPage * perPageFromApi, total);
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -424,30 +464,57 @@ export const OverviewRecentlySection = () => {
 
       {renderTable()}
 
-      {!isLoading && !isError && totalPages > 1 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 px-1">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            {total > 0 ? (
-              <>
-                Page {currentPage} of {totalPages}
-                <span className="text-gray-400 dark:text-gray-500"> · {total} total</span>
-              </>
-            ) : null}
-          </p>
-          <div className="flex gap-2">
+      {!isLoading && !isError && total > 0 && (
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-between gap-4 px-1 py-1">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+            <label className="flex items-center gap-2">
+              <span className="whitespace-nowrap">Rows per page</span>
+              <select value={perPage} onChange={onPerPageChange} className={`${selectClass} w-auto min-w-[4.5rem]`}>
+                {PER_PAGE_OPTIONS.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <span className="text-gray-500 dark:text-gray-500">
+              {rangeStart}–{rangeEnd} of {total}
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <button
               type="button"
               disabled={currentPage <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800"
+              className="px-3 sm:px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800"
             >
               Previous
             </button>
+            <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <span className="whitespace-nowrap">Page</span>
+              <input
+                type="number"
+                min={1}
+                max={totalPages}
+                value={pageInput}
+                onChange={(e) => setPageInput(e.target.value)}
+                onBlur={applyPageInput}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    applyPageInput();
+                  }
+                }}
+                className={pageInputClass}
+                aria-label="Go to page"
+              />
+              <span className="text-gray-500 dark:text-gray-500 whitespace-nowrap">/ {totalPages}</span>
+            </label>
             <button
               type="button"
               disabled={currentPage >= totalPages}
-              onClick={() => setPage((p) => p + 1)}
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              className="px-3 sm:px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-800"
             >
               Next
             </button>
