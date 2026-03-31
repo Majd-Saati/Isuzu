@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Filter, Calendar } from 'lucide-react';
+import { Filter, Calendar, ChevronDown, RotateCcw } from 'lucide-react';
 import { OverviewTable } from '@/components/dashboard/OverviewTable';
 import { OverviewTableSkeleton } from '@/components/dashboard/OverviewTableSkeleton';
 import { OverviewTableEmpty } from '@/components/dashboard/OverviewTableEmpty';
@@ -33,8 +33,16 @@ const KIND_OPTIONS = [
 
 const BUDGET_TYPE_OPTIONS = [
   { value: '', label: 'Any' },
-  { value: 'actual cost', label: 'Actual cost' },
   { value: 'estimated cost', label: 'Estimated cost' },
+  { value: 'actual cost', label: 'Actual cost' },
+  { value: 'support cost', label: 'Support cost' },
+  { value: 'invoice', label: 'Invoice' },
+];
+
+const META_TYPE_OPTIONS = [
+  { value: '', label: 'Any' },
+  { value: 'comment', label: 'Comment' },
+  { value: 'evidence', label: 'Evidence' },
 ];
 
 const BUDGET_STATUS_OPTIONS = [
@@ -60,6 +68,7 @@ export const OverviewRecentlySection = () => {
   const [metaType, setMetaType] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     if (!isAdmin && user?.id) setCompanyId(String(user.id));
@@ -69,21 +78,49 @@ export const OverviewRecentlySection = () => {
 
   const bumpPageReset = () => setPage(1);
 
+  const resetAllFilters = () => {
+    setPage(1);
+    setKind('');
+    setTermId('');
+    setPlanId('');
+    setActivityId('');
+    setBudgetType('');
+    setBudgetStatus('');
+    setMetaType('');
+    setDateFrom('');
+    setDateTo('');
+    if (isAdmin) {
+      setCompanyId('');
+    } else if (user?.id) {
+      setCompanyId(String(user.id));
+    }
+  };
+
+  const hasActiveFilters = Boolean(
+    kind ||
+      termId ||
+      planId ||
+      activityId ||
+      budgetType ||
+      budgetStatus ||
+      metaType ||
+      dateFrom ||
+      dateTo ||
+      (isAdmin && companyId)
+  );
+
   const { data: companiesData } = useCompanies({ page: 1, perPage: 100 }, { enabled: isAdmin });
   const companies = companiesData?.companies ?? [];
 
   const { data: termsData } = useTerms({ page: 1, perPage: 100 });
   const terms = termsData?.terms ?? [];
 
-  const { data: plansData } = usePlans(
-    {
-      page: 1,
-      perPage: 100,
-      companyId: effectiveCompanyId || undefined,
-      termId: termId || undefined,
-    },
-    { enabled: Boolean(effectiveCompanyId) }
-  );
+  const { data: plansData } = usePlans({
+    page: 1,
+    perPage: 100,
+    companyId: effectiveCompanyId || undefined,
+    termId: termId || undefined,
+  });
   const plans = plansData?.plans ?? [];
 
   const { data: activitiesData } = useActivities({
@@ -131,18 +168,6 @@ export const OverviewRecentlySection = () => {
 
   const recentItems = data?.recentOperations || [];
   const pagination = data?.pagination || {};
-  const kindOptionsFromApi = data?.filters?.kind;
-
-  const mergedKindOptions = useMemo(() => {
-    if (!Array.isArray(kindOptionsFromApi) || !kindOptionsFromApi.length) {
-      return KIND_OPTIONS;
-    }
-    const fromApi = kindOptionsFromApi.map((k) => ({
-      value: k,
-      label: k.replace(/_/g, ' '),
-    }));
-    return [{ value: '', label: 'All kinds' }, ...fromApi];
-  }, [kindOptionsFromApi]);
 
   const onTermChange = (e) => {
     bumpPageReset();
@@ -199,12 +224,39 @@ export const OverviewRecentlySection = () => {
   return (
     <div className="space-y-4 md:space-y-6">
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 md:p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Filter className="w-4 h-4 text-[#E60012]" />
-          <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">Filters</span>
+        <div className="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => setFiltersOpen((o) => !o)}
+            className="flex flex-1 items-center gap-2 min-w-0 text-left rounded-lg py-1 -my-1 px-1 -mx-1 hover:bg-gray-50 dark:hover:bg-gray-800/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E60012]/50"
+            aria-expanded={filtersOpen}
+          >
+            <ChevronDown
+              className={`w-4 h-4 shrink-0 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${
+                filtersOpen ? 'rotate-180' : ''
+              }`}
+              aria-hidden
+            />
+            <Filter className="w-4 h-4 shrink-0 text-[#E60012]" aria-hidden />
+            <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">Filters</span>
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              resetAllFilters();
+            }}
+            disabled={!hasActiveFilters}
+            title="Reset all filters"
+            aria-label="Reset all filters"
+            className="shrink-0 p-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-[#E60012] dark:hover:text-[#E60012] disabled:opacity-35 disabled:pointer-events-none disabled:hover:bg-transparent transition-colors"
+          >
+            <RotateCcw className="w-4 h-4" strokeWidth={2} />
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {filtersOpen ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
           {isAdmin && (
             <label className="flex flex-col gap-1.5">
               <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Company</span>
@@ -229,7 +281,7 @@ export const OverviewRecentlySection = () => {
               }}
               className={selectClass}
             >
-              {mergedKindOptions.map((opt) => (
+              {KIND_OPTIONS.map((opt) => (
                 <option key={opt.value || 'all'} value={opt.value}>
                   {opt.label}
                 </option>
@@ -251,16 +303,11 @@ export const OverviewRecentlySection = () => {
 
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Plan</span>
-            <select
-              value={planId}
-              onChange={onPlanChange}
-              className={selectClass}
-              disabled={!effectiveCompanyId}
-            >
+            <select value={planId} onChange={onPlanChange} className={selectClass}>
               <option value="">Any plan</option>
               {plans.map((pl) => (
                 <option key={pl.id} value={String(pl.id)}>
-                  {pl.plan_name || pl.name || pl.id}
+                  {pl.name || pl.plan_name || pl.id}
                 </option>
               ))}
             </select>
@@ -324,13 +371,20 @@ export const OverviewRecentlySection = () => {
 
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Meta type</span>
-            <input
-              type="text"
+            <select
               value={metaType}
-              onChange={(e) => setMetaType(e.target.value)}
-              placeholder="e.g. comment"
-              className={inputClass}
-            />
+              onChange={(e) => {
+                bumpPageReset();
+                setMetaType(e.target.value);
+              }}
+              className={selectClass}
+            >
+              {META_TYPE_OPTIONS.map((opt) => (
+                <option key={opt.value || 'any'} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label className="flex flex-col gap-1.5">
@@ -365,6 +419,7 @@ export const OverviewRecentlySection = () => {
             />
           </label>
         </div>
+        ) : null}
       </div>
 
       {renderTable()}
