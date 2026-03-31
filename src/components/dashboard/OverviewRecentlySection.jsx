@@ -209,25 +209,20 @@ export const OverviewRecentlySection = () => {
     if (page > totalPagesNum) setPage(totalPagesNum);
   }, [totalPagesNum, page]);
 
-  const applyPageInput = useCallback(() => {
-    if (totalPagesNum == null) {
-      setPageInput(String(page));
-      return;
-    }
-    const raw = String(pageInput).trim();
-    if (raw === '') {
-      setPageInput(String(page));
-      return;
-    }
-    const n = parseInt(raw, 10);
-    if (Number.isNaN(n)) {
-      setPageInput(String(page));
-      return;
-    }
-    const clamped = Math.min(Math.max(1, n), totalPagesNum);
-    setPage(clamped);
-    setPageInput(String(clamped));
-  }, [totalPagesNum, page, pageInput]);
+  /** Parse digits and update `page` immediately so the request runs without waiting for blur. */
+  const syncPageFromDigitString = useCallback(
+    (digitString) => {
+      if (totalPagesNum == null) return;
+      const raw = String(digitString).trim();
+      if (raw === '') return;
+      const n = parseInt(raw, 10);
+      if (Number.isNaN(n)) return;
+      const clamped = Math.min(Math.max(1, n), totalPagesNum);
+      setPage(clamped);
+      setPageInput(String(clamped));
+    },
+    [totalPagesNum]
+  );
 
   const onPerPageChange = (e) => {
     const v = Number(e.target.value);
@@ -530,14 +525,21 @@ export const OverviewRecentlySection = () => {
                 onChange={(e) => {
                   const next = e.target.value.replace(/\D/g, '');
                   setPageInput(next);
+                  syncPageFromDigitString(next);
                 }}
-                onBlur={() => {
+                onBlur={(e) => {
                   pageInputFocusedRef.current = false;
-                  applyPageInput();
+                  const val = e.target.value.replace(/\D/g, '');
+                  if (val.trim() === '') {
+                    setPageInput(String(page));
+                    return;
+                  }
+                  syncPageFromDigitString(val);
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
+                    syncPageFromDigitString(e.currentTarget.value.replace(/\D/g, ''));
                     e.currentTarget.blur();
                   }
                 }}
