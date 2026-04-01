@@ -1,9 +1,17 @@
 import * as Yup from 'yup';
 
+/** Budget types that require an attached media file */
+export const BUDGET_TYPES_REQUIRING_MEDIA = ['estimated cost', 'actual cost'];
+
+export function isMediaRequiredForBudgetType(budgetType) {
+  return BUDGET_TYPES_REQUIRING_MEDIA.includes(budgetType);
+}
+
 /**
  * Build Yup schema for Add Budget form.
  * When termMonths exist and budget value > 0, monthly breakdown is required:
  * each month must have a value and the sum must equal the budget value.
+ * Pass `context.budgetType` at validate time; media is required only for estimated/actual cost.
  * @param {{ key: string, label: string }[]} termMonths
  * @returns {Yup.ObjectSchema}
  */
@@ -25,8 +33,24 @@ export function getAddBudgetSchema(termMonths) {
       .test('positive', 'Value must be greater than 0', (v) => parseFloat(v) > 0),
     description: Yup.string().required('Description is required'),
     media: Yup.mixed()
-      .required('Media is required')
-      .test('is-file', 'Please attach a file', (value) => value instanceof File),
+      .nullable()
+      .test('media-by-type', function (value) {
+        const budgetType = this.options.context?.budgetType;
+        const needsMedia = isMediaRequiredForBudgetType(budgetType);
+        if (needsMedia) {
+          if (value == null) {
+            return this.createError({ message: 'Media is required' });
+          }
+          if (!(value instanceof File)) {
+            return this.createError({ message: 'Please attach a file' });
+          }
+          return true;
+        }
+        if (value != null && !(value instanceof File)) {
+          return this.createError({ message: 'Please attach a valid file' });
+        }
+        return true;
+      }),
     monthsBreakdown:
       Object.keys(breakdownShape).length > 0
         ? Yup.object()

@@ -117,14 +117,14 @@ export const ActivityTableRow = ({
           )}
         </div>
       </td>
-      <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-44 relative">
-        <div className="relative">
+      <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 relative align-middle whitespace-nowrap w-max">
+        <div className="relative inline-block">
           <button
             ref={statusButtonRef}
             type="button"
             disabled={isAdmin}
             onClick={handleStatusButtonClick}
-            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 text-sm focus:outline-none transition-all ${
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 text-sm focus:outline-none transition-all w-max ${
               isAdmin
                 ? 'opacity-60 cursor-not-allowed'
                 : 'hover:border-gray-400 dark:hover:border-gray-600 focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 focus:border-gray-400 dark:focus:border-gray-600 cursor-pointer'

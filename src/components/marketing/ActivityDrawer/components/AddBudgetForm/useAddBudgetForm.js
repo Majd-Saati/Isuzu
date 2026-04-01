@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useCreateActivityBudget } from '@/hooks/api/useActivities';
 import { getAvailableBudgetTypes, canAddBudgetType } from '../../utils/budgetValidation';
 import { getTermMonths } from './utils';
-import { getAddBudgetSchema } from './addBudgetSchema';
+import { getAddBudgetSchema, isMediaRequiredForBudgetType } from './addBudgetSchema';
 import { formatMoneyFromContext } from '@/lib/dashboardMoney';
 
 export function useAddBudgetForm({
@@ -155,7 +155,10 @@ export function useAddBudgetForm({
           media,
           monthsBreakdown: needsBreakdown ? monthsBreakdown : {},
         },
-        { abortEarly: false, context: { budgetValue: totalValue } }
+        {
+          abortEarly: false,
+          context: { budgetValue: totalValue, budgetType: type },
+        }
       );
     } catch (err) {
       if (err.name === 'ValidationError' && err.inner) {
@@ -222,6 +225,7 @@ export function useAddBudgetForm({
           setMonthsBreakdown({});
           setShowMonthsBreakdown(false);
           setBreakdownErrors({});
+          setMediaError('');
           onSuccess?.();
         },
       }
@@ -264,6 +268,7 @@ export function useAddBudgetForm({
     defaultType,
     hasTermMonths: termMonths.length > 0,
     selectedType: typeOptions.find((t) => t.value === type),
+    isMediaRequired: isMediaRequiredForBudgetType(type),
     // Handlers
     handleDistributeEvenly,
     handleMonthValueChange,
@@ -273,6 +278,7 @@ export function useAddBudgetForm({
       setType(newType);
       setShowTypeDropdown(false);
       resetTypeDropdown();
+      setMediaError('');
     },
     createBudgetMutation,
     onCancel,

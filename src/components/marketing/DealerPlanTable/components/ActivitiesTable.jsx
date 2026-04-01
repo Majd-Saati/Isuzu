@@ -25,7 +25,7 @@ export const ActivitiesTable = ({
 }) => {
   return (
     <div className="hidden xl:block overflow-x-auto custom-scrollbar border-b-2 border-gray-200 dark:border-gray-700">
-      <table className="w-full table-fixed min-w-max">
+      <table className="w-full table-auto min-w-max">
         <thead className="bg-gray-50/70 dark:bg-gray-800/70 sticky top-0 z-10">
           <tr>
             <th className="w-12 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700">
@@ -49,7 +49,7 @@ export const ActivitiesTable = ({
             <th className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-36">
               Team Member
             </th>
-            <th className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-44">
+            <th className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 whitespace-nowrap w-max min-w-[7rem]">
               Status
             </th>
             {showBudgetColumns && (

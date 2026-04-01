@@ -48,6 +48,7 @@ export function AddBudgetForm({
     typeOptions,
     hasTermMonths,
     selectedType,
+    isMediaRequired,
     handleDistributeEvenly,
     handleMonthValueChange,
     handleSubmit,
@@ -67,7 +68,10 @@ export function AddBudgetForm({
   });
 
   const isSubmitDisabled =
-    createBudgetMutation.isPending || !value || !description || !media;
+    createBudgetMutation.isPending ||
+    !value ||
+    !description ||
+    (isMediaRequired && !media);
 
   return (
     <form onSubmit={handleSubmit} className={FORM_CLASS}>
@@ -128,7 +132,9 @@ export function AddBudgetForm({
       </div>
 
       <div>
-        <label className={LABEL_CLASS}>Media *</label>
+        <label className={LABEL_CLASS}>
+          Media{isMediaRequired ? ' *' : ' (optional)'}
+        </label>
         <div className="relative">
           <input
             type="file"
