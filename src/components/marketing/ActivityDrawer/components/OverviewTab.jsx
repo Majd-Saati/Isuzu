@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { DollarSign, MessageSquare, FileText, Plus, ChevronDown, Loader2, AlertCircle, X } from 'lucide-react';
 import { formatCurrency } from '../utils/formatters';
 import { BudgetCard } from './BudgetCard';
 import { CommentCard } from './CommentCard';
 import { AddCommentForm } from './AddCommentForm';
 import { AddEvidenceForm } from './AddEvidenceForm';
+import { getMonthsBreakdownFromRecord } from '../utils/budgetBreakdown';
 
 export const OverviewTab = ({
   data,
+  budgetListData,
   isLoading,
   isError,
   onAcceptBudget,
@@ -45,6 +47,28 @@ export const OverviewTab = ({
         return typeMatch && statusMatch;
       })
     : budget;
+
+  const budgetDetailById = useMemo(() => {
+    const map = new Map();
+    for (const b of budgetListData?.budget ?? []) {
+      const id = b?.id ?? b?.budget_id;
+      if (id != null) map.set(String(id), b);
+    }
+    return map;
+  }, [budgetListData?.budget]);
+
+  /** Same rows as Budget List tab: merge `months_breakdown` from budget list when meta payload omits it */
+  const displayBudgetEntries = useMemo(() => {
+    return filteredBudget.map((item) => {
+      const fromMeta = getMonthsBreakdownFromRecord(item);
+      if (fromMeta && Object.keys(fromMeta).length > 0) return item;
+      const id = String(item.id ?? item.budget_id ?? '');
+      const detail = budgetDetailById.get(id);
+      const fromList = getMonthsBreakdownFromRecord(detail);
+      if (!fromList || Object.keys(fromList).length === 0) return item;
+      return { ...item, months_breakdown: fromList };
+    });
+  }, [filteredBudget, budgetDetailById]);
 
   // Separate costs by type
   const estimatedCosts = filteredBudget.filter(item => item.type === 'estimated cost');
@@ -181,7 +205,7 @@ export const OverviewTab = ({
           </button>
           {isBudgetExpanded && (
             <div className="space-y-3 animate-accordion-down">
-              {filteredBudget.map((item) => (
+              {displayBudgetEntries.map((item) => (
                 <BudgetCard key={item.id} item={item} onAccept={onAcceptBudget} onDecline={onDeclineBudget} onDelete={onDeleteBudget} />
               ))}
             </div>

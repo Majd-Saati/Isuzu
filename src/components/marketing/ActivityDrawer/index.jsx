@@ -60,7 +60,6 @@ export const ActivityDrawer = ({
       activity,
       planId,
       companyId,
-      activeTab,
       budgetFilterType,
       budgetFilterStatus,
       metaType,
@@ -282,6 +281,7 @@ export const ActivityDrawer = ({
           {activeTab === 'overview' ? (
             <OverviewTab
               data={metaData}
+              budgetListData={budgetListData}
               isLoading={isLoadingMeta}
               isError={isErrorMeta}
               isAdmin={isAdmin}

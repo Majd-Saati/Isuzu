@@ -127,7 +127,7 @@ export const useActivityMeta = (params = {}, options = {}) => {
 };
 
 export const useActivityBudgetList = (params = {}, options = {}) => {
-  const { activityId, planId, companyId, type, status } = params;
+  const { activityId, planId, companyId, type, status, page, perPage } = params;
   return useQuery({
     queryKey: [
       'activityBudgetList',
@@ -136,6 +136,8 @@ export const useActivityBudgetList = (params = {}, options = {}) => {
       String(companyId || ''),
       type || '',
       status || '',
+      page ?? 1,
+      perPage ?? 20,
     ],
     queryFn: () => activitiesService.getActivityBudgetList(params),
     select: (data) => ({

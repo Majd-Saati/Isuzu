@@ -6,19 +6,23 @@ export const useActivityDrawerData = ({
   activity,
   planId,
   companyId,
-  activeTab,
   budgetFilterType,
   budgetFilterStatus,
   metaType,
 }) => {
   // Memoize query params for budget list
-  const budgetQueryParams = useMemo(() => ({
-    activityId: activity?.id,
-    planId: planId,
-    companyId: companyId,
-    type: budgetFilterType,
-    status: budgetFilterStatus,
-  }), [activity?.id, planId, companyId, budgetFilterType, budgetFilterStatus]);
+  const budgetQueryParams = useMemo(
+    () => ({
+      activityId: activity?.id,
+      planId: planId,
+      companyId: companyId,
+      type: budgetFilterType,
+      status: budgetFilterStatus,
+      page: 1,
+      perPage: 100,
+    }),
+    [activity?.id, planId, companyId, budgetFilterType, budgetFilterStatus]
+  );
 
   // Memoize query params for meta (comments/evidences)
   const metaQueryParams = useMemo(() => ({
@@ -38,14 +42,14 @@ export const useActivityDrawerData = ({
     enabled: isOpen && !!activity?.id && !!planId && !!companyId,
   });
 
-  // Fetch activity budget list - only when budget tab is active
+  // Budget list (includes months_breakdown) — fetch whenever drawer is open for Overview merge + Budget tab
   const { 
     data: budgetListData, 
     isLoading: isLoadingBudget, 
     isError: isErrorBudget,
     refetch: refetchBudgetList,
   } = useActivityBudgetList(budgetQueryParams, {
-    enabled: isOpen && !!activity?.id && !!planId && !!companyId && activeTab === 'budget',
+    enabled: isOpen && !!activity?.id && !!planId && !!companyId,
   });
 
   return {

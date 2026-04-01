@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { DollarSign, Clock, User, FileText, Check, XCircle, Trash2, Calendar } from 'lucide-react';
 import { StatusBadge } from './StatusBadge';
 import { formatCurrency, formatDate, formatMonthLabel } from '../utils/formatters';
+import { getMonthsBreakdownFromRecord } from '../utils/budgetBreakdown';
 import { isAdminUser } from '@/lib/permissions';
 
 export const BudgetCard = ({ item, showCreator = true, onAccept, onDecline, onDelete }) => {
@@ -21,7 +22,8 @@ export const BudgetCard = ({ item, showCreator = true, onAccept, onDecline, onDe
   };
 
   const styles = getStyles();
-  
+  const monthsBreakdown = getMonthsBreakdownFromRecord(item);
+
   return (
     <div className={`p-4 rounded-xl border-2 ${styles.bg}`}>
       <div className="flex items-start justify-between mb-3">
@@ -75,14 +77,14 @@ export const BudgetCard = ({ item, showCreator = true, onAccept, onDecline, onDe
         </div>
       )}
 
-      {item.months_breakdown && Object.keys(item.months_breakdown).length > 0 && (
+      {monthsBreakdown && Object.keys(monthsBreakdown).length > 0 && (
         <div className="mb-3 p-2 bg-white/60 dark:bg-gray-800/60 rounded-lg">
           <div className="flex items-center gap-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
             <Calendar className="w-3.5 h-3.5" />
             Monthly breakdown
           </div>
           <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
-            {Object.entries(item.months_breakdown)
+            {Object.entries(monthsBreakdown)
               .sort(([a], [b]) => a.localeCompare(b))
               .map(([monthKey, amount]) => (
                 <div
