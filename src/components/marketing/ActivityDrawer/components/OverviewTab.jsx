@@ -6,6 +6,12 @@ import { CommentCard } from './CommentCard';
 import { AddCommentForm } from './AddCommentForm';
 import { AddEvidenceForm } from './AddEvidenceForm';
 import { getMonthsBreakdownFromRecord } from '../utils/budgetBreakdown';
+import { parseMediaPaths } from '../utils/mediaUrls';
+
+function hasParsedMedia(record) {
+  if (!record) return false;
+  return parseMediaPaths(record.media ?? record.Media).length > 0;
+}
 
 export const OverviewTab = ({
   data,
@@ -57,16 +63,27 @@ export const OverviewTab = ({
     return map;
   }, [budgetListData?.budget]);
 
-  /** Same rows as Budget List tab: merge `months_breakdown` from budget list when meta payload omits it */
+  /** Same rows as Budget List tab: merge `months_breakdown` and `media` from budget list when meta omits them */
   const displayBudgetEntries = useMemo(() => {
     return filteredBudget.map((item) => {
+      let next = item;
       const fromMeta = getMonthsBreakdownFromRecord(item);
-      if (fromMeta && Object.keys(fromMeta).length > 0) return item;
-      const id = String(item.id ?? item.budget_id ?? '');
-      const detail = budgetDetailById.get(id);
-      const fromList = getMonthsBreakdownFromRecord(detail);
-      if (!fromList || Object.keys(fromList).length === 0) return item;
-      return { ...item, months_breakdown: fromList };
+      if (!fromMeta || Object.keys(fromMeta).length === 0) {
+        const id = String(item.id ?? item.budget_id ?? '');
+        const detail = budgetDetailById.get(id);
+        const fromList = getMonthsBreakdownFromRecord(detail);
+        if (fromList && Object.keys(fromList).length > 0) {
+          next = { ...next, months_breakdown: fromList };
+        }
+      }
+      if (!hasParsedMedia(next)) {
+        const id = String(item.id ?? item.budget_id ?? '');
+        const detail = budgetDetailById.get(id);
+        if (detail && hasParsedMedia(detail)) {
+          next = { ...next, media: detail.media ?? detail.Media };
+        }
+      }
+      return next;
     });
   }, [filteredBudget, budgetDetailById]);
 
