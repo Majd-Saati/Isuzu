@@ -24,6 +24,9 @@ export function getAddBudgetSchema(termMonths) {
       .required('Value is required')
       .test('positive', 'Value must be greater than 0', (v) => parseFloat(v) > 0),
     description: Yup.string().required('Description is required'),
+    media: Yup.mixed()
+      .required('Media is required')
+      .test('is-file', 'Please attach a file', (value) => value instanceof File),
     monthsBreakdown:
       Object.keys(breakdownShape).length > 0
         ? Yup.object()

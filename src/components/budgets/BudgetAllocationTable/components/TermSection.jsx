@@ -4,7 +4,13 @@ import { BudgetAllocationTableHeader } from './TableHeader';
 import { AllocationRow } from './AllocationRow';
 import { formatDate } from '../utils';
 
-export const TermSection = ({ term, onDeleteAllocation, onAddAllocation, showDeleteAllocation = true }) => {
+export const TermSection = ({
+  term,
+  onDeleteAllocation,
+  onEditAllocation,
+  onAddAllocation,
+  showDeleteAllocation = true,
+}) => {
   const allocations = term.allocations ?? [];
   const hasAllocations = allocations.length > 0;
 
@@ -48,6 +54,7 @@ export const TermSection = ({ term, onDeleteAllocation, onAddAllocation, showDel
                   key={allocation.id}
                   allocation={allocation}
                   onDelete={onDeleteAllocation}
+                  onEdit={onEditAllocation}
                   showDelete={showDeleteAllocation}
                 />
               ))}

@@ -22,6 +22,7 @@ export function useAddBudgetForm({
   const [media, setMedia] = useState(null);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [validationError, setValidationError] = useState('');
+  const [mediaError, setMediaError] = useState('');
   const [monthsBreakdown, setMonthsBreakdown] = useState({});
   const [showMonthsBreakdown, setShowMonthsBreakdown] = useState(false);
   const [breakdownErrors, setBreakdownErrors] = useState({});
@@ -130,6 +131,7 @@ export function useAddBudgetForm({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMediaError('');
 
     const validation = canAddBudgetType(type, existingBudgets, { isAdmin });
     if (!validation.canAdd) {
@@ -150,6 +152,7 @@ export function useAddBudgetForm({
         {
           value,
           description,
+          media,
           monthsBreakdown: needsBreakdown ? monthsBreakdown : {},
         },
         { abortEarly: false, context: { budgetValue: totalValue } }
@@ -167,6 +170,8 @@ export function useAddBudgetForm({
             });
           }
         });
+        const mediaErr = err.inner.find((e) => e.path === 'media');
+        setMediaError(mediaErr ? mediaErr.message : '');
         const topError = err.inner.find(
           (e) => e.path === 'value' || e.path === 'description'
         );
@@ -174,12 +179,14 @@ export function useAddBudgetForm({
         setBreakdownErrors(byPath);
       } else {
         setValidationError(err.message ?? 'Validation failed');
+        setMediaError('');
         setBreakdownErrors({});
       }
       return;
     }
 
     setValidationError('');
+    setMediaError('');
     setBreakdownErrors({});
 
     const hasBreakdownValues = Object.values(monthsBreakdown).some(
@@ -223,7 +230,10 @@ export function useAddBudgetForm({
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
-    if (file) setMedia(file);
+    if (file) {
+      setMedia(file);
+      setMediaError('');
+    }
   };
 
   const resetTypeDropdown = () => setValidationError('');
@@ -241,6 +251,7 @@ export function useAddBudgetForm({
     showTypeDropdown,
     setShowTypeDropdown,
     validationError,
+    mediaError,
     monthsBreakdown,
     showMonthsBreakdown,
     setShowMonthsBreakdown,

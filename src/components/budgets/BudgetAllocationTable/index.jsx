@@ -7,7 +7,12 @@ import { BudgetAllocationEmptyState } from './components/EmptyState';
 import { BudgetAllocationErrorState } from './components/ErrorState';
 import { BudgetAllocationTableSkeleton } from './BudgetAllocationTableSkeleton';
 import { SetBudgetAllocationModal } from '@/components/budgets/SetBudgetAllocationModal';
-import { useSetBudgetAllocation, useDeleteBudgetAllocation } from '@/hooks/api/useBudgetAllocation';
+import {
+  useSetBudgetAllocation,
+  useUpdateBudgetAllocation,
+  useDeleteBudgetAllocation,
+} from '@/hooks/api/useBudgetAllocation';
+import { EditBudgetAllocationModal } from '@/components/budgets/EditBudgetAllocationModal';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 
 export const BudgetAllocationTable = () => {
@@ -15,7 +20,9 @@ export const BudgetAllocationTable = () => {
   const [preselectedTermId, setPreselectedTermId] = useState(null);
   const [preselectedTermName, setPreselectedTermName] = useState('');
   const [allocationToDelete, setAllocationToDelete] = useState(null);
+  const [allocationToEdit, setAllocationToEdit] = useState(null);
   const setAllocationMutation = useSetBudgetAllocation();
+  const updateAllocationMutation = useUpdateBudgetAllocation();
   const deleteAllocationMutation = useDeleteBudgetAllocation();
 
   const {
@@ -115,10 +122,22 @@ export const BudgetAllocationTable = () => {
                 ? (allocation) => setAllocationToDelete({ id: allocation.id, company_name: allocation.company_name })
                 : undefined
             }
+            onEditAllocation={isAdmin ? (allocation) => setAllocationToEdit(allocation) : undefined}
             onAddAllocation={isAdmin ? (t) => { setPreselectedTermId(t.term_id); setPreselectedTermName(t.term_name || ''); setShowSetModal(true); } : undefined}
           />
         ))}
       </div>
+      <EditBudgetAllocationModal
+        isOpen={!!allocationToEdit}
+        allocation={allocationToEdit}
+        onClose={() => setAllocationToEdit(null)}
+        isSubmitting={updateAllocationMutation.isPending}
+        onSave={(body) => {
+          updateAllocationMutation.mutate(body, {
+            onSuccess: () => setAllocationToEdit(null),
+          });
+        }}
+      />
       <DeleteConfirmationModal
         isOpen={!!allocationToDelete}
         onClose={() => setAllocationToDelete(null)}

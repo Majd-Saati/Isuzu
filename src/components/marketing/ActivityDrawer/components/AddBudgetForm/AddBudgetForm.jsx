@@ -37,6 +37,7 @@ export function AddBudgetForm({
     showTypeDropdown,
     setShowTypeDropdown,
     validationError,
+    mediaError,
     monthsBreakdown,
     showMonthsBreakdown,
     setShowMonthsBreakdown,
@@ -66,7 +67,7 @@ export function AddBudgetForm({
   });
 
   const isSubmitDisabled =
-    createBudgetMutation.isPending || !value || !description;
+    createBudgetMutation.isPending || !value || !description || !media;
 
   return (
     <form onSubmit={handleSubmit} className={FORM_CLASS}>
@@ -127,7 +128,7 @@ export function AddBudgetForm({
       </div>
 
       <div>
-        <label className={LABEL_CLASS}>Media (Optional)</label>
+        <label className={LABEL_CLASS}>Media *</label>
         <div className="relative">
           <input
             type="file"
@@ -141,6 +142,9 @@ export function AddBudgetForm({
             {media ? media.name : 'Select file'}
           </label>
         </div>
+        {mediaError ? (
+          <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{mediaError}</p>
+        ) : null}
       </div>
 
       <div className="flex items-center gap-2 pt-2">

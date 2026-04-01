@@ -22,6 +22,14 @@ export const budgetAllocationService = {
   },
 
   /**
+   * Update an existing budget allocation value.
+   * @param {{ id: number, value: number }} body
+   */
+  updateBudgetAllocation: async (body) => {
+    return apiClient.post('/budget_allocation_update', body);
+  },
+
+  /**
    * Delete a budget allocation.
    * @param {{ id: number }} body
    */

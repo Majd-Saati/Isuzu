@@ -31,6 +31,19 @@ export const useSetBudgetAllocation = () => {
 };
 
 /**
+ * Update budget allocation (`id`, `value`). On success invalidates the allocation list.
+ */
+export const useUpdateBudgetAllocation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body) => budgetAllocationService.updateBudgetAllocation(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgetAllocationList'] });
+    },
+  });
+};
+
+/**
  * Delete budget allocation. On success invalidates list so the table refetches.
  */
 export const useDeleteBudgetAllocation = () => {
