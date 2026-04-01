@@ -13,13 +13,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Install dependencies
+      # 2. Install dependencies (npm ci — lockfile-pinned, reproducible)
       - name: Install dependencies
         run: npm ci
 
-      # 3. Build app
+      # 3. Build app (Vite reads VITE_* at build time; add secret API_URL in repo Settings → Secrets)
       - name: Build project
         run: npm run build
+        env:
+          VITE_API_BASE_URL: ${{ secrets.API_URL }}
 
       # 4. Deploy via FTP
       - name: Upload to cPanel
@@ -31,3 +33,5 @@ jobs:
           # Vite outputs to dist/ (use build/ if you use Create React App)
           local-dir: dist/
           server-dir: public_html/
+          # Deletes remote files under server-dir that are not in this deploy (e.g. old hashed assets)
+          dangerous-clean-slate: true
