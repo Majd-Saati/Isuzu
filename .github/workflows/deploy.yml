@@ -34,4 +34,4 @@ jobs:
           local-dir: dist/
           server-dir: public_html/
           # Deletes remote files under server-dir that are not in this deploy (e.g. old hashed assets)
-          dangerous-clean-slate: true
+          # dangerous-clean-slate: true
