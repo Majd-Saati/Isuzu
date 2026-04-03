@@ -39,8 +39,8 @@ export const Header = ({ onMenuClick, sidebarCollapsed = false }) => {
   }, []);
 
   return (
-    <header 
-      className={`fixed top-0 z-40 bg-white/95 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-sm dark:shadow-none backdrop-blur-md flex flex-col items-stretch font-normal px-4 md:px-8 lg:px-12 py-4 animate-fade-in transition-all duration-300 left-0 right-0 ${
+    <header
+      className={`fixed top-0 z-40 flex h-[80px] sm:h-[100px] items-center bg-white/95 dark:bg-gray-950 border-b-2 border-gray-200 dark:border-gray-800 backdrop-blur-md font-normal px-4 md:px-8 lg:px-12 py-0 animate-fade-in transition-all duration-300 left-0 right-0 ${
         sidebarCollapsed ? 'md:left-[80px]' : 'md:left-[306px]'
       }`}
     >

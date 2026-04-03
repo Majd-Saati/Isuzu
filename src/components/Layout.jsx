@@ -26,7 +26,7 @@ export const Layout = () => {
           sidebarCollapsed={sidebarCollapsed}
         />
         
-        <div className="w-full bg-white dark:bg-gray-950 p-5 pt-24 min-h-[calc(100vh-96px)] transition-colors duration-300 rounded-t-2xl shadow-[0_-4px_24px_rgba(0,0,0,0.06)] dark:shadow-none border-t border-gray-200/80 dark:border-gray-800/50">
+        <div className="w-full bg-white dark:bg-gray-950 p-5 pt-[80px] sm:pt-[100px] min-h-[calc(100vh-5rem)] sm:min-h-[calc(100vh-6.25rem)] transition-colors duration-300 rounded-t-2xl shadow-[0_-4px_24px_rgba(0,0,0,0.06)] dark:shadow-none border-t border-gray-200/80 dark:border-gray-800/50">
           <Suspense fallback={null}>
             <Outlet />
           </Suspense>

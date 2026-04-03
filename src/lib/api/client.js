@@ -39,6 +39,15 @@ apiClient.interceptors.request.use(
       const code = getStoredCurrency();
       if (code) config.headers['x-currency'] = code;
     }
+
+    // Non-admins: never send company_id on GET (backend scopes by authenticated user)
+    const method = (config.method || 'get').toLowerCase();
+    if (method === 'get' && !isCurrentUserAdmin() && config.params != null && typeof config.params === 'object' && !Array.isArray(config.params)) {
+      const rest = { ...config.params };
+      delete rest.company_id;
+      config.params = rest;
+    }
+
     return config;
   },
   (error) => {
