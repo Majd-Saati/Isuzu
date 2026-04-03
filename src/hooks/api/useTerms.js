@@ -1,7 +1,32 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { termsService } from '@/lib/api/services/termsService';
 
+/** Normalized list params so identical API calls share one cache (e.g. { perPage: 100 } vs { page: 1, perPage: 100 }). */
+const normalizeTermsListParams = (params = {}) => {
+  const page = params.page != null && params.page !== '' ? Number(params.page) : 1;
+  const perPage = params.perPage != null && params.perPage !== '' ? Number(params.perPage) : 20;
+  const safePage = Number.isFinite(page) && page > 0 ? page : 1;
+  const safePerPage = Number.isFinite(perPage) && perPage > 0 ? perPage : 20;
+  const rawSearch = params.search;
+  const search =
+    typeof rawSearch === 'string' && rawSearch.trim() !== '' ? rawSearch.trim() : undefined;
+  return { page: safePage, perPage: safePerPage, search };
+};
+
+const termsListQueryKey = (page, perPage, search) => ['terms', 'list', page, perPage, search ?? ''];
+
+/** Prefetch first page (100 rows, no search). Call once when authenticated — merges with useTerms (calendar, dashboard, etc.). */
+export const prefetchTermsListPage1Per100 = (queryClient) => {
+  const p = normalizeTermsListParams({ page: 1, perPage: 100 });
+  return queryClient.prefetchQuery({
+    queryKey: termsListQueryKey(p.page, p.perPage, p.search),
+    queryFn: () => termsService.getTerms(p),
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
 export const useTerms = (params = {}, options = {}) => {
+  const { page, perPage, search } = normalizeTermsListParams(params);
   const {
     enabled = true,
     staleTime,
@@ -10,9 +35,11 @@ export const useTerms = (params = {}, options = {}) => {
     refetchOnReconnect,
   } = options;
 
+  const isStandardFullList = page === 1 && perPage === 100 && search === undefined;
+
   return useQuery({
-    queryKey: ['terms', params],
-    queryFn: () => termsService.getTerms(params),
+    queryKey: termsListQueryKey(page, perPage, search),
+    queryFn: () => termsService.getTerms({ page, perPage, search }),
     select: (data) => ({
       terms: data?.body?.terms || [],
       pagination: data?.body?.pagination || {
@@ -23,10 +50,13 @@ export const useTerms = (params = {}, options = {}) => {
       },
     }),
     enabled,
-    staleTime,
-    refetchOnWindowFocus,
-    refetchOnMount,
-    refetchOnReconnect,
+    ...(isStandardFullList
+      ? { refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false }
+      : {}),
+    ...(staleTime !== undefined ? { staleTime } : {}),
+    ...(refetchOnWindowFocus !== undefined ? { refetchOnWindowFocus } : {}),
+    ...(refetchOnMount !== undefined ? { refetchOnMount } : {}),
+    ...(refetchOnReconnect !== undefined ? { refetchOnReconnect } : {}),
   });
 };
 

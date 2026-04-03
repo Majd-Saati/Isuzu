@@ -1,11 +1,13 @@
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { Provider, useSelector } from 'react-redux';
 import { Toaster } from 'sonner';
 import { store } from './store/store';
 import { queryClient } from './lib/queryClient';
 import { prefetchDealers } from '@/hooks/api/useCompanies';
+import { prefetchTermsListPage1Per100 } from '@/hooks/api/useTerms';
+import { prefetchCountriesListPage1Per500 } from '@/hooks/api/useCountries';
 import { isAuthenticated } from '@/hooks/api/useAuth';
 import { AppRouter } from './router/AppRouter';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -29,6 +31,24 @@ const DealersPrefetcher = () => {
   return null;
 };
 
+/** Warm shared list queries when logged in (dedupes Strict Mode + multi-widget pages). */
+const ListDataPrefetcher = () => {
+  const qc = useQueryClient();
+  const authed = useSelector((state) => state.auth.isAuthenticated);
+  const isAdmin = useSelector((state) => {
+    const u = state.auth.user;
+    return u?.is_admin === '1' || u?.is_admin === 1;
+  });
+  useLayoutEffect(() => {
+    if (!authed || !isAuthenticated()) return;
+    prefetchTermsListPage1Per100(qc);
+    if (!isAdmin) {
+      prefetchCountriesListPage1Per500(qc);
+    }
+  }, [qc, authed, isAdmin]);
+  return null;
+};
+
 const App = () => (
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
@@ -36,6 +56,7 @@ const App = () => (
         <CurrencyProvider>
         <TooltipProvider>
         <CurrencyBootstrap />
+        <ListDataPrefetcher />
         <DealersPrefetcher />
         <Toaster
           position="top-right"

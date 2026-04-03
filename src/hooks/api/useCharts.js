@@ -1,6 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { chartsService, reportService } from '@/lib/api/services/chartsService';
 
+/** Primitive query key so new object identities do not trigger duplicate /charts requests. */
+const chartsTotalsQueryKey = (params = {}) => {
+  const company_id =
+    params.company_id != null && params.company_id !== '' ? String(params.company_id) : '';
+  const month = params.month != null && params.month !== '' ? String(params.month) : '';
+  const term_id =
+    params.term_id != null && params.term_id !== '' ? String(params.term_id) : '';
+  const year = params.year != null && params.year !== '' ? String(params.year) : '';
+  return ['charts', 'totals', company_id, month, term_id, year];
+};
+
 /**
  * @param {{ company_id?: string, month?: string, term_id?: string|number, year?: string|number }} params
  * @param {{ enabled?: boolean }} options
@@ -8,7 +19,7 @@ import { chartsService, reportService } from '@/lib/api/services/chartsService';
 export const useCharts = (params = {}, options = {}) => {
   const { enabled = true } = options;
   return useQuery({
-    queryKey: ['charts', params],
+    queryKey: chartsTotalsQueryKey(params),
     queryFn: () => chartsService.getCharts(params),
     select: (data) => data?.body ?? null,
     enabled: enabled && (params.month != null || params.term_id != null || params.year != null),

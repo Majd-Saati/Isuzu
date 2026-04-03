@@ -12,7 +12,7 @@ export const useCalendarPage = () => {
   const [selectedTermId, setSelectedTermId] = useState('');
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
 
-  const { data: termsData } = useTerms({ page: 1, perPage: 100 }, { enabled: true });
+  const { data: termsData } = useTerms({ page: 1, perPage: 100 });
   const { data: companiesData } = useCompanies({ page: 1, perPage: 100 }, { enabled: isAdmin });
   const terms = termsData?.terms || [];
   const companies = companiesData?.companies || [];
