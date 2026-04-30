@@ -1,8 +1,16 @@
-const isPendingStatus = (status) => (status || '').toLowerCase() === 'pending';
+const isApprovedStatus = (status) => {
+  const key = (status || '').toLowerCase();
+  return key === 'accepted' || key === 'approved';
+};
 
-const hasPendingEstimatedCost = (existingBudgets = []) =>
+const hasApprovedEstimatedCost = (existingBudgets = []) =>
   existingBudgets.some(
-    (b) => b.type === 'estimated cost' && isPendingStatus(b.status)
+    (b) => b.type === 'estimated cost' && isApprovedStatus(b.status)
+  );
+
+const hasApprovedActualCost = (existingBudgets = []) =>
+  existingBudgets.some(
+    (b) => b.type === 'actual cost' && isApprovedStatus(b.status)
   );
 
 /**
@@ -29,10 +37,10 @@ export const canAddBudgetType = (type, existingBudgets = [], { isAdmin = true } 
           reason: 'You must add at least one "Estimated Cost" entry before adding an "Actual Cost" entry.'
         };
       }
-      if (!isAdmin && hasPendingEstimatedCost(existingBudgets)) {
+      if (!hasApprovedEstimatedCost(existingBudgets)) {
         return {
           canAdd: false,
-          reason: 'You cannot add an Actual Cost while an Estimated Cost is still pending approval.',
+          reason: 'You must have at least one approved Estimated Cost before adding an Actual Cost entry.',
         };
       }
       return { canAdd: true, reason: '' };
@@ -54,6 +62,12 @@ export const canAddBudgetType = (type, existingBudgets = [], { isAdmin = true } 
         return {
           canAdd: false,
           reason: 'You must add at least one "Actual Cost" entry before adding a "Support Cost" entry.'
+        };
+      }
+      if (!hasApprovedActualCost(existingBudgets)) {
+        return {
+          canAdd: false,
+          reason: 'You must have at least one approved Actual Cost before adding a Support Cost entry.',
         };
       }
       return { canAdd: true, reason: '' };
