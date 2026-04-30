@@ -40,7 +40,7 @@ const ROUTE_PERMISSIONS = {
   '/dashboard': 'overview',
   '/marketing-plans': 'plans_list',
   '/budgets-allocation': 'plans_list',
-  '/terms': 'terms_list',
+  '/terms': null, // Admin only
   '/calendar': 'calendar_view',
   '/charts': 'overview', // Charts might need overview
   '/countries': null, // Admin only

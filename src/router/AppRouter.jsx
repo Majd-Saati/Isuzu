@@ -41,7 +41,7 @@ export const AppRouter = () => (
         <Route path={ROUTES.USERS} element={<AdminGuard><UsersPage /></AdminGuard>} />
         <Route path={ROUTES.CHARTS} element={<PermissionGuard><Charts /></PermissionGuard>} />
         <Route path={ROUTES.CALENDAR} element={<PermissionGuard><Calendar /></PermissionGuard>} />
-        <Route path={ROUTES.TERMS} element={<PermissionGuard><Terms /></PermissionGuard>} />
+        <Route path={ROUTES.TERMS} element={<AdminGuard><Terms /></AdminGuard>} />
       </Route>
 
       {/* 404 Not Found */}
