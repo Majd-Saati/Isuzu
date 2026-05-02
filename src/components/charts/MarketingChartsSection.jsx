@@ -61,7 +61,7 @@ export const MarketingChartsSection = () => {
   return (
     <div className="space-y-6">
       <SectionHeader
-        title="Marketing cost & incentive"
+        title="Marketing Expenditure and Supportcentive"
         subtitle={hasData ? `${selectedCompany} • ${periodLabel}` : undefined}
       />
 

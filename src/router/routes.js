@@ -10,7 +10,7 @@ export const ROUTES = {
   // Protected routes
   DASHBOARD: '/dashboard',
   MARKETING_PLANS: '/marketing-plans',
-  BUDGETS_ALLOCATION: '/budgets-allocation',
+  BUDGETS_ALLOCATION: '/budget-allocation',
   ADMINISTRATORS: '/administrators',
   COMPANIES: '/companies',
   USERS: '/users',
@@ -36,7 +36,7 @@ export const ROUTE_METADATA = {
     requiresAuth: true,
   },
   [ROUTES.BUDGETS_ALLOCATION]: {
-    title: 'Budgets Allocation',
+    title: 'Budget Allocation',
     requiresAuth: true,
   },
   [ROUTES.ADMINISTRATORS]: {

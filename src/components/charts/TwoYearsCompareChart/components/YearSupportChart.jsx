@@ -17,7 +17,7 @@ export const YearSupportChart = ({ yearsData = [], isAdmin = false, currencyCode
   const FIRST_YEAR_COLOR = '#4A84E3';
   const SECOND_YEAR_COLOR = '#1BBF7B';
   const displayCode = getEffectiveCurrencyCode(isAdmin, currencyCode);
-  const supportTitle = displayCode ? `Support cost (${displayCode})` : 'Support cost';
+  const supportTitle = displayCode ? `Support Cost (${displayCode})` : 'Support Cost';
   if (!Array.isArray(yearsData) || yearsData.length === 0) return null;
 
   const normalizedYears = yearsData
@@ -79,7 +79,7 @@ export const YearSupportChart = ({ yearsData = [], isAdmin = false, currencyCode
     <div className="rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 md:p-6 shadow-sm hover:shadow-lg transition-shadow duration-300">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base md:text-lg font-bold text-gray-900 dark:text-gray-100">
-          Two years comparison – {supportTitle}
+          Year-on-Year {supportTitle}
         </h3>
       </div>
       <div className="w-full h-[280px] md:h-[320px]">

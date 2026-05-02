@@ -650,7 +650,7 @@ const Charts = () => {
         </section>
 
         <section id="support-allocation-efficiency" className="py-12 border-b border-gray-200 dark:border-gray-700">
-          <SectionHeader title="Support Amount Vs Budget Allocation" />
+          <SectionHeader title="Support Amount vs Budget Allocation" />
           <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
             <SupportAllocationChartByMonth />
             <SupportAllocationChartByTerm />

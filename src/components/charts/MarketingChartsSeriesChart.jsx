@@ -37,8 +37,8 @@ const COLORS = {
 };
 
 const METRICS = [
-  { key: 'actual_cost', name: 'Actual cost', color: COLORS.actual_cost },
-  { key: 'support_cost', name: 'Support cost', color: COLORS.support_cost },
+  { key: 'actual_cost', name: 'Actual Cost', color: COLORS.actual_cost },
+  { key: 'support_cost', name: 'Support Cost', color: COLORS.support_cost },
   // { key: 'total_cost', name: 'Total cost', color: COLORS.total_cost },
   // { key: 'incentive', name: 'Incentive', color: COLORS.incentive },
 ];
@@ -113,7 +113,7 @@ export const MarketingChartsSeriesChart = ({
         series,
         totals,
         filename,
-        'Marketing Cost & Incentive Report',
+        'Marketing Expenditure and Supportcentive Report',
         isAdmin,
         currencyCode
       );
@@ -264,7 +264,7 @@ export const MarketingChartsSeriesChart = ({
     >
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-base md:text-lg font-bold text-gray-900 dark:text-gray-100">
-          Cost & incentive breakdown
+          Expenditure & Supprt Breakdown
         </h3>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-xs text-gray-500 dark:text-gray-400">

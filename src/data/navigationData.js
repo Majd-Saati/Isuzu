@@ -12,9 +12,9 @@ export const mainNavigation = [
     icon: 'https://api.builder.io/api/v1/image/assets/132ea46dcd5a44718cd3517d9e4e8249/88e9f980e003b1b85ae32ee2ea48585207ef1fca?placeholderIfAbsent=true'
   },
   {
-    id: 'budgets-allocation',
-    label: 'Budgets Allocation',
-    path: '/budgets-allocation',
+    id: 'budget-allocation',
+    label: 'Budget Allocation',
+    path: '/budget-allocation',
     icon: 'https://api.builder.io/api/v1/image/assets/132ea46dcd5a44718cd3517d9e4e8249/3cfd2b331b1afb96a08113cad2433d1e3d137c19?placeholderIfAbsent=true'
   },
   {

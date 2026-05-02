@@ -68,7 +68,7 @@ export const YearlyExpenseChart = () => {
   return (
     <div className="space-y-6">
       <SectionHeader
-        title="Yearly expense & term chart"
+        title="Yearly Expense Chart"
         subtitle={hasData ? `${selectedCompany} • ${year}` : undefined}
       />
 

@@ -5,7 +5,7 @@ export const SummaryCards = ({ totalActualCost, totalSupportCost, isAdmin = fals
   // Only show Actual and Support cards per request. Other cards kept commented for reference.
   const cards = [
     {
-      label: 'Actual cost',
+      label: 'Actual Cost',
       value: totalActualCost,
       gradient: 'from-green-50 to-white',
       darkGradient: 'dark:from-gray-800 dark:to-gray-900',
@@ -19,7 +19,7 @@ export const SummaryCards = ({ totalActualCost, totalSupportCost, isAdmin = fals
       darkDotColor: 'dark:bg-emerald-400'
     },
     {
-      label: 'Support cost',
+      label: 'Support Cost',
       value: totalSupportCost,
       gradient: 'from-blue-50 to-white',
       darkGradient: 'dark:from-gray-800 dark:to-gray-900',

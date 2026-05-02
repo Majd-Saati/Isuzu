@@ -13,7 +13,7 @@ const formatCompact = (value) => {
 const cards = [
   {
     key: 'actual_cost',
-    label: 'Actual cost',
+    label: 'Actual Cost',
     icon: DollarSign,
     useMoneyGlyph: true,
     gradient: 'bg-gradient-to-br from-emerald-500 to-teal-600',
