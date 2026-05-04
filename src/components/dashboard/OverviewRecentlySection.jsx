@@ -31,8 +31,8 @@ const KIND_OPTIONS = [
 const BUDGET_TYPE_OPTIONS = [
   { value: '', label: 'Any' },
   { value: 'estimated cost', label: 'Estimated cost' },
-  { value: 'actual cost', label: 'Actual cost' },
-  { value: 'support cost', label: 'Support cost' },
+  { value: 'actual cost', label: 'Actual Cost' },
+  { value: 'support cost', label: 'Support Cost' },
   { value: 'invoice', label: 'Invoice' },
 ];
 

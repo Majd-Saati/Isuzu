@@ -69,7 +69,7 @@ export const DealerExpenseSupportSection = () => {
               Dealer Expense vs Support Amount
             </h2>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Actual cost (scale) and support cost (fill) by term and month
+              Actual Cost (scale) and support Cost (fill) by term and month
             </p>
           </div>
         </div>

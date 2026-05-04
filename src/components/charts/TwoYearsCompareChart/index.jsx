@@ -30,7 +30,7 @@ export const TwoYearsCompareChart = () => {
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
   const { currency } = useCurrency();
   const displayCode = getEffectiveCurrencyCode(isAdmin, currency);
-  const supportCostLabel = displayCode ? `Support cost (${displayCode})` : 'Support cost';
+  const supportCostLabel = displayCode ? `Support Cost (${displayCode})` : 'Support Cost';
 
   const [year1, setYear1] = useState(currentYear);
   const [year2, setYear2] = useState(currentYear() - 1);
@@ -107,7 +107,7 @@ export const TwoYearsCompareChart = () => {
       const success = await utils.exportToPDF(
         chartsContainerRef.current,
         filename,
-        `Two years comparison – ${supportCostLabel} (${year1} vs ${year2})`
+        `Year-on-Year – ${supportCostLabel} (${year1} vs ${year2})`
       );
       if (success) toast.success('PDF exported successfully');
       else toast.error('Failed to export PDF');
@@ -142,7 +142,7 @@ export const TwoYearsCompareChart = () => {
   return (
     <div className="space-y-6">
       <SectionHeader
-        title={`Two years comparison – ${supportCostLabel}`}
+        title={`Year-on-Year ${supportCostLabel}`}
         subtitle={hasData ? `${year1} vs ${year2}` : undefined}
       >
         {hasData && (
@@ -228,7 +228,7 @@ export const TwoYearsCompareChart = () => {
             No data for {year1} vs {year2}
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center max-w-sm">
-            There is no support cost data available for the selected years and company.
+            There is no Support Cost data available for the selected years and company.
           </p>
         </div>
       )}

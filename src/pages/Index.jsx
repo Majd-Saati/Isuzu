@@ -703,7 +703,7 @@ const Index = () => {
     { id: 'yearly-expense', label: 'Yearly Expense' },
     { id: 'two-years-compare', label: 'Two Years Compare' },
     { id: 'reporting-table', label: 'Reporting Table' },
-    { id: 'overview-recently', label: 'Overview Recently' },
+    { id: 'overview-recently', label: 'Overview of Recent Activities' },
     { id: 'isuzu-dealers', label: 'ISUZU Dealers' },
   ];
 
@@ -722,7 +722,7 @@ const Index = () => {
         </section>
 
         <section id="support-allocation-efficiency" className="py-12 border-b border-gray-200 dark:border-gray-700">
-          <SectionHeader title="Support Amount Vs Budget Allocation" />
+          <SectionHeader title="Support Amount vs Budget Allocation" />
           <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
             <SupportAllocationChartByMonth />
             <SupportAllocationChartByTerm />
