@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+﻿import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { formatDealerCardMoney, getEffectiveCurrencyCode } from '@/lib/dashboardMoney';
@@ -191,7 +191,8 @@ export const exportReportToExcel = (reportData, filename = 'report') => {
         if (termId) params.set('term', String(termId));
         params.set('openDrawer', '1');
 
-        const url = `https://marketing.5v.ae/marketing-plans?${params.toString()}`;
+        const appOrigin = (typeof window !== 'undefined' && window.location?.origin) || '';
+        const url = `${appOrigin}/marketing-plans?${params.toString()}`;
 
         // evidences is the 7th column -> column index 6 (0-based)
         const cellAddress = XLSX.utils.encode_cell({ c: 6, r: rowIndex });

@@ -1,4 +1,4 @@
-# Application overview
+﻿# Application overview
 
 ## What this application does
 
@@ -7,7 +7,7 @@ The app is an internal **marketing operations dashboard** (Isuzu / dealer contex
 - See a **dashboard** with dealer summaries, multiple chart types, a reporting table, and recent activity.
 - Manage **marketing plans** and nested **activities** (status, budgets, media, comments, and more).
 - View and adjust **budget allocations** per term (and per company when admin).
-- Browse **charts** (similar visualizations to the dashboard, plus placeholder “efficiency” demo state).
+- Browse **charts** (similar visualizations to the dashboard, plus placeholder â€œefficiencyâ€ demo state).
 - Open a **calendar** view of plans and costs for a selected term (and company when admin).
 - Maintain **terms** (time periods) and **term exchange rates**.
 - When **admin**: manage **companies** (dealers), **users**, **countries**, and **administrator** accounts.
@@ -32,17 +32,17 @@ All business data comes from a **backend REST API**; this repository is the **fr
 
 ## Entry points and bootstrap
 
-- **`src/main.jsx`** — mounts the React tree (not expanded here; standard Vite + React).
+- **`src/main.jsx`** â€” mounts the React tree (not expanded here; standard Vite + React).
 - **`src/App.jsx`** wraps the app with:
   - Redux `Provider` (`store` from `src/store/store.js`)
   - React Query `QueryClientProvider`
   - `ThemeProvider` (`src/contexts/ThemeContext.jsx`)
   - `CurrencyProvider` (`src/contexts/CurrencyContext.jsx`)
-  - `CurrencyBootstrap` — resolves default currency for non-admins when needed
-  - `TooltipProvider` — shared tooltip behavior
-  - `ListDataPrefetcher` — prefetches terms (and countries for non-admins) when logged in
-  - `DealersPrefetcher` — prefetches dealer/company list for **admins** when logged in
-  - `Toaster` (Sonner) — global toast styling and duration
+  - `CurrencyBootstrap` â€” resolves default currency for non-admins when needed
+  - `TooltipProvider` â€” shared tooltip behavior
+  - `ListDataPrefetcher` â€” prefetches terms (and countries for non-admins) when logged in
+  - `DealersPrefetcher` â€” prefetches dealer/company list for **admins** when logged in
+  - `Toaster` (Sonner) â€” global toast styling and duration
   - `BrowserRouter` + `AppRouter`
 
 ## Project structure (high level)
@@ -50,7 +50,7 @@ All business data comes from a **backend REST API**; this repository is the **fr
 ```
 src/
   App.jsx                 # Root providers and router mount
-  components/             # UI by feature (dashboard, marketing, budgets, calendar, …)
+  components/             # UI by feature (dashboard, marketing, budgets, calendar, â€¦)
   contexts/               # Theme, currency
   data/                   # Static navigation config
   hooks/                  # Feature hooks; hooks/api/* wrap services with React Query
@@ -65,8 +65,8 @@ src/
 
 ## Environment configuration
 
-- **`VITE_API_BASE_URL`** — optional override for the API base URL.
-- If unset, the client falls back to `https://marketing.5v.ae/api/` (see `src/lib/api/client.js`).
+- **`VITE_API_BASE_URL`** â€” optional override for the API base URL.
+- If unset, the client falls back to `https://marketing.isuzu-tech.com/api/` (see `src/lib/api/client.js`).
 
 Example `.env`:
 

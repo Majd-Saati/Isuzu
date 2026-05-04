@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+﻿import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Loader2, ChevronDown } from 'lucide-react';
 import { useFormik } from 'formik';
@@ -12,15 +12,12 @@ import { Input } from '@/components/ui/Input';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import { useCreateCompany, useUpdateCompany } from '@/hooks/api/useCompanies';
 import { useCountries } from '@/hooks/api/useCountries';
+import { buildMediaUrl } from '@/lib/api/config';
 
 // Register FilePond plugins
 registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
 
-const getCompanyLogoUrl = (path) => {
-  if (!path) return '';
-  if (path.startsWith('http')) return path;
-  return `https://marketing.5v.ae/${path}`;
-};
+const getCompanyLogoUrl = (path) => buildMediaUrl(path) || '';
 
 const companySchema = Yup.object({
   name: Yup.string()

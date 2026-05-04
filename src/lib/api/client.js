@@ -1,9 +1,7 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 import { toast } from 'sonner';
 import { getStoredCurrency } from '@/contexts/CurrencyContext';
-
-// API Base URL - Change this to update all API calls
-const API_BASE_URL = 'https://marketing.5v.ae/api/';
+import { API_BASE_URL } from '@/lib/api/config';
 
 /** Only non-admin users get x-currency; admin requests must not send it. */
 const isCurrentUserAdmin = () => {
@@ -19,7 +17,7 @@ const isCurrentUserAdmin = () => {
 
 // Create axios instance with default config
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || API_BASE_URL,
+  baseURL: API_BASE_URL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',

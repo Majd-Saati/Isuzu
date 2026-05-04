@@ -1,7 +1,8 @@
-import React from 'react';
+﻿import React from 'react';
 import { Building2, Globe } from 'lucide-react';
+import { MEDIA_BASE_URL } from '@/lib/api/config';
 
-const LOGO_BASE = 'https://marketing.5v.ae/';
+const LOGO_BASE = `${MEDIA_BASE_URL}/`;
 
 export const CalendarCompanyCard = ({ company, displayCurrencyCode = '' }) => {
   if (!company) return null;
@@ -47,7 +48,7 @@ export const CalendarCompanyCard = ({ company, displayCurrencyCode = '' }) => {
         <div className="flex items-center justify-between py-2">
           <span className="text-sm text-gray-600 dark:text-gray-400">Currency</span>
           <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-            {displayCurrencyCode || '—'}
+            {displayCurrencyCode || 'â€”'}
           </span>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { PerformanceChart } from '@/components/dashboard/PerformanceChart';
 import { OverviewRecentlySection } from '@/components/dashboard/OverviewRecentlySection';
@@ -23,18 +23,9 @@ import { format, parseISO } from 'date-fns';
 import { Calendar, ClipboardList, Building2 } from 'lucide-react';
 import { isAdminUser } from '@/lib/permissions';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { buildMediaUrl } from '@/lib/api/config';
 
-
-
-const getLogoUrl = (path) => {
-
-  if (!path) return null;
-
-  if (path.startsWith('http')) return path;
-
-  return `https://marketing.5v.ae/${path}`;
-
-};
+const getLogoUrl = (path) => buildMediaUrl(path);
 
 const getDefaultMonth = () => format(new Date(), 'yyyy-MM');
 
@@ -158,7 +149,7 @@ const DealerEfficiencyChartByMonth = () => {
   if (!month) {
     return (
       <div className={`${chartCardClass} max-w-lg`}>
-        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month (—)</p>
+        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month (â€”)</p>
         {monthFilter}
         <div className="flex flex-col items-center justify-center py-12 text-center mt-4">
           <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Select a month to view data.</p>
@@ -264,7 +255,7 @@ const DealerEfficiencyChartByTerm = () => {
   const cardContent = (
     <>
       <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">
-        By Term ({termId ? termLabel : '—'})
+        By Term ({termId ? termLabel : 'â€”'})
       </p>
       {termFilter}
     </>
@@ -381,7 +372,7 @@ const SupportAllocationChartByMonth = () => {
   if (!month) {
     return (
       <div className={`${chartCardClass} max-w-lg`}>
-        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month (—)</p>
+        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month (â€”)</p>
         {monthFilter}
         <div className="flex flex-col items-center justify-center py-12 text-center mt-4">
           <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Select a month to view data.</p>
@@ -491,7 +482,7 @@ const SupportAllocationChartByTerm = () => {
   const cardContent = (
     <>
       <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">
-        By Term ({termId ? termLabel : '—'})
+        By Term ({termId ? termLabel : 'â€”'})
       </p>
       {termFilter}
     </>

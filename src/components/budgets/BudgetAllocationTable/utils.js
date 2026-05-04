@@ -1,7 +1,9 @@
-const LOGO_BASE = 'https://marketing.5v.ae/';
+﻿import { MEDIA_BASE_URL } from '@/lib/api/config';
+
+const LOGO_BASE = `${MEDIA_BASE_URL}/`;
 
 export const formatDate = (dateString) => {
-  if (!dateString) return '—';
+  if (!dateString) return 'â€”';
   const d = new Date(dateString);
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 };

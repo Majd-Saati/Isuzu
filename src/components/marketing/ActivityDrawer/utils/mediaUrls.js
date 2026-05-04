@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://marketing.5v.ae/api/';
+﻿import { MEDIA_BASE_URL } from '@/lib/api/config';
 
 function stripWrappers(path) {
   let s = String(path).trim();
@@ -16,9 +16,8 @@ export function resolveMediaUrl(path) {
   let cleanPath = stripWrappers(path);
   if (!cleanPath) return null;
   if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) return cleanPath;
-  const baseDomain = API_BASE_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
   cleanPath = cleanPath.replace(/^\//, '');
-  return `${baseDomain}/${cleanPath}`;
+  return `${MEDIA_BASE_URL}/${cleanPath}`;
 }
 
 /**

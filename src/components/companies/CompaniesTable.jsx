@@ -1,6 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { Edit2, Trash2, Building2 } from 'lucide-react';
 import { CustomPagination } from '@/components/ui/CustomPagination';
+import { buildMediaUrl } from '@/lib/api/config';
 
 export const CompaniesTable = ({ 
   companies, 
@@ -11,11 +12,11 @@ export const CompaniesTable = ({
   onItemsPerPageChange 
 }) => {
   const formatDate = (dateString) => {
-    if (!dateString) return '—';
+    if (!dateString) return 'â€”';
     
     const date = new Date(dateString);
     
-    if (isNaN(date.getTime())) return '—';
+    if (isNaN(date.getTime())) return 'â€”';
     
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -58,7 +59,7 @@ export const CompaniesTable = ({
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#E60012] to-[#C00010] flex items-center justify-center text-white font-semibold text-sm overflow-hidden">
                       {company.logo ? (
                         <img 
-                          src={`https://marketing.5v.ae/${company.logo}`} 
+                          src={buildMediaUrl(company.logo)}
                           alt={company.name}
                           className="w-full h-full object-cover"
                         />
@@ -73,12 +74,12 @@ export const CompaniesTable = ({
                 </td>
                 <td className="px-6 py-4 border-r-2 border-gray-200 dark:border-gray-700">
                   <span className="inline-flex items-center px-3 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-sm font-medium">
-                    {company.country_name || '—'}
+                    {company.country_name || 'â€”'}
                   </span>
                 </td>
                 <td className="px-6 py-4 border-r-2 border-gray-200 dark:border-gray-700">
                   <span className="inline-flex items-center px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-sm font-medium">
-                    {company.country_currency || '—'}
+                    {company.country_currency || 'â€”'}
                   </span>
                 </td>
                 <td className="px-6 py-4 border-r-2 border-gray-200 dark:border-gray-700">

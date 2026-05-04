@@ -1,7 +1,7 @@
-# Dashboard (`/dashboard`)
+﻿# Dashboard (`/dashboard`)
 
 **Page:** `src/pages/Index.jsx`  
-**Access:** `PermissionGuard` — requires `overview` for non-admins (`src/lib/permissions.js`).
+**Access:** `PermissionGuard` â€” requires `overview` for non-admins (`src/lib/permissions.js`).
 
 ## Purpose
 
@@ -28,9 +28,9 @@ Two side-by-side widgets (`DealerEfficiencyChartByMonth`, `DealerEfficiencyChart
 
 - **Data source:** `useCharts` hook (charts API) with either `month` or `term_id`, plus `company_id` for admins.
 - **Admin:** Company dropdown + month picker or term dropdown.  
-- **Non-admin:** Company is fixed to the logged-in user’s id; only month/term selection applies.
+- **Non-admin:** Company is fixed to the logged-in userâ€™s id; only month/term selection applies.
 - **Chart meaning:** Builds `DealerEfficiencyChart` data from API `totals`: compares **support cost** to **actual cost** (expense), expressed as a capped percentage for the radial/visual display.
-- **Empty states:** Prompts to select month/term; shows “No data available” on error or missing totals.
+- **Empty states:** Prompts to select month/term; shows â€œNo data availableâ€ on error or missing totals.
 
 ## Support amount vs budget allocation
 
@@ -42,23 +42,23 @@ Two parallel widgets (`SupportAllocationChartByMonth`, `SupportAllocationChartBy
 
 ## Marketing charts section
 
-- **`MarketingChartsSection`** (`src/components/charts/`) — additional chart blocks driven by the marketing/charts hooks and filters (month or term, consistent with the charts feature set).
+- **`MarketingChartsSection`** (`src/components/charts/`) â€” additional chart blocks driven by the marketing/charts hooks and filters (month or term, consistent with the charts feature set).
 
 ## Yearly expense
 
-- **`YearlyExpenseChart`** — expense by selected year.
+- **`YearlyExpenseChart`** â€” expense by selected year.
 
 ## Two years compare
 
-- **`TwoYearsCompareChart`** — compares support cost (JPY) across two years with filters defined in that component.
+- **`TwoYearsCompareChart`** â€” compares support cost (JPY) across two years with filters defined in that component.
 
 ## Reporting table
 
-- **`ReportingTable`** — term-based report with evidence modal (see [06-charts-and-reporting.md](./06-charts-and-reporting.md)).
+- **`ReportingTable`** â€” term-based report with evidence modal (see [06-charts-and-reporting.md](./06-charts-and-reporting.md)).
 
 ## Overview Recently
 
-- **`SectionTitle`** + **`OverviewRecentlySection`** — recent activity or summary widgets (implementation in `src/components/dashboard/OverviewRecentlySection.jsx` and related files).
+- **`SectionTitle`** + **`OverviewRecentlySection`** â€” recent activity or summary widgets (implementation in `src/components/dashboard/OverviewRecentlySection.jsx` and related files).
 
 ## ISUZU Dealers (dealer cards)
 
@@ -67,7 +67,7 @@ Two parallel widgets (`SupportAllocationChartByMonth`, `SupportAllocationChartBy
 - **Error:** bordered error panel.
 - **Empty:** `DealerCardsEmpty`.
 - **Data mapping:** Each dealer gets:
-  - Name, logo URL (relative paths prefixed with `https://marketing.5v.ae/`)
+  - Name, logo URL (relative paths prefixed with `https://marketing.isuzu-tech.com/`)
   - Term list sorted by `start_date` descending, showing plan counts per term
   - Costs: `support_cost_total`, `actual_cost_total`, `estimated_cost_total`, `total_cost`
 - **Display:** `DealerCard` with `isAdmin` and **currency** from `CurrencyContext` (`useCurrency`).

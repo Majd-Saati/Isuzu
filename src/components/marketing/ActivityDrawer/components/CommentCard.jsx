@@ -1,8 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { MessageSquare, FileText, Clock, User, Upload, Trash2 } from 'lucide-react';
 import { formatDate } from '../utils/formatters';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://marketing.5v.ae/api/';
+import { MEDIA_BASE_URL } from '@/lib/api/config';
 
 const getMediaUrl = (media) => {
   if (!media) return null;
@@ -42,13 +41,10 @@ const getMediaUrl = (media) => {
     return cleanPath;
   }
   
-  // Extract base domain from API_BASE_URL (e.g., https://marketing.5v.ae)
-  const baseDomain = API_BASE_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
-  
   // Remove leading slash if present, then construct full URL
   cleanPath = cleanPath.replace(/^\//, '');
-  
-  return `${baseDomain}/${cleanPath}`;
+
+  return `${MEDIA_BASE_URL}/${cleanPath}`;
 };
 
 const isImageFile = (url) => {

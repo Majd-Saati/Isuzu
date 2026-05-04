@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Filter, Calendar, ChevronDown, RotateCcw } from 'lucide-react';
 import { OverviewTable } from '@/components/dashboard/OverviewTable';
@@ -11,12 +11,9 @@ import { usePlans } from '@/hooks/api/usePlans';
 import { useActivities } from '@/hooks/api/useActivities';
 import { isAdminUser } from '@/lib/permissions';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { buildMediaUrl } from '@/lib/api/config';
 
-const getLogoUrl = (path) => {
-  if (!path) return null;
-  if (path.startsWith('http')) return path;
-  return `https://marketing.5v.ae/${path}`;
-};
+const getLogoUrl = (path) => buildMediaUrl(path);
 
 const selectClass =
   'px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-0 w-full cursor-pointer';
@@ -500,7 +497,7 @@ export const OverviewRecentlySection = () => {
               </select>
             </label>
             <span className="text-gray-500 dark:text-gray-500">
-              {rangeStart}–{rangeEnd} of {total}
+              {rangeStart}â€“{rangeEnd} of {total}
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -547,7 +544,7 @@ export const OverviewRecentlySection = () => {
                 aria-label="Go to page"
               />
               <span className="text-gray-500 dark:text-gray-500 whitespace-nowrap">
-                / {totalPagesNum != null ? totalPagesNum : '—'}
+                / {totalPagesNum != null ? totalPagesNum : 'â€”'}
               </span>
             </label>
             <button

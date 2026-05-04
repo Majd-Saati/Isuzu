@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($files = @\\('src\\\\lib\\\\api\\\\client.js','src\\\\components\\\\dashboard\\\\ReportingTable\\\\constants.js','src\\\\components\\\\marketing\\\\ActivityDrawer\\\\components\\\\CommentCard.jsx','src\\\\components\\\\marketing\\\\ActivityDrawer\\\\utils\\\\mediaUrls.js','src\\\\pages\\\\Index.jsx','src\\\\components\\\\calendar\\\\CalendarCompanyCard.jsx','src\\\\components\\\\companies\\\\CompaniesTable.jsx','src\\\\components\\\\companies\\\\AddEditCompanyModal.jsx','src\\\\components\\\\budgets\\\\BudgetAllocationTable\\\\utils.js','src\\\\components\\\\charts\\\\chartExportUtils.js','src\\\\components\\\\dashboard\\\\OverviewRecentlySection.jsx','docs\\\\03-dashboard.md','docs\\\\01-application-overview.md'\\); foreach\\($f in $files\\){ $c = Get-Content -Raw -Path $f; $c = $c -replace 'marketing\\\\.5v\\\\.ae','marketing.isuzu-tech.com'; Set-Content -Path $f -Value $c -NoNewline -Encoding utf8 })"
+    ]
+  }
+}
