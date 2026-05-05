@@ -5,6 +5,7 @@ import { MarketingPlansTableSkeleton } from '@/components/marketing/MarketingPla
 import { MarketingPlansTableEmpty } from '@/components/marketing/MarketingPlansTableEmpty';
 import { MarketingPlansActionBar } from '@/components/marketing/MarketingPlansActionBar';
 import { AddPlanModal } from '@/components/marketing/AddPlanModal';
+import { CustomPagination } from '@/components/ui/CustomPagination';
 import { usePlans, useCreatePlan, useUpdatePlan } from '@/hooks/api/usePlans';
 import { useActivities } from '@/hooks/api/useActivities';
 import { useMarketingPlansFilters } from '@/hooks/useMarketingPlansFilters';
@@ -31,7 +32,9 @@ const MarketingPlans = () => {
   // Filters and pagination from custom hook
   const {
     page,
+    setPage,
     perPage,
+    setPerPage,
     companyFilter,
     termFilter,
     companyFilterId,
@@ -56,6 +59,7 @@ const MarketingPlans = () => {
     search: searchTerm || undefined,
   });
   const plans = data?.plans || [];
+  const pagination = data?.pagination;
 
   // Fetch activities for all visible plans
   const planIds = useMemo(() => plans.map((plan) => plan.id), [plans]);
@@ -96,7 +100,19 @@ const MarketingPlans = () => {
   // Search handler
   const handleSearchChange = useCallback((e) => {
     setSearchTerm(e.target.value);
-  }, []);
+    setPage(1);
+  }, [setPage]);
+
+  const handlePageChange = useCallback((newPage) => {
+    if (newPage < 1) return;
+    if (pagination?.total_pages && newPage > pagination.total_pages) return;
+    setPage(newPage);
+  }, [setPage, pagination?.total_pages]);
+
+  const handlePerPageChange = useCallback((newPerPage) => {
+    setPerPage(newPerPage);
+    setPage(1);
+  }, [setPerPage, setPage]);
 
   // Render table content based on loading/error/empty state
   const renderContent = () => {
@@ -157,6 +173,20 @@ const MarketingPlans = () => {
 
       {/* Table */}
       {renderContent()}
+
+      {/* Pagination */}
+      {!isLoading && !isError && plans.length > 0 && pagination && (
+        <div className="mt-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-900 shadow-sm">
+          <CustomPagination
+            currentPage={pagination.page || page}
+            totalPages={pagination.total_pages || 1}
+            onPageChange={handlePageChange}
+            itemsPerPage={pagination.per_page || perPage}
+            totalItems={pagination.total || 0}
+            onItemsPerPageChange={handlePerPageChange}
+          />
+        </div>
+      )}
     </>
   );
 };

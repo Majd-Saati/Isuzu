@@ -26,7 +26,7 @@ export const useMarketingPlansFilters = () => {
   
   // Pagination state
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(20);
+  const [perPage, setPerPage] = useState(15);
   
   // Filter state
   const [companyFilterId, setCompanyFilterId] = useState(null);
@@ -87,7 +87,7 @@ export const useMarketingPlansFilters = () => {
     const pageParam = Number(params.get('page'));
     const perPageParam = Number(params.get('per_page'));
     setPage(!Number.isNaN(pageParam) && pageParam > 0 ? pageParam : 1);
-    setPerPage(!Number.isNaN(perPageParam) && perPageParam > 0 ? perPageParam : 20);
+    setPerPage(!Number.isNaN(perPageParam) && perPageParam > 0 ? perPageParam : 15);
   }, [location.search]);
 
   // Update company name when companies load or companyFilterId changes
