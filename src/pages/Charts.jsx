@@ -248,7 +248,7 @@ const DealerEfficiencyChartByTerm = () => {
   const cardContent = (
     <>
       <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">
-        By Term ({termId ? termLabel : '—'})
+        By Term{termId ? ` (${termLabel})` : ''}
       </p>
       {termFilter}
     </>

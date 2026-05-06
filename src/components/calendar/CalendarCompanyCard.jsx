@@ -48,7 +48,7 @@ export const CalendarCompanyCard = ({ company, displayCurrencyCode = '' }) => {
         <div className="flex items-center justify-between py-2">
           <span className="text-sm text-gray-600 dark:text-gray-400">Currency</span>
           <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-            {displayCurrencyCode || 'â€”'}
+            {displayCurrencyCode || ''}
           </span>
         </div>
       </div>

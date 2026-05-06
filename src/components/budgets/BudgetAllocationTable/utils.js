@@ -3,7 +3,7 @@
 const LOGO_BASE = `${MEDIA_BASE_URL}/`;
 
 export const formatDate = (dateString) => {
-  if (!dateString) return 'â€”';
+  if (!dateString) return '';
   const d = new Date(dateString);
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 };

@@ -12,11 +12,11 @@ export const CompaniesTable = ({
   onItemsPerPageChange 
 }) => {
   const formatDate = (dateString) => {
-    if (!dateString) return 'â€”';
+    if (!dateString) return '';
     
     const date = new Date(dateString);
     
-    if (isNaN(date.getTime())) return 'â€”';
+    if (isNaN(date.getTime())) return '';
     
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -74,12 +74,12 @@ export const CompaniesTable = ({
                 </td>
                 <td className="px-6 py-4 border-r-2 border-gray-200 dark:border-gray-700">
                   <span className="inline-flex items-center px-3 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-sm font-medium">
-                    {company.country_name || 'â€”'}
+                    {company.country_name || ''}
                   </span>
                 </td>
                 <td className="px-6 py-4 border-r-2 border-gray-200 dark:border-gray-700">
                   <span className="inline-flex items-center px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-sm font-medium">
-                    {company.country_currency || 'â€”'}
+                    {company.country_currency || ''}
                   </span>
                 </td>
                 <td className="px-6 py-4 border-r-2 border-gray-200 dark:border-gray-700">

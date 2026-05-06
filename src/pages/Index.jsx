@@ -149,7 +149,7 @@ const DealerEfficiencyChartByMonth = () => {
   if (!month) {
     return (
       <div className={`${chartCardClass} max-w-lg`}>
-        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month (â€”)</p>
+        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month</p>
         {monthFilter}
         <div className="flex flex-col items-center justify-center py-12 text-center mt-4">
           <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Select a month to view data.</p>
@@ -255,7 +255,7 @@ const DealerEfficiencyChartByTerm = () => {
   const cardContent = (
     <>
       <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">
-        By Term ({termId ? termLabel : 'â€”'})
+        By Term{termId ? ` (${termLabel})` : ''}
       </p>
       {termFilter}
     </>
@@ -372,7 +372,7 @@ const SupportAllocationChartByMonth = () => {
   if (!month) {
     return (
       <div className={`${chartCardClass} max-w-lg`}>
-        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month (â€”)</p>
+        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month </p>
         {monthFilter}
         <div className="flex flex-col items-center justify-center py-12 text-center mt-4">
           <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Select a month to view data.</p>
@@ -482,7 +482,7 @@ const SupportAllocationChartByTerm = () => {
   const cardContent = (
     <>
       <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">
-        By Term ({termId ? termLabel : 'â€”'})
+        By Term{termId ? ` (${termLabel})` : ''}
       </p>
       {termFilter}
     </>

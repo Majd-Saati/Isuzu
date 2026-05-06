@@ -544,7 +544,7 @@ export const OverviewRecentlySection = () => {
                 aria-label="Go to page"
               />
               <span className="text-gray-500 dark:text-gray-500 whitespace-nowrap">
-                / {totalPagesNum != null ? totalPagesNum : 'â€”'}
+                / {totalPagesNum != null ? totalPagesNum : ''}
               </span>
             </label>
             <button
