@@ -31,20 +31,30 @@ export const YearSupportChart = ({ yearsData = [], isAdmin = false, currencyCode
   const firstYearKey = String(firstYear.year);
   const secondYearKey = secondYear ? String(secondYear.year) : null;
 
-  const monthIndex = new Map();
+  // Preserve the API's month ordering (fiscal year may not start in January).
+  // Use the first year's month sequence as the canonical order; fall back to the
+  // second year's sequence for any positions it doesn't cover.
   const monthLabel = new Map();
+  const orderedMonths = [];
+  const seenMonths = new Set();
 
-  normalizedYears.forEach((yearData) => {
-    (yearData.months || []).forEach((monthData) => {
+  const appendFromYear = (yearData) => {
+    (yearData?.months || []).forEach((monthData) => {
       const monthNumber = Number(monthData?.month);
       if (!monthNumber || monthNumber < 1 || monthNumber > 12) return;
-      monthIndex.set(monthNumber, true);
-      const shortLabel = String(monthData?.label || '').trim().split(' ')[0];
-      monthLabel.set(monthNumber, shortLabel || `M${monthNumber}`);
+      if (!seenMonths.has(monthNumber)) {
+        seenMonths.add(monthNumber);
+        orderedMonths.push(monthNumber);
+      }
+      if (!monthLabel.has(monthNumber)) {
+        const shortLabel = String(monthData?.label || '').trim().split(' ')[0];
+        monthLabel.set(monthNumber, shortLabel || `M${monthNumber}`);
+      }
     });
-  });
+  };
 
-  const orderedMonths = Array.from(monthIndex.keys()).sort((a, b) => a - b);
+  normalizedYears.forEach(appendFromYear);
+
   const chartData = orderedMonths.map((monthNumber) => {
     const row = {
       month: monthLabel.get(monthNumber) || `M${monthNumber}`,
