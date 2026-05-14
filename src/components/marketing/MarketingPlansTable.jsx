@@ -11,22 +11,42 @@ const calculateCosts = (budget = []) => {
   let actualStatus = null;
   let supportStatus = null;
 
+  // Track latest status per type as a fallback for the UI badge color
+  let latestEstimatedStatus = null;
+  let latestActualStatus = null;
+  let latestSupportStatus = null;
+
   budget.forEach((item) => {
     const value = parseFloat(item.value) || 0;
     const type = (item.type || '').toLowerCase();
-    const status = item.status || null;
+    const status = (item.status || '').toLowerCase() || null;
+    const isAccepted = status === 'accepted';
 
     if (type === 'estimated cost') {
-      estimatedCost += value;
-      estimatedStatus = status || estimatedStatus;
+      latestEstimatedStatus = status || latestEstimatedStatus;
+      if (isAccepted) {
+        estimatedCost += value;
+        estimatedStatus = 'accepted';
+      }
     } else if (type === 'actual cost') {
-      actualCost += value;
-      actualStatus = status || actualStatus;
+      latestActualStatus = status || latestActualStatus;
+      if (isAccepted) {
+        actualCost += value;
+        actualStatus = 'accepted';
+      }
     } else if (type === 'support cost') {
-      supportCost += value;
-      supportStatus = status || supportStatus;
+      latestSupportStatus = status || latestSupportStatus;
+      if (isAccepted) {
+        supportCost += value;
+        supportStatus = 'accepted';
+      }
     }
   });
+
+  // If no accepted entries exist for a type, fall back to the latest status so the badge still reflects state
+  estimatedStatus = estimatedStatus || latestEstimatedStatus;
+  actualStatus = actualStatus || latestActualStatus;
+  supportStatus = supportStatus || latestSupportStatus;
 
   return {
     estimatedCost,
