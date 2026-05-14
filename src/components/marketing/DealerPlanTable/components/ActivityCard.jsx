@@ -185,18 +185,20 @@ export const ActivityCard = ({
             </div>
 
             {/* Support Cost */}
-            <div>
-              <span className="text-gray-500 dark:text-gray-400 font-medium">Support</span>
-              <button
-                type="button"
-                onClick={() => onOpenDrawer(activity, 'support cost', activity.supportStatus)}
-                className={`${getAmountColorByStatus(
-                  activity.supportStatus
-                )} ${activity.supportCost === 0 && !isDeniedBudgetStatus(activity.supportStatus) ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
-              >
-                {formatMoneyFromContext(activity.supportCost)}
-              </button>
-            </div>
+            {isAdmin && (
+              <div>
+                <span className="text-gray-500 dark:text-gray-400 font-medium">Support</span>
+                <button
+                  type="button"
+                  onClick={() => onOpenDrawer(activity, 'support cost', activity.supportStatus)}
+                  className={`${getAmountColorByStatus(
+                    activity.supportStatus
+                  )} ${activity.supportCost === 0 && !isDeniedBudgetStatus(activity.supportStatus) ? 'dark:text-white' : ''} font-semibold mt-1 lg:mt-1.5 text-sm lg:text-base hover:underline`}
+                >
+                  {formatMoneyFromContext(activity.supportCost)}
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

@@ -178,17 +178,19 @@ export const ActivityTableRow = ({
               {formatMoneyFromContext(activity.actualCost)}
             </button>
           </td>
-          <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-32">
-            <button
-              type="button"
-              onClick={() => onOpenDrawer(activity, 'support cost', activity.supportStatus)}
-              className={`text-sm font-medium ${getAmountColorByStatus(
-                activity.supportStatus
-              )} ${activity.supportCost === 0 && !isDeniedBudgetStatus(activity.supportStatus) ? 'dark:text-white' : ''} hover:underline`}
-            >
-              {formatMoneyFromContext(activity.supportCost)}
-            </button>
-          </td>
+          {isAdmin && (
+            <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-32">
+              <button
+                type="button"
+                onClick={() => onOpenDrawer(activity, 'support cost', activity.supportStatus)}
+                className={`text-sm font-medium ${getAmountColorByStatus(
+                  activity.supportStatus
+                )} ${activity.supportCost === 0 && !isDeniedBudgetStatus(activity.supportStatus) ? 'dark:text-white' : ''} hover:underline`}
+              >
+                {formatMoneyFromContext(activity.supportCost)}
+              </button>
+            </td>
+          )}
         </>
       )}
       {showMediaUploadColumns && (

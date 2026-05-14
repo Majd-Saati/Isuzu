@@ -24,7 +24,8 @@ export const BudgetListTab = ({
 }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [isBudgetItemsExpanded, setIsBudgetItemsExpanded] = useState(true);
-  const { budget = [], pagination } = data || {};
+  const { budget: rawBudget = [], pagination } = data || {};
+  const budget = isAdmin ? rawBudget : rawBudget.filter(item => item.type !== 'support cost');
 
   // Separate costs by type
   const estimatedCosts = budget.filter(item => item.type === 'estimated cost');
@@ -38,7 +39,7 @@ export const BudgetListTab = ({
 
   const hasEstimated = totalEstimated > 0;
   const hasActual = totalActual > 0;
-  const hasSupport = totalSupport > 0;
+  const hasSupport = totalSupport > 0 && isAdmin;
 
   if (isLoading) {
     return (

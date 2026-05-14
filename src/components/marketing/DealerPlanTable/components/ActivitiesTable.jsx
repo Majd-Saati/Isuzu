@@ -60,9 +60,11 @@ export const ActivitiesTable = ({
                 <th className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-32">
                   Actual
                 </th>
-                <th className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-32">
-                  Support
-                </th>
+                {isAdmin && (
+                  <th className="text-left text-sm font-medium text-gray-500 dark:text-gray-400 py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-32">
+                    Support
+                  </th>
+                )}
               </>
             )}
             {showMediaUploadColumns && (
@@ -97,6 +99,7 @@ export const ActivitiesTable = ({
             onClick={onAddActivity}
             showBudgetColumns={showBudgetColumns}
             showMediaUploadColumns={showMediaUploadColumns}
+            isAdmin={isAdmin}
           />
         </tbody>
       </table>

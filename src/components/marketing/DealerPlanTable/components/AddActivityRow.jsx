@@ -1,7 +1,7 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
 
-export const AddActivityRow = ({ onClick, showBudgetColumns, showMediaUploadColumns }) => {
+export const AddActivityRow = ({ onClick, showBudgetColumns, showMediaUploadColumns, isAdmin = true }) => {
   return (
     <tr 
       onClick={onClick}
@@ -24,7 +24,7 @@ export const AddActivityRow = ({ onClick, showBudgetColumns, showMediaUploadColu
         <>
           <td className="py-4 px-6 w-32"></td>
           <td className="py-4 px-6 w-32"></td>
-          <td className="py-4 px-6 w-32"></td>
+          {isAdmin && <td className="py-4 px-6 w-32"></td>}
         </>
       )}
       {showMediaUploadColumns && (

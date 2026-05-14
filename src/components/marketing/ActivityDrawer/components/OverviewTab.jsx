@@ -31,6 +31,7 @@ export const OverviewTab = ({
   metaType,
   onClearMetaFilter,
   onMetaCreated,
+  isAdmin = true,
 }) => {
   const [showAddCommentForm, setShowAddCommentForm] = useState(false);
   const [showAddEvidenceForm, setShowAddEvidenceForm] = useState(false);
@@ -44,15 +45,16 @@ export const OverviewTab = ({
   const evidences = meta.filter(item => item.type === 'evidence');
 
   // Apply same filter logic as Budget tab (client-side) when a filter is active
+  const visibleBudget = isAdmin ? budget : budget.filter(item => item.type !== 'support cost');
   const filteredBudget = filterType
-    ? budget.filter((item) => {
+    ? visibleBudget.filter((item) => {
         const typeMatch = item.type === filterType;
         const statusMatch = !filterStatus
           ? true
           : (item.status || '').toLowerCase() === filterStatus.toLowerCase();
         return typeMatch && statusMatch;
       })
-    : budget;
+    : visibleBudget;
 
   const budgetDetailById = useMemo(() => {
     const map = new Map();
