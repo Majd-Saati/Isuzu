@@ -14,7 +14,7 @@ import { DealerEfficiencyChartEmpty } from '@/components/dashboard/DealerEfficie
 import { ReportingTable } from '@/components/dashboard/ReportingTable';
 import { ReportingTableSkeleton } from '@/components/dashboard/ReportingTableSkeleton';
 import { ReportingTableEmpty } from '@/components/dashboard/ReportingTableEmpty';
-import { MarketingChartsSection, YearlyExpenseChart, TwoYearsCompareChart } from '@/components/charts';
+import { MarketingChartsSection, TwoYearsCompareChart } from '@/components/charts';
 import { SectionNav } from '@/components/SectionNav';
 import { useCharts } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
@@ -370,7 +370,6 @@ const Index = () => {
     { id: 'dealer-efficiency', label: 'Dealer Efficiency' },
     { id: 'support-allocation-efficiency', label: 'Support vs Allocation' },
     { id: 'marketing-charts', label: 'Marketing Charts' },
-    { id: 'yearly-expense', label: 'Yearly Expense' },
     { id: 'two-years-compare', label: 'Two Years Compare' },
     { id: 'reporting-table', label: 'Reporting Table' },
     { id: 'overview-recently', label: 'Overview of Recent Activities' },
@@ -385,14 +384,9 @@ const Index = () => {
         {/* Shared Company + Term filter linked to Dealer Efficiency + Support vs Allocation */}
         <DealerSupportChartsSection />
 
-        {/* Marketing API Charts - month or term_id */}
+        {/* Marketing API Charts - by month, term, or year */}
         <section id="marketing-charts" className="py-12 border-b border-gray-200 dark:border-gray-700">
           <MarketingChartsSection />
-        </section>
-
-        {/* Yearly Expense Chart - by year */}
-        <section id="yearly-expense" className="py-12 border-b border-gray-200 dark:border-gray-700">
-          <YearlyExpenseChart />
         </section>
 
         {/* Two years comparison - Support cost (JPY) */}

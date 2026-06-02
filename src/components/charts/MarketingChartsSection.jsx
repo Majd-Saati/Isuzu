@@ -17,20 +17,20 @@ import { MarketingChartsTotals } from './MarketingChartsTotals';
 import { MarketingChartsSeriesChart } from './MarketingChartsSeriesChart';
 import { MarketingChartsSkeleton } from './MarketingChartsSkeleton';
 import { MarketingChartsEmpty } from './MarketingChartsEmpty';
-import { format } from 'date-fns';
 import { useCurrency } from '@/contexts/CurrencyContext';
-
-const getDefaultMonth = () => format(new Date(), 'yyyy-MM');
 
 export const MarketingChartsSection = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
   const { currency } = useCurrency();
 
-  const [periodType, setPeriodType] = useState('month');
-  const [month, setMonth] = useState(getDefaultMonth);
+  const [periodType, setPeriodType] = useState('term');
   const [termId, setTermId] = useState('');
+  const [year, setYear] = useState(() => new Date().getFullYear());
   const [companyId, setCompanyId] = useState(isAdmin ? 'all' : String(user?.id || ''));
+
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
 
   const { data: termsData } = useTerms({ perPage: 100 });
   const terms = termsData?.terms ?? [];
@@ -44,10 +44,10 @@ export const MarketingChartsSection = () => {
 
   const params = useMemo(() => {
     const base = { company_id: companyId };
-    if (periodType === 'month') return { ...base, month };
+    if (periodType === 'year') return { ...base, year };
     if (termId) return { ...base, term_id: termId };
     return base;
-  }, [periodType, month, termId, companyId]);
+  }, [periodType, termId, year, companyId]);
 
   const { data, isLoading, isError, error } = useCharts(params);
 
@@ -56,12 +56,12 @@ export const MarketingChartsSection = () => {
 
   const selectedCompany = companies.find((c) => c.id === companyId)?.name || 'All companies';
   const selectedTerm = terms.find((t) => t.id === termId)?.name || '';
-  const periodLabel = periodType === 'month' ? month : selectedTerm;
+  const periodLabel = periodType === 'year' ? String(year) : selectedTerm;
 
   return (
     <div className="space-y-6">
       <SectionHeader
-        title="Marketing Expenditure and Supportcentive"
+        title="Marketing Expenditure vs Support"
         subtitle={hasData ? `${selectedCompany} • ${periodLabel}` : undefined}
       />
 
@@ -98,17 +98,6 @@ export const MarketingChartsSection = () => {
           <div className="flex rounded-lg border border-gray-200 dark:border-gray-600 overflow-hidden bg-white dark:bg-gray-900">
             <button
               type="button"
-              onClick={() => setPeriodType('month')}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
-                periodType === 'month'
-                  ? 'bg-[#E60012] text-white'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-              By month
-            </button>
-            <button
-              type="button"
               onClick={() => setPeriodType('term')}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 periodType === 'term'
@@ -118,16 +107,20 @@ export const MarketingChartsSection = () => {
             >
               By term
             </button>
+            <button
+              type="button"
+              onClick={() => setPeriodType('year')}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
+                periodType === 'year'
+                  ? 'bg-[#E60012] text-white'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+            >
+              By year
+            </button>
           </div>
 
-          {periodType === 'month' ? (
-            <input
-              type="month"
-              value={month}
-              onChange={(e) => setMonth(e.target.value)}
-              className={SECTION_FILTER_SELECT_CLASS}
-            />
-          ) : (
+          {periodType === 'term' && (
             <select
               value={termId}
               onChange={(e) => setTermId(e.target.value)}
@@ -137,6 +130,19 @@ export const MarketingChartsSection = () => {
               {terms.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.name || `Term ${t.id}`}
+                </option>
+              ))}
+            </select>
+          )}
+          {periodType === 'year' && (
+            <select
+              value={year}
+              onChange={(e) => setYear(Number(e.target.value))}
+              className={SECTION_FILTER_SELECT_CLASS}
+            >
+              {yearOptions.map((y) => (
+                <option key={y} value={y}>
+                  {y}
                 </option>
               ))}
             </select>
@@ -167,7 +173,9 @@ export const MarketingChartsSection = () => {
           <MarketingChartsSeriesChart 
             series={data.series} 
             totals={data.totals}
-            filename={`marketing-${companyId}-${periodType === 'month' ? month : `term-${termId}`}`}
+            filename={`marketing-${companyId}-${
+              periodType === 'year' ? `year-${year}` : `term-${termId}`
+            }`}
             isAdmin={isAdmin}
             currencyCode={currency}
           />
