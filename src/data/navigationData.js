@@ -16,12 +16,6 @@ export const mainNavigation = [
     label: 'Budget Allocation',
     path: '/budget-allocation',
     icon: 'https://api.builder.io/api/v1/image/assets/132ea46dcd5a44718cd3517d9e4e8249/3cfd2b331b1afb96a08113cad2433d1e3d137c19?placeholderIfAbsent=true'
-  },
-  {
-    id: 'charts',
-    label: 'Charts',
-    path: '/charts',
-    icon: 'https://api.builder.io/api/v1/image/assets/132ea46dcd5a44718cd3517d9e4e8249/c491fe67f6552c296f95c36a207ae8a66a0d22b0?placeholderIfAbsent=true'
   }
 ];
 

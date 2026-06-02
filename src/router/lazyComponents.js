@@ -20,7 +20,6 @@ export const BudgetsAllocation = lazy(() => import('../pages/BudgetsAllocation')
 export const Administrators = lazy(() => import('../pages/Administrators'));
 export const Companies = lazy(() => import('../pages/Users')); // Companies page (formerly Users)
 export const UsersPage = lazy(() => import('../pages/UsersPage')); // New Users page
-export const Charts = lazy(() => import('../pages/Charts'));
 export const Countries = lazy(() => import('../pages/Countries'));
 export const Calendar = lazy(() => import('../pages/Calendar'));
 export const Terms = lazy(() => import('../pages/Terms'));

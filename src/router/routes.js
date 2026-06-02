@@ -14,7 +14,6 @@ export const ROUTES = {
   ADMINISTRATORS: '/administrators',
   COMPANIES: '/companies',
   USERS: '/users',
-  CHARTS: '/charts',
   COUNTRIES: '/countries',
   CALENDAR: '/calendar',
   TERMS: '/terms',
@@ -49,10 +48,6 @@ export const ROUTE_METADATA = {
   },
   [ROUTES.USERS]: {
     title: 'Users',
-    requiresAuth: true,
-  },
-  [ROUTES.CHARTS]: {
-    title: 'Charts',
     requiresAuth: true,
   },
   [ROUTES.COUNTRIES]: {

@@ -42,7 +42,6 @@ const ROUTE_PERMISSIONS = {
   '/budgets-allocation': 'plans_list',
   '/terms': null, // Admin only
   '/calendar': 'calendar_view',
-  '/charts': 'overview', // Charts might need overview
   '/countries': null, // Admin only
   '/companies': null, // Admin only
   '/users': null, // Admin only
