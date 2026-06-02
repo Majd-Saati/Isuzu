@@ -19,15 +19,12 @@ import { SectionNav } from '@/components/SectionNav';
 import { useCharts } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
 import { useCompanies } from '@/hooks/api/useCompanies';
-import { format, parseISO } from 'date-fns';
-import { Calendar, ClipboardList, Building2 } from 'lucide-react';
+import { ClipboardList, Building2 } from 'lucide-react';
 import { isAdminUser } from '@/lib/permissions';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { buildMediaUrl } from '@/lib/api/config';
 
 const getLogoUrl = (path) => buildMediaUrl(path);
-
-const getDefaultMonth = () => format(new Date(), 'yyyy-MM');
 
 const buildDealerChartData = (totals, title) => {
   if (!totals) return null;
@@ -59,56 +56,57 @@ const buildSupportVsAllocationChartData = (totals, allocationSource, title) => {
   };
 };
 
-const monthLabel = (monthStr) => {
-  try {
-    const d = parseISO(`${monthStr}-01`);
-    return format(d, 'MMM yyyy');
-  } catch {
-    return monthStr;
-  }
-};
-
 const chartCardClass =
   'bg-white dark:bg-gray-900 rounded-none p-6 md:p-7 w-full border border-gray-100 dark:border-gray-800 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)] hover:shadow-[0px_8px_32px_rgba(0,0,0,0.12)] dark:hover:shadow-[0px_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 animate-fade-in';
 
 const selectClass =
   'px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[160px] cursor-pointer';
 
-const DealerEfficiencyChartByMonth = () => {
+const DealerSupportChartsSection = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
   const { currency } = useCurrency();
 
-  const [month, setMonth] = useState('');
-  const [companyId, setCompanyId] = useState(isAdmin ? '' : String(user?.id || ''));
+  const { data: termsData } = useTerms({ perPage: 100 });
   const { data: companiesData } = useCompanies({ perPage: 100 }, { enabled: isAdmin });
+  const terms = termsData?.terms ?? [];
   const companies = companiesData?.companies ?? [];
+
+  const [termId, setTermId] = useState('');
+  const [companyId, setCompanyId] = useState(isAdmin ? '' : String(user?.id || ''));
 
   useEffect(() => {
     if (!isAdmin && user?.id) setCompanyId(String(user.id));
   }, [isAdmin, user]);
 
-  // ref for month input so clicking the container can open the picker
-  const monthInputRef = useRef(null);
-
   const { data, isLoading, isError } = useCharts(
-    { company_id: isAdmin ? (companyId || undefined) : user?.id, month: month || undefined },
-    { enabled: !!month }
+    { company_id: isAdmin ? (companyId || undefined) : user?.id, term_id: termId || undefined },
+    { enabled: !!termId }
   );
-  const chartData = buildDealerChartData(data?.totals, `By Month (${monthLabel(month)})`);
 
-  const monthFilter = (
-    <div className="flex flex-row flex-wrap gap-6">
+  const selectedTerm = terms.find((t) => String(t.id) === String(termId));
+  const termLabel = selectedTerm?.name || (termId ? `Term ${termId}` : 'Select term');
+
+  const dealerChartData = buildDealerChartData(data?.totals, `By Term (${termLabel})`);
+  const supportChartData = buildSupportVsAllocationChartData(
+    data?.totals,
+    data?.term_budget_vs_support,
+    `By Term (${termLabel})`
+  );
+
+  // Single shared Company + Term filter toolbar, linked to both charts below
+  const filter = (
+    <div className="flex flex-wrap items-end gap-4 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-5 py-4 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)]">
       {isAdmin && (
-        <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-1.5 min-w-[200px] flex-1">
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
             <Building2 className="w-4 h-4 text-[#E60012]" />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
-          </div>
+            Company
+          </label>
           <select
             value={companyId}
             onChange={(e) => setCompanyId(e.target.value)}
-            className={selectClass}
+            className={`${selectClass} w-full`}
           >
             <option value="">Select company</option>
             {companies.map((c) => (
@@ -119,127 +117,15 @@ const DealerEfficiencyChartByMonth = () => {
           </select>
         </div>
       )}
-      <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-white" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Month</span>
-        </div>
-        <div
-          className="w-full"
-          onClick={() => {
-            if (monthInputRef?.current) {
-              const el = monthInputRef.current;
-              if (typeof el.showPicker === 'function') el.showPicker();
-              else el.focus();
-            }
-          }}
-        >
-          <input
-            ref={monthInputRef}
-            type="month"
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] cursor-pointer w-full"
-          />
-        </div>
-      </div>
-    </div>
-  );
-
-  if (!month) {
-    return (
-      <div className={`${chartCardClass} max-w-lg`}>
-        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month</p>
-        {monthFilter}
-        <div className="flex flex-col items-center justify-center py-12 text-center mt-4">
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Select a month to view data.</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError || (!isLoading && !chartData)) {
-    return (
-      <div className={`${chartCardClass} max-w-lg`}>
-        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month ({monthLabel(month)})</p>
-        {monthFilter}
-        <div className="flex flex-col items-center justify-center py-12 text-center mt-4">
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">No data available for this month.</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="max-w-lg">
-      <DealerEfficiencyChart
-        chartId="dashboard-month-api"
-        data={chartData ?? { title: `By Month (${monthLabel(month)})` }}
-        filter={monthFilter}
-        isLoading={isLoading}
-        showTitle={false}
-        isAdmin={isAdmin}
-        currencyCode={currency}
-      />
-    </div>
-  );
-};
-
-const DealerEfficiencyChartByTerm = () => {
-  const user = useSelector((state) => state.auth.user);
-  const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
-  const { currency } = useCurrency();
-  
-  const { data: termsData } = useTerms({ perPage: 100 });
-  const { data: companiesData } = useCompanies({ perPage: 100 }, { enabled: isAdmin });
-  const terms = termsData?.terms ?? [];
-  const companies = companiesData?.companies ?? [];
-  const [termId, setTermId] = useState('');
-  const [companyId, setCompanyId] = useState(isAdmin ? '' : String(user?.id || ''));
-
-  useEffect(() => {
-    if (!isAdmin && user?.id) setCompanyId(String(user.id));
-  }, [isAdmin, user]);
-
-  const { data, isLoading, isError } = useCharts(
-    { company_id: isAdmin ? (companyId || undefined) : user?.id, term_id: termId || undefined },
-    { enabled: !!termId }
-  );
-  const selectedTerm = terms.find((t) => String(t.id) === String(termId));
-  const termLabel = selectedTerm?.name || (termId ? `Term ${termId}` : 'Select term');
-  const chartData = buildDealerChartData(data?.totals, `By Term (${termLabel})`);
-
-  const termFilter = (
-    <div className="flex flex-row flex-wrap gap-6">
-      {isAdmin && (
-        <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-[#E60012]" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
-        </div>
-        <select
-          value={companyId}
-          onChange={(e) => setCompanyId(e.target.value)}
-          className={selectClass}
-        >
-          <option value="">Select company</option>
-          {companies.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-        </div>
-      )}
-      <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-1.5 min-w-[200px] flex-1">
+        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
           <ClipboardList className="w-4 h-4 text-[#E60012]" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Term</span>
-        </div>
+          Term
+        </label>
         <select
           value={termId}
           onChange={(e) => setTermId(e.target.value)}
-          className={selectClass}
+          className={`${selectClass} w-full`}
         >
           <option value="">Select term</option>
           {terms.map((t) => (
@@ -252,287 +138,71 @@ const DealerEfficiencyChartByTerm = () => {
     </div>
   );
 
-  const cardContent = (
-    <>
-      <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">
-        By Term{termId ? ` (${termLabel})` : ''}
-      </p>
-      {termFilter}
-    </>
-  );
-
-  if (!termId) {
-    return (
-      <div className={`${chartCardClass} max-w-lg`}>
-        {cardContent}
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Select a term to view data.</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError || (!isLoading && !chartData)) {
-    return (
-      <div className={`${chartCardClass} max-w-lg`}>
-        {cardContent}
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">No data available for this term.</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="max-w-lg">
-      <DealerEfficiencyChart
-        chartId="dashboard-term-api"
-        data={chartData ?? { title: `By Term (${termLabel})` }}
-        filter={termFilter}
-        isLoading={isLoading}
-        showTitle={false}
-        isAdmin={isAdmin}
-        currencyCode={currency}
-      />
-    </div>
-  );
-};
-
-const SupportAllocationChartByMonth = () => {
-  const user = useSelector((state) => state.auth.user);
-  const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
-  const { currency } = useCurrency();
-
-  const [month, setMonth] = useState('');
-  const [companyId, setCompanyId] = useState(isAdmin ? '' : String(user?.id || ''));
-  const { data: companiesData } = useCompanies({ perPage: 100 }, { enabled: isAdmin });
-  const companies = companiesData?.companies ?? [];
-
-  useEffect(() => {
-    if (!isAdmin && user?.id) setCompanyId(String(user.id));
-  }, [isAdmin, user]);
-
-  const monthInputRef = useRef(null);
-
-  const { data, isLoading, isError } = useCharts(
-    { company_id: isAdmin ? (companyId || undefined) : user?.id, month: month || undefined },
-    { enabled: !!month }
-  );
-  const chartData = buildSupportVsAllocationChartData(
-    data?.totals,
-    data?.month_term_budget_allocation,
-    `By Month (${monthLabel(month)})`
-  );
-
-  const monthFilter = (
-    <div className="flex flex-row flex-wrap gap-6">
-      {isAdmin && (
-        <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-[#E60012]" />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
+  const renderChart = (chartData, chartId, extraData) => {
+    if (!termId) {
+      return (
+        <div className={`${chartCardClass} w-full`}>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Select a term to view data.</p>
           </div>
-          <select value={companyId} onChange={(e) => setCompanyId(e.target.value)} className={selectClass}>
-            <option value="">Select company</option>
-            {companies.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
         </div>
-      )}
-      <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-white" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Month</span>
-        </div>
-        <div
-          className="w-full"
-          onClick={() => {
-            if (monthInputRef?.current) {
-              const el = monthInputRef.current;
-              if (typeof el.showPicker === 'function') el.showPicker();
-              else el.focus();
-            }
-          }}
-        >
-          <input
-            ref={monthInputRef}
-            type="month"
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] cursor-pointer w-full"
-          />
-        </div>
-      </div>
-    </div>
-  );
+      );
+    }
 
-  if (!month) {
-    return (
-      <div className={`${chartCardClass} max-w-lg`}>
-        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month </p>
-        {monthFilter}
-        <div className="flex flex-col items-center justify-center py-12 text-center mt-4">
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Select a month to view data.</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError || (!isLoading && !chartData)) {
-    return (
-      <div className={`${chartCardClass} max-w-lg`}>
-        <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Month ({monthLabel(month)})</p>
-        {monthFilter}
-        <div className="flex flex-col items-center justify-center py-12 text-center mt-4">
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">No data available for this month.</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="max-w-lg">
-      <DealerEfficiencyChart
-        chartId="dashboard-support-allocation-month-api"
-        data={
-          chartData
-            ? {
-                ...chartData,
-                amountLabel: 'Allocated Budget',
-                legendLabel: 'Support Amount',
-              }
-            : { title: `By Month (${monthLabel(month)})` }
-        }
-        filter={monthFilter}
-        isLoading={isLoading}
-        showTitle={false}
-        isAdmin={isAdmin}
-        currencyCode={currency}
-      />
-    </div>
-  );
-};
-
-const SupportAllocationChartByTerm = () => {
-  const user = useSelector((state) => state.auth.user);
-  const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
-  const { currency } = useCurrency();
-
-  const { data: termsData } = useTerms({ perPage: 100 });
-  const { data: companiesData } = useCompanies({ perPage: 100 }, { enabled: isAdmin });
-  const terms = termsData?.terms ?? [];
-  const companies = companiesData?.companies ?? [];
-  const [termId, setTermId] = useState('');
-  const [companyId, setCompanyId] = useState(isAdmin ? '' : String(user?.id || ''));
-
-  useEffect(() => {
-    if (!isAdmin && user?.id) setCompanyId(String(user.id));
-  }, [isAdmin, user]);
-
-  const { data, isLoading, isError } = useCharts(
-    { company_id: isAdmin ? (companyId || undefined) : user?.id, term_id: termId || undefined },
-    { enabled: !!termId }
-  );
-  const selectedTerm = terms.find((t) => String(t.id) === String(termId));
-  const termLabel = selectedTerm?.name || (termId ? `Term ${termId}` : 'Select term');
-  const chartData = buildSupportVsAllocationChartData(
-    data?.totals,
-    data?.term_budget_vs_support,
-    `By Term (${termLabel})`
-  );
-
-  const termFilter = (
-    <div className="flex flex-row flex-wrap gap-6">
-      {isAdmin && (
-        <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-[#E60012]" />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Company</span>
+    if (isError || (!isLoading && !chartData)) {
+      return (
+        <div className={`${chartCardClass} max-w-lg`}>
+          <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">By Term ({termLabel})</p>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">No data available for this term.</p>
           </div>
-          <select value={companyId} onChange={(e) => setCompanyId(e.target.value)} className={selectClass}>
-            <option value="">Select company</option>
-            {companies.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
         </div>
-      )}
-      <div className="flex flex-col gap-1.5 min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <ClipboardList className="w-4 h-4 text-[#E60012]" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Term</span>
-        </div>
-        <select value={termId} onChange={(e) => setTermId(e.target.value)} className={selectClass}>
-          <option value="">Select term</option>
-          {terms.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.name || `Term ${t.id}`}
-            </option>
-          ))}
-        </select>
-      </div>
-    </div>
-  );
+      );
+    }
 
-  const cardContent = (
-    <>
-      <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">
-        By Term{termId ? ` (${termLabel})` : ''}
-      </p>
-      {termFilter}
-    </>
-  );
-
-  if (!termId) {
     return (
-      <div className={`${chartCardClass} max-w-lg`}>
-        {cardContent}
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Select a term to view data.</p>
-        </div>
+      <div className="w-full">
+        <DealerEfficiencyChart
+          chartId={chartId}
+          data={chartData ? { ...chartData, ...extraData } : { title: `By Term (${termLabel})` }}
+          isLoading={isLoading}
+          showTitle={false}
+          isAdmin={isAdmin}
+          currencyCode={currency}
+        />
       </div>
     );
-  }
-
-  if (isError || (!isLoading && !chartData)) {
-    return (
-      <div className={`${chartCardClass} max-w-lg`}>
-        {cardContent}
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">No data available for this term.</p>
-        </div>
-      </div>
-    );
-  }
+  };
 
   return (
-    <div className="max-w-lg">
-      <DealerEfficiencyChart
-        chartId="dashboard-support-allocation-term-api"
-        data={
-          chartData
-            ? {
-                ...chartData,
-                amountLabel: 'Allocated Budget',
-                legendLabel: 'Support Amount',
-              }
-            : { title: `By Term (${termLabel})` }
-        }
-        filter={termFilter}
-        isLoading={isLoading}
-        showTitle={false}
-        isAdmin={isAdmin}
-        currencyCode={currency}
-      />
-    </div>
+    <section className="mt-[38px] max-md:mt-8 pb-12 border-b border-gray-200 dark:border-gray-700">
+      {/* Shared Company + Term filter toolbar, linked to both charts */}
+      <div className="mb-8">
+        {filter}
+      </div>
+
+      {/* Both charts on the same row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div id="dealer-efficiency">
+          <SectionHeader title="Dealer Efficiency" />
+          <div className="mt-4">
+            {renderChart(dealerChartData, 'dashboard-dealer-term-api')}
+          </div>
+        </div>
+
+        <div id="support-allocation-efficiency">
+          <SectionHeader title="Support Amount vs Budget Allocation" />
+          <div className="mt-4">
+            {renderChart(supportChartData, 'dashboard-support-allocation-term-api', {
+              amountLabel: 'Allocated Budget',
+              legendLabel: 'Support Amount',
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
-
 
 
 const Index = () => {
@@ -712,22 +382,8 @@ const Index = () => {
       <SectionNav sections={dashboardSections} />
       <div className="flex w-full flex-col items-stretch mt-[19px] px-5 max-w-full">
 
-        {/* Dealer Efficiency - by month and by term, side by side */}
-        <section id="dealer-efficiency" className="mt-[38px] max-md:mt-8 pb-12 border-b border-gray-200 dark:border-gray-700">
-          <SectionHeader title="Dealer Efficiency" />
-          <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <DealerEfficiencyChartByMonth />
-          <DealerEfficiencyChartByTerm />
-          </div>
-        </section>
-
-        <section id="support-allocation-efficiency" className="py-12 border-b border-gray-200 dark:border-gray-700">
-          <SectionHeader title="Support Amount vs Budget Allocation" />
-          <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SupportAllocationChartByMonth />
-            <SupportAllocationChartByTerm />
-          </div>
-        </section>
+        {/* Shared Company + Term filter linked to Dealer Efficiency + Support vs Allocation */}
+        <DealerSupportChartsSection />
 
         {/* Marketing API Charts - month or term_id */}
         <section id="marketing-charts" className="py-12 border-b border-gray-200 dark:border-gray-700">
