@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { calendarService } from '@/lib/api/services/calendarService';
+import { normalizeCalendarData } from '@/components/calendar/utils/calendarUtils';
 
 const calendarViewQueryKey = (params = {}) => {
   const term_id = params.term_id != null && params.term_id !== '' ? String(params.term_id) : '';
@@ -24,7 +25,7 @@ export const useCalendarView = (params = {}, options = {}) => {
   return useQuery({
     queryKey: calendarViewQueryKey(params),
     queryFn: () => calendarService.getCalendarView(params),
-    select: (data) => data?.body || null,
+    select: (data) => normalizeCalendarData(data?.body),
     enabled: Boolean(enabled && term_id), // Only term_id is required, company_id is optional (for "all companies")
     staleTime,
     refetchOnWindowFocus: refetchOnWindowFocus !== undefined ? refetchOnWindowFocus : true,
