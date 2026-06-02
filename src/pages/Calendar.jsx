@@ -82,19 +82,19 @@ const Calendar = () => {
       <SectionTitle title="MARKETING CALENDAR VIEW" />
       {filters}
 
-      <SummaryCards
-        totalActualCost={summaryStats.totalActualCost}
-        totalSupportCost={summaryStats.totalSupportCost}
-        isAdmin={isAdmin}
-        currencyCode={currency}
-      />
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <CalendarTermCard term={term} />
         {company && selectedCompanyId !== 'all' && (
           <CalendarCompanyCard company={company} displayCurrencyCode={displayCurrencyCode} />
         )}
       </div>
+
+      <SummaryCards
+        totalActualCost={summaryStats.totalActualCost}
+        totalSupportCost={summaryStats.totalSupportCost}
+        isAdmin={isAdmin}
+        currencyCode={currency}
+      />
 
       <CalendarTable plans={plans} months={months} isAdmin={isAdmin} currencyCode={currency} />
     </div>
