@@ -1,51 +1,7 @@
 ﻿import React from 'react';
 import { MessageSquare, FileText, Clock, User, Upload, Trash2 } from 'lucide-react';
 import { formatDate } from '../utils/formatters';
-import { MEDIA_BASE_URL } from '@/lib/api/config';
-
-const getMediaUrl = (media) => {
-  if (!media) return null;
-  
-  let mediaPath = null;
-  
-  // Handle array - extract first element
-  if (Array.isArray(media)) {
-    mediaPath = media[0];
-  } else if (typeof media === 'string') {
-    // Check if it's a JSON array string (starts with [ and ends with ])
-    const trimmed = media.trim();
-    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-      try {
-        const parsed = JSON.parse(trimmed);
-        mediaPath = Array.isArray(parsed) ? parsed[0] : parsed;
-      } catch (e) {
-        // If parsing fails, try to extract the path manually
-        // Remove brackets and quotes
-        mediaPath = trimmed.replace(/^\[/, '').replace(/\]$/, '').replace(/^["']/, '').replace(/["']$/, '');
-      }
-    } else {
-      mediaPath = media;
-    }
-  } else {
-    mediaPath = media;
-  }
-  
-  if (!mediaPath) return null;
-  
-  // Convert to string and clean up any remaining quotes or brackets
-  let cleanPath = String(mediaPath).trim();
-  cleanPath = cleanPath.replace(/^\[/, '').replace(/\]$/, '').replace(/^["']/, '').replace(/["']$/, '');
-  
-  // If it's already a full URL, return as is
-  if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
-    return cleanPath;
-  }
-  
-  // Remove leading slash if present, then construct full URL
-  cleanPath = cleanPath.replace(/^\//, '');
-
-  return `${MEDIA_BASE_URL}/${cleanPath}`;
-};
+import { parseMediaPaths, resolveMediaUrl, mediaFileLabel } from '../utils/mediaUrls';
 
 const isImageFile = (url) => {
   if (!url) return false;
@@ -55,8 +11,9 @@ const isImageFile = (url) => {
 };
 
 export const CommentCard = ({ item, onDelete, icon: Icon = MessageSquare }) => {
-  const mediaUrl = getMediaUrl(item.media);
-  const isImage = isImageFile(mediaUrl);
+  const mediaItems = parseMediaPaths(item.media)
+    .map((path) => ({ url: resolveMediaUrl(path), label: mediaFileLabel(path) }))
+    .filter((m) => m.url);
   const itemType = item?.type || item?.meta_type;
 
   return (
@@ -78,49 +35,51 @@ export const CommentCard = ({ item, onDelete, icon: Icon = MessageSquare }) => {
               </button>
             )}
           </div>
-          {mediaUrl && (
-            <div className="mt-2">
-              {isImage ? (
-                <div className="space-y-1">
-                  <a 
-                    href={mediaUrl} 
-                    target="_blank" 
+          {mediaItems.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-3">
+              {mediaItems.map(({ url, label }, index) =>
+                isImageFile(url) ? (
+                  <div key={`${url}-${index}`} className="space-y-1">
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block cursor-pointer group"
+                      title="Click to open in new tab"
+                    >
+                      <img
+                        src={url}
+                        alt={label}
+                        className="max-w-full h-auto rounded-lg border-2 border-gray-200 dark:border-gray-700 max-h-48 object-contain transition-all group-hover:border-[#E60012] group-hover:shadow-md"
+                        onError={(e) => {
+                          e.target.parentElement.style.display = 'none';
+                          e.target.parentElement.nextSibling.style.display = 'inline-flex';
+                        }}
+                      />
+                    </a>
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="items-center gap-1.5 text-xs text-[#E60012] hover:underline"
+                      style={{ display: 'none' }}
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      {label}
+                    </a>
+                  </div>
+                ) : (
+                  <a
+                    key={`${url}-${index}`}
+                    href={url}
+                    target="_blank"
                     rel="noopener noreferrer"
-                    className="block cursor-pointer group"
-                    title="Click to open in new tab"
-                  >
-                    <img 
-                      src={mediaUrl} 
-                      alt="Attachment" 
-                      className="max-w-full h-auto rounded-lg border-2 border-gray-200 dark:border-gray-700 max-h-48 object-contain transition-all group-hover:border-[#E60012] group-hover:shadow-md"
-                      onError={(e) => {
-                        // If image fails to load, hide image container
-                        e.target.parentElement.style.display = 'none';
-                        e.target.parentElement.nextSibling.style.display = 'inline-flex';
-                      }}
-                    />
-                  </a>
-                  <a 
-                    href={mediaUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="items-center gap-1.5 text-xs text-[#E60012] hover:underline"
-                    style={{ display: 'none' }}
+                    className="inline-flex items-center gap-1.5 text-xs text-[#E60012] hover:underline"
                   >
                     <Upload className="w-3.5 h-3.5" />
-                    View Attachment
+                    {label}
                   </a>
-                </div>
-              ) : (
-                <a 
-                  href={mediaUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-[#E60012] hover:underline"
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  View Attachment
-                </a>
+                )
               )}
             </div>
           )}

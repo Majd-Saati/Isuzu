@@ -1,5 +1,17 @@
 import apiClient from '../client';
 
+/**
+ * Append one or many media files to a FormData payload.
+ * Accepts a single File (legacy) or an array of Files, sending each as `media[]`
+ * so the backend receives them as an array.
+ */
+function appendMediaFiles(formData, media) {
+  const files = Array.isArray(media) ? media : media ? [media] : [];
+  files.forEach((file) => {
+    if (file) formData.append('media[]', file);
+  });
+}
+
 export const activitiesService = {
   getActivities: async (params = {}) => {
     const { planIds = [], page = 1, perPage = 20 } = params;
@@ -82,9 +94,7 @@ export const activitiesService = {
     formData.append('type', data.type);
     formData.append('value', data.value);
     formData.append('description', data.description);
-    if (data.media) {
-      formData.append('media', data.media);
-    }
+    appendMediaFiles(formData, data.media);
     if (data.months_breakdown && Object.keys(data.months_breakdown).length > 0) {
       formData.append('months_breakdown', JSON.stringify(data.months_breakdown));
     }
@@ -113,9 +123,7 @@ export const activitiesService = {
     formData.append('company_id', data.company_id);
     formData.append('type', data.type || 'comment');
     formData.append('description', data.description);
-    if (data.media) {
-      formData.append('media', data.media);
-    }
+    appendMediaFiles(formData, data.media);
     return apiClient.post('/activity_meta_add', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

@@ -35,19 +35,22 @@ export function getAddBudgetSchema(termMonths) {
     media: Yup.mixed()
       .nullable()
       .test('media-by-type', function (value) {
+        // Normalize to an array: supports a single File (legacy) or an array of Files.
+        const files = Array.isArray(value) ? value : value ? [value] : [];
+        const allValid = files.every((f) => f instanceof File);
         const budgetType = this.options.context?.budgetType;
         const needsMedia = isMediaRequiredForBudgetType(budgetType);
         if (needsMedia) {
-          if (value == null) {
+          if (files.length === 0) {
             return this.createError({ message: 'Media is required' });
           }
-          if (!(value instanceof File)) {
-            return this.createError({ message: 'Please attach a file' });
+          if (!allValid) {
+            return this.createError({ message: 'Please attach valid files' });
           }
           return true;
         }
-        if (value != null && !(value instanceof File)) {
-          return this.createError({ message: 'Please attach a valid file' });
+        if (files.length > 0 && !allValid) {
+          return this.createError({ message: 'Please attach valid files' });
         }
         return true;
       }),

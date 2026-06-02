@@ -81,7 +81,6 @@ export const DealerEfficiencyChart = ({
           </h3>
         </div>
       )}
-      <p className="text-[#78716c] dark:text-gray-400 text-sm font-semibold mb-3">{title}</p>
       {filter && <div className="mb-4">{filter}</div>}
 
       <div className="flex justify-center mb-5 w-full">
@@ -171,7 +170,7 @@ export const DealerEfficiencyChart = ({
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 bg-gray-50 dark:bg-gray-800/80 px-5 py-4 rounded-lg border border-gray-100 dark:border-gray-700/60">
+      <div className="flex flex-col items-center gap-y-3 bg-gray-50 dark:bg-gray-800/80 px-5 py-4 rounded-lg border border-gray-100 dark:border-gray-700/60">
         <div className="flex items-center gap-3">
           <div className="w-8 h-4 rounded-md bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-500 shrink-0" />
           <span className="text-[#4A5568] dark:text-gray-300 text-sm font-medium">

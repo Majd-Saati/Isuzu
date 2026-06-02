@@ -19,7 +19,7 @@ export function useAddBudgetForm({
   const [type, setType] = useState('estimated cost');
   const [value, setValue] = useState('');
   const [description, setDescription] = useState('');
-  const [media, setMedia] = useState(null);
+  const [media, setMedia] = useState([]);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [validationError, setValidationError] = useState('');
   const [mediaError, setMediaError] = useState('');
@@ -219,7 +219,7 @@ export function useAddBudgetForm({
         onSuccess: () => {
           setValue('');
           setDescription('');
-          setMedia(null);
+          setMedia([]);
           setType(defaultType);
           setValidationError('');
           setMonthsBreakdown({});
@@ -233,11 +233,16 @@ export function useAddBudgetForm({
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setMedia(file);
+    const files = Array.from(e.target.files || []);
+    if (files.length) {
+      setMedia((prev) => [...prev, ...files]);
       setMediaError('');
     }
+    e.target.value = '';
+  };
+
+  const handleRemoveFile = (index) => {
+    setMedia((prev) => prev.filter((_, i) => i !== index));
   };
 
   const resetTypeDropdown = () => setValidationError('');
@@ -274,6 +279,7 @@ export function useAddBudgetForm({
     handleMonthValueChange,
     handleSubmit,
     handleFileChange,
+    handleRemoveFile,
     handleSelectType: (newType) => {
       setType(newType);
       setShowTypeDropdown(false);

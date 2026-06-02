@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Upload, Loader2 } from 'lucide-react';
+import { Plus, Upload, Loader2, X } from 'lucide-react';
 import { useAddBudgetForm } from './useAddBudgetForm';
 import { BudgetTypeDropdown } from './BudgetTypeDropdown';
 import { MonthlyBreakdownSection } from './MonthlyBreakdownSection';
@@ -53,6 +53,7 @@ export function AddBudgetForm({
     handleMonthValueChange,
     handleSubmit,
     handleFileChange,
+    handleRemoveFile,
     handleSelectType,
     createBudgetMutation,
   } = useAddBudgetForm({
@@ -71,7 +72,7 @@ export function AddBudgetForm({
     createBudgetMutation.isPending ||
     !value ||
     !description ||
-    (isMediaRequired && !media);
+    (isMediaRequired && media.length === 0);
 
   return (
     <form onSubmit={handleSubmit} className={FORM_CLASS}>
@@ -138,6 +139,7 @@ export function AddBudgetForm({
         <div className="relative">
           <input
             type="file"
+            multiple
             onChange={handleFileChange}
             className="hidden"
             id="add-budget-media-upload"
@@ -145,9 +147,29 @@ export function AddBudgetForm({
           />
           <label htmlFor="add-budget-media-upload" className={FILE_LABEL_CLASS}>
             <Upload className="w-4 h-4" />
-            {media ? media.name : 'Select file'}
+            {media.length > 0 ? `${media.length} file${media.length > 1 ? 's' : ''} selected` : 'Select files'}
           </label>
         </div>
+        {media.length > 0 && (
+          <ul className="mt-2 space-y-1">
+            {media.map((file, index) => (
+              <li
+                key={`${file.name}-${index}`}
+                className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-xs text-gray-700 dark:text-gray-300"
+              >
+                <span className="truncate">{file.name}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFile(index)}
+                  className="shrink-0 text-gray-400 hover:text-[#E60012] transition-colors"
+                  aria-label={`Remove ${file.name}`}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
         {mediaError ? (
           <p className="mt-1.5 text-xs text-red-600 dark:text-red-400">{mediaError}</p>
         ) : null}

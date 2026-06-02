@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, Upload, Smile, Plus, Loader2 } from 'lucide-react';
+import { MessageSquare, Upload, Smile, Plus, Loader2, X } from 'lucide-react';
 import { useCreateActivityMeta } from '@/hooks/api/useActivities';
 import { EmojiPicker } from './EmojiPicker';
 
 export const AddCommentForm = ({ activityId, planId, companyId, onSuccess, onCancel }) => {
   const [description, setDescription] = useState('');
-  const [media, setMedia] = useState(null);
+  const [media, setMedia] = useState([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const textareaRef = useRef(null);
   const emojiPickerRef = useRef(null);
@@ -42,7 +42,7 @@ export const AddCommentForm = ({ activityId, planId, companyId, onSuccess, onCan
       {
         onSuccess: () => {
           setDescription('');
-          setMedia(null);
+          setMedia([]);
           setShowEmojiPicker(false);
           onSuccess?.();
         },
@@ -51,10 +51,15 @@ export const AddCommentForm = ({ activityId, planId, companyId, onSuccess, onCan
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setMedia(file);
+    const files = Array.from(e.target.files || []);
+    if (files.length) {
+      setMedia((prev) => [...prev, ...files]);
     }
+    e.target.value = '';
+  };
+
+  const handleRemoveFile = (index) => {
+    setMedia((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleEmojiSelect = (emoji) => {
@@ -125,6 +130,7 @@ export const AddCommentForm = ({ activityId, planId, companyId, onSuccess, onCan
         <div className="relative">
           <input
             type="file"
+            multiple
             onChange={handleFileChange}
             className="hidden"
             id="comment-media-upload"
@@ -135,9 +141,29 @@ export const AddCommentForm = ({ activityId, planId, companyId, onSuccess, onCan
             className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-white dark:bg-gray-900 border-2 border-dashed border-gray-300 dark:border-gray-600 text-sm text-gray-500 dark:text-gray-400 cursor-pointer hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-all"
           >
             <Upload className="w-4 h-4" />
-            {media ? media.name : 'Select file'}
+            {media.length > 0 ? `${media.length} file${media.length > 1 ? 's' : ''} selected` : 'Select files'}
           </label>
         </div>
+        {media.length > 0 && (
+          <ul className="mt-2 space-y-1">
+            {media.map((file, index) => (
+              <li
+                key={`${file.name}-${index}`}
+                className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-xs text-gray-700 dark:text-gray-300"
+              >
+                <span className="truncate">{file.name}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFile(index)}
+                  className="shrink-0 text-gray-400 hover:text-[#E60012] transition-colors"
+                  aria-label={`Remove ${file.name}`}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Actions */}

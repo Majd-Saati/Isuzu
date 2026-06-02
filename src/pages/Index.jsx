@@ -96,7 +96,7 @@ const DealerSupportChartsSection = () => {
 
   // Single shared Company + Term filter toolbar, linked to both charts below
   const filter = (
-    <div className="flex flex-wrap items-end gap-4 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-5 py-4 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)]">
+    <div className="flex flex-wrap items-end gap-4 w-full max-w-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-5 py-4 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)]">
       {isAdmin && (
         <div className="flex flex-col gap-1.5 min-w-[200px] flex-1">
           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
