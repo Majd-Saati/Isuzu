@@ -60,14 +60,17 @@ export function formatDealerCardMoney(value, isAdmin, currencyCode) {
 
 export function formatEfficiencyMoney(value, isAdmin, currencyCode) {
   const code = getEffectiveCurrencyCode(isAdmin, currencyCode);
+  // JPY has no minor unit, so it should never show decimals.
+  const fractionDigits = code === 'JPY' ? 0 : 2;
   const num = Number(value);
   if (Number.isNaN(num)) {
-    if (!code) return '0.00';
+    const zero = (0).toFixed(fractionDigits);
+    if (!code) return zero;
     return code === 'JPY'
-      ? `${YEN_MARK}\u00A00.00`
-      : formatAmountWithCode(0, code, 2, 2);
+      ? `${YEN_MARK}\u00A0${zero}`
+      : formatAmountWithCode(0, code, fractionDigits, fractionDigits);
   }
-  const formatted = num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const formatted = num.toFixed(fractionDigits).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   if (!code) return formatted;
   if (code === 'JPY') {
     return `${YEN_MARK}\u00A0${formatted}`;
@@ -76,8 +79,8 @@ export function formatEfficiencyMoney(value, isAdmin, currencyCode) {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: code,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
     }).format(num);
   } catch {
     return `${code}\u00A0${formatted}`;
