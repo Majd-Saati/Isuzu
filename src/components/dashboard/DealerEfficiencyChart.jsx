@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatEfficiencyMoney } from '@/lib/dashboardMoney';
+import { formatEfficiencyMoney, formatEfficiencyGaugeCenter } from '@/lib/dashboardMoney';
 
 const BUDGET_STYLE = {
   title: 'Budget Vs Support Amount',
@@ -49,7 +49,6 @@ export const DealerEfficiencyChart = ({
   } = d;
 
   const percentage = Math.min(100, Math.max(0, Number(rawPercent) ?? 0));
-  const formattedPercentage = percentage.toFixed(2);
   const cx = CHART.size / 2;
   const cy = CHART.size / 2;
   const semicircleLength = Math.PI * CHART.radius;
@@ -71,6 +70,19 @@ export const DealerEfficiencyChart = ({
   const endVal = endValue ?? amount;
   const startVal = startValue ?? 0;
 
+  const legendSkeleton = (
+    <div className="flex flex-col items-center gap-y-3 bg-gray-50 dark:bg-gray-800/80 px-5 py-4 rounded-lg border border-gray-100 dark:border-gray-700/60">
+      <div className="flex items-center gap-3 w-full max-w-[280px]">
+        <div className="w-8 h-4 rounded-md bg-gray-200 dark:bg-gray-600 animate-pulse shrink-0" />
+        <div className="h-4 flex-1 bg-gray-200 dark:bg-gray-600 rounded animate-pulse" />
+      </div>
+      <div className="flex items-center gap-3 w-full max-w-[280px]">
+        <div className="w-8 h-4 rounded-md bg-gray-200 dark:bg-gray-600 animate-pulse shrink-0" />
+        <div className="h-4 flex-1 bg-gray-200 dark:bg-gray-600 rounded animate-pulse" />
+      </div>
+    </div>
+  );
+
   return (
     <div className="bg-white dark:bg-gray-900 rounded-lg p-4 md:p-5 w-full border border-gray-200/80 dark:border-gray-700/80 shadow-sm hover:shadow-md dark:shadow-none dark:hover:shadow-none transition-all duration-300">
       {showTitle && (
@@ -89,7 +101,44 @@ export const DealerEfficiencyChart = ({
           style={{ width: CHART.size, maxWidth: '100%', aspectRatio: '1' }}
         >
           {isLoading ? (
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 animate-pulse" />
+            <svg
+              className="relative z-10 w-full h-full min-w-0 animate-pulse"
+              viewBox={`0 0 ${CHART.size} ${CHART.size}`}
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <path
+                d={topArcPath}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={CHART.strokeWidth}
+                strokeLinecap="butt"
+                className="text-gray-200 dark:text-gray-600"
+              />
+              <rect
+                x={start.x - 36}
+                y={start.y + CHART.labelOffset - 8}
+                width={72}
+                height={14}
+                rx={4}
+                className="fill-gray-200 dark:fill-gray-600"
+              />
+              <rect
+                x={end.x - 36}
+                y={end.y + CHART.labelOffset - 8}
+                width={72}
+                height={14}
+                rx={4}
+                className="fill-gray-200 dark:fill-gray-600"
+              />
+              <rect
+                x={cx - 40}
+                y={cy - 12}
+                width={80}
+                height={24}
+                rx={6}
+                className="fill-gray-300 dark:fill-gray-500"
+              />
+            </svg>
           ) : (
           <svg
             className="relative z-10 w-full h-full min-w-0"
@@ -145,8 +194,7 @@ export const DealerEfficiencyChart = ({
               {formatEfficiencyMoney(endVal, isAdmin, currencyCode)}
             </text>
 
-            {/* Center: soft circle + percentage */}
-            <circle cx={cx} cy={cy} r={52} className="fill-gray-100/90 dark:fill-gray-800/90" />
+            {/* Center: support cost (compact K/M) */}
             <text
               x={cx}
               y={cy}
@@ -155,7 +203,7 @@ export const DealerEfficiencyChart = ({
               className="fill-gray-900 dark:fill-gray-100 font-extrabold tabular-nums"
               style={{ fontSize: 38, letterSpacing: '-0.02em' }}
             >
-              {formattedPercentage}%
+              {formatEfficiencyGaugeCenter(valueAtEnd)}
             </text>
             {/* <text
               x={fillBoundary.x}
@@ -170,23 +218,27 @@ export const DealerEfficiencyChart = ({
         </div>
       </div>
 
-      <div className="flex flex-col items-center gap-y-3 bg-gray-50 dark:bg-gray-800/80 px-5 py-4 rounded-lg border border-gray-100 dark:border-gray-700/60">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-4 rounded-md bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-500 shrink-0" />
-          <span className="text-[#4A5568] dark:text-gray-300 text-sm font-medium">
-            {amountLabel}: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatEfficiencyMoney(amount, isAdmin, currencyCode)}</span>
-          </span>
+      {isLoading ? (
+        legendSkeleton
+      ) : (
+        <div className="flex flex-col items-center gap-y-3 bg-gray-50 dark:bg-gray-800/80 px-5 py-4 rounded-lg border border-gray-100 dark:border-gray-700/60">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-4 rounded-md bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-500 shrink-0" />
+            <span className="text-[#4A5568] dark:text-gray-300 text-sm font-medium">
+              {amountLabel}: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatEfficiencyMoney(amount, isAdmin, currencyCode)}</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div
+              className="w-8 h-4 rounded-md shrink-0"
+              style={{ background: `linear-gradient(135deg, ${color}, ${gradientEnd})` }}
+            />
+            <span className="text-[#4A5568] dark:text-gray-300 text-sm font-medium">
+              {legendLabel}: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatEfficiencyMoney(valueAtEnd, isAdmin, currencyCode)}</span>
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div
-            className="w-8 h-4 rounded-md shrink-0"
-            style={{ background: `linear-gradient(135deg, ${color}, ${gradientEnd})` }}
-          />
-          <span className="text-[#4A5568] dark:text-gray-300 text-sm font-medium">
-            {legendLabel}: <span className="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{formatEfficiencyMoney(valueAtEnd, isAdmin, currencyCode)}</span>
-          </span>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

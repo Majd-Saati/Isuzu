@@ -124,6 +124,19 @@ export function formatJpyAxisCompact(value, isAdmin, currencyCode) {
   return code === 'JPY' ? `${YEN_MARK}\u00A0${s}` : `${code}\u00A0${s}`;
 }
 
+/** Compact K/M label for semi-circle gauge center (no currency prefix). */
+export function formatEfficiencyGaugeCenter(value) {
+  const num = Number(value) || 0;
+  if (num >= 1_000_000) {
+    return `${(num / 1_000_000).toFixed(2)}M`;
+  }
+  if (num >= 1_000) {
+    const k = num / 1_000;
+    return Number.isInteger(k) ? `${k}K` : `${k.toFixed(2).replace(/\.?0+$/, '')}K`;
+  }
+  return String(Math.round(num));
+}
+
 /**
  * For non-React modules (e.g. Activity drawer formatters): uses Redux-synced user in localStorage + stored currency.
  */
