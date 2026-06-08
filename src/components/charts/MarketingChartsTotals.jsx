@@ -33,6 +33,18 @@ const cards = [
     iconBg: 'bg-blue-100 dark:bg-blue-900/40',
   },
   {
+    key: 'allocated_budget',
+    label: 'Allocated Budget',
+    icon: Wallet,
+    gradient: 'bg-gradient-to-br from-purple-500 to-violet-600',
+    bg: 'bg-purple-50 dark:bg-purple-900/20',
+    border: 'border-purple-200 dark:border-purple-800',
+    text: 'text-purple-700 dark:text-purple-300',
+    iconBg: 'bg-purple-100 dark:bg-purple-900/40',
+    dataSource: 'term_budget_allocation',
+    valueKey: 'allocated_budget_total_jpy',
+  },
+  {
     key: 'total_cost',
     label: 'Total cost',
     icon: Wallet,
@@ -54,18 +66,31 @@ const cards = [
   },
 ];
 
-export const MarketingChartsTotals = ({ totals, isAdmin = false, currencyCode = '' }) => {
+export const MarketingChartsTotals = ({
+  totals,
+  termBudgetAllocation,
+  isAdmin = false,
+  currencyCode = '',
+}) => {
   const [hoveredCard, setHoveredCard] = useState(null);
 
   if (!totals || typeof totals !== 'object') return null;
 
+  const visibleCards = cards.filter((c) => {
+    if (c.key === 'actual_cost' || c.key === 'support_cost') return true;
+    if (c.key === 'allocated_budget') {
+      return termBudgetAllocation?.allocated_budget_total_jpy != null;
+    }
+    return false;
+  });
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {cards
-        // Only render actual_cost and support_cost cards per request; keep others defined but hidden
-        .filter((c) => c.key === 'actual_cost' || c.key === 'support_cost')
-        .map(({ key, label, icon: Icon, useMoneyGlyph, gradient, bg, border, text, iconBg }, index) => {
-        const value = totals[key];
+    <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${visibleCards.length >= 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'}`}>
+      {visibleCards.map(({ key, label, icon: Icon, useMoneyGlyph, gradient, bg, border, text, iconBg, dataSource, valueKey }, index) => {
+        const value =
+          dataSource === 'term_budget_allocation'
+            ? termBudgetAllocation?.[valueKey]
+            : totals[key];
         const isHovered = hoveredCard === key;
         
         return (
