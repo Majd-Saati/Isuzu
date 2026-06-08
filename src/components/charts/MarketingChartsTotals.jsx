@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { DollarSign, TrendingUp, Award, Wallet, TrendingDown } from 'lucide-react';
 import { MoneyGlyph } from '@/components/dashboard/MoneyGlyph';
 import { formatChartsCurrency } from '@/lib/dashboardMoney';
@@ -72,8 +72,6 @@ export const MarketingChartsTotals = ({
   isAdmin = false,
   currencyCode = '',
 }) => {
-  const [hoveredCard, setHoveredCard] = useState(null);
-
   if (!totals || typeof totals !== 'object') return null;
 
   const visibleCards = cards.filter((c) => {
@@ -86,28 +84,21 @@ export const MarketingChartsTotals = ({
 
   return (
     <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${visibleCards.length >= 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'}`}>
-      {visibleCards.map(({ key, label, icon: Icon, useMoneyGlyph, gradient, bg, border, text, iconBg, dataSource, valueKey }, index) => {
+      {visibleCards.map(({ key, label, icon: Icon, useMoneyGlyph, bg, border, text, iconBg, dataSource, valueKey }, index) => {
         const value =
           dataSource === 'term_budget_allocation'
             ? termBudgetAllocation?.[valueKey]
             : totals[key];
-        const isHovered = hoveredCard === key;
         
         return (
           <div
             key={key}
-            onMouseEnter={() => setHoveredCard(key)}
-            onMouseLeave={() => setHoveredCard(null)}
-            className={`group relative rounded-2xl border-2 ${border} ${bg} p-5 transition-all duration-300 hover:shadow-xl hover:scale-105 hover:-translate-y-1 cursor-pointer overflow-hidden animate-fade-in`}
+            className={`relative rounded-2xl border-2 ${border} ${bg} p-5 overflow-hidden animate-fade-in`}
             style={{ animationDelay: `${index * 100}ms` }}
           >
-            {/* Gradient overlay on hover */}
-            <div className={`absolute inset-0 ${gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-            
-            {/* Content */}
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-3">
-                <div className={`p-2.5 rounded-xl ${iconBg} transition-transform duration-300 ${isHovered ? 'scale-110 rotate-6' : ''}`}>
+                <div className={`p-2.5 rounded-xl ${iconBg}`}>
                   {useMoneyGlyph ? (
                     <MoneyGlyph isAdmin={isAdmin} currencyCode={currencyCode} className={`w-5 h-5 ${text}`} />
                   ) : (
@@ -122,7 +113,7 @@ export const MarketingChartsTotals = ({
               </div>
               
               <div className="space-y-1">
-                <p className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 transition-all duration-300">
+                <p className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {formatChartsCurrency(value, isAdmin, currencyCode)}
                 </p>
                 <p className={`text-xs font-medium ${text} opacity-60`}>
@@ -130,9 +121,6 @@ export const MarketingChartsTotals = ({
                 </p>
               </div>
             </div>
-
-            {/* Animated shine effect */}
-            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           </div>
         );
       })}
