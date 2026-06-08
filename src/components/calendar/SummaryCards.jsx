@@ -1,8 +1,13 @@
 import React from 'react';
 import { formatDealerCardMoney } from '@/lib/dashboardMoney';
 
-export const SummaryCards = ({ totalActualCost, totalSupportCost, isAdmin = false, currencyCode = '' }) => {
-  // Only show Actual and Support cards per request. Other cards kept commented for reference.
+export const SummaryCards = ({
+  totalActualCost,
+  totalSupportCost,
+  allocatedBudget,
+  isAdmin = false,
+  currencyCode = '',
+}) => {
   const cards = [
     {
       label: 'Actual Cost',
@@ -16,7 +21,7 @@ export const SummaryCards = ({ totalActualCost, totalSupportCost, isAdmin = fals
       bgColor: 'bg-green-100',
       darkBgColor: 'dark:bg-gray-700',
       dotColor: 'bg-[#10B981]',
-      darkDotColor: 'dark:bg-emerald-400'
+      darkDotColor: 'dark:bg-emerald-400',
     },
     {
       label: 'Support Cost',
@@ -30,20 +35,30 @@ export const SummaryCards = ({ totalActualCost, totalSupportCost, isAdmin = fals
       bgColor: 'bg-blue-100',
       darkBgColor: 'dark:bg-gray-700',
       dotColor: 'bg-[#3b82f6]',
-      darkDotColor: 'dark:bg-blue-400'
+      darkDotColor: 'dark:bg-blue-400',
     },
-    // Original cards (commented):
-    // { label: 'Total Budget', value: totalBudget, ... }
-    // { label: 'Total Expenditure', value: totalExpenditure, ... }
-    // { label: 'Total Incentive', value: totalIncentive, ... }
-  ];
+    {
+      label: 'Allocated Budget',
+      value: allocatedBudget,
+      gradient: 'from-purple-50 to-white',
+      darkGradient: 'dark:from-gray-800 dark:to-gray-900',
+      border: 'border-purple-100',
+      darkBorder: 'dark:border-gray-700',
+      textColor: 'text-[#9333ea]',
+      darkTextColor: 'dark:text-purple-300',
+      bgColor: 'bg-purple-100',
+      darkBgColor: 'dark:bg-gray-700',
+      dotColor: 'bg-[#9333ea]',
+      darkDotColor: 'dark:bg-purple-400',
+    },
+  ].filter((card) => card.label !== 'Allocated Budget' || allocatedBudget != null);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {cards.map((card, index) => (
-        <div 
+        <div
           key={index}
-          className={`bg-gradient-to-br ${card.gradient} ${card.darkGradient} rounded-xl border-2 ${card.border} ${card.darkBorder} p-5 hover:shadow-md dark:hover:shadow-lg transition-all duration-300`}
+          className={`bg-gradient-to-br ${card.gradient} ${card.darkGradient} rounded-xl border-2 ${card.border} ${card.darkBorder} p-5`}
         >
           <div className="flex items-center justify-between">
             <div>

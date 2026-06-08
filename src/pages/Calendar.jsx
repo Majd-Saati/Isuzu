@@ -75,7 +75,8 @@ const Calendar = () => {
     );
   }
 
-  const { term, company, months = [], plans = [] } = calendarData || {};
+  const { term, company, months = [], plans = [], term_budget_allocation: termBudgetAllocation } =
+    calendarData || {};
 
   return (
     <div className="space-y-5">
@@ -92,6 +93,7 @@ const Calendar = () => {
       <SummaryCards
         totalActualCost={summaryStats.totalActualCost}
         totalSupportCost={summaryStats.totalSupportCost}
+        allocatedBudget={termBudgetAllocation?.allocated_budget_total_jpy}
         isAdmin={isAdmin}
         currencyCode={currency}
       />
