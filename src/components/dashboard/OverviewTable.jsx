@@ -121,12 +121,17 @@ const mapItemToRow = (item, index, isAdmin, appCurrencyCode) => {
   };
 };
 
+const TABLE_HEAD_CELL =
+  'px-6 py-4 text-left text-sm font-semibold text-[#374151] dark:text-gray-200 border-b border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800';
+const TABLE_BODY_CELL =
+  'px-6 py-5 align-top border-b border-r border-gray-200 dark:border-gray-700';
+
 /**
- * Desktop table cells
+ * Desktop table cell content
  */
 const DealerCell = ({ dealer }) => (
-  <div className="px-6 py-6 flex items-center gap-3 border-r border-gray-200 dark:border-gray-700">
-    <div className="relative">
+  <div className="flex items-center gap-3">
+    <div className="relative shrink-0">
       <img
         src={dealer.avatar}
         className="w-10 h-10 rounded-full object-cover ring-2 ring-white dark:ring-gray-900 shadow-md"
@@ -138,7 +143,7 @@ const DealerCell = ({ dealer }) => (
 );
 
 const InfoCell = ({ row, isAdmin, appCurrencyCode }) => (
-  <div className="px-6 py-6 flex flex-col justify-center border-r border-gray-200 dark:border-gray-700">
+  <div className="flex flex-col justify-center min-w-0">
     <div className="flex items-center justify-between gap-2 mb-1">
       <div className={`text-sm font-semibold ${row.action.isHighlighted ? 'text-[#E60012]' : 'text-[#1F2937] dark:text-gray-200'}`}>
         {row.action.title}
@@ -206,7 +211,7 @@ const InfoCell = ({ row, isAdmin, appCurrencyCode }) => (
 );
 
 const UserCell = ({ meta }) => (
-  <div className="px-6 py-6 flex flex-col justify-center border-r border-gray-200 dark:border-gray-700">
+  <div className="flex flex-col justify-center min-w-0">
     <div className="flex flex-col">
       <span className="text-xs font-semibold text-[#374151] dark:text-gray-200">
         {meta?.createdByName || '-'}
@@ -219,7 +224,7 @@ const UserCell = ({ meta }) => (
 );
 
 const TermCell = ({ meta }) => (
-  <div className="px-6 py-6 flex flex-col justify-center border-r border-gray-200 dark:border-gray-700">
+  <div className="flex flex-col justify-center min-w-0">
     <span className="text-xs sm:text-sm font-semibold text-[#1F2937] dark:text-gray-200 truncate">
       {meta?.termName || '-'}
     </span>
@@ -232,46 +237,69 @@ const TermCell = ({ meta }) => (
 );
 
 const StatusCell = ({ status }) => (
-  <div className="px-6 py-6 flex items-center">
-    <StatusBadge status={status}>
-      {status === 'approval' && 'Approval'}
-      {status === 'pending' && 'In Pending'}
-      {status === 'completed' && 'Completed'}
-    </StatusBadge>
-  </div>
+  <StatusBadge status={status}>
+    {status === 'approval' && 'Approval'}
+    {status === 'pending' && 'In Pending'}
+    {status === 'completed' && 'Completed'}
+  </StatusBadge>
 );
 
-/**
- * Desktop table row & header
- */
 const TableRow = ({ row, isAdmin, appCurrencyCode }) => (
-  <div className="grid grid-cols-5 border-b border-gray-100/80 dark:border-gray-700 hover:bg-gradient-to-r hover:from-blue-50/30 dark:hover:from-gray-800/50 hover:to-transparent dark:hover:to-gray-800/50 transition-all duration-200">
-    <DealerCell dealer={row.dealer} />
-    <InfoCell row={row} isAdmin={isAdmin} appCurrencyCode={appCurrencyCode} />
-    <UserCell meta={row.meta} />
-    <TermCell meta={row.meta} />
-    <StatusCell status={row.status} />
-  </div>
-);
-
-const TableHeader = () => (
-  <div className="grid grid-cols-5 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50/90 dark:from-gray-800 via-gray-50/70 dark:via-gray-800 to-gray-50/90 dark:to-gray-900/50 backdrop-blur-sm">
-    <div className="px-6 py-4 text-sm font-semibold text-[#374151] dark:text-gray-200 border-r border-gray-200 dark:border-gray-700">Dealer</div>
-    <div className="px-6 py-4 text-sm font-semibold text-[#374151] dark:text-gray-200 border-r border-gray-200 dark:border-gray-700">Info</div>
-    <div className="px-6 py-4 text-sm font-semibold text-[#374151] dark:text-gray-200 border-r border-gray-200 dark:border-gray-700">User</div>
-    <div className="px-6 py-4 text-sm font-semibold text-[#374151] dark:text-gray-200 border-r border-gray-200 dark:border-gray-700">Term</div>
-    <div className="px-6 py-4 text-sm font-semibold text-[#374151] dark:text-gray-200">Status</div>
-  </div>
+  <tr className="hover:bg-blue-50/30 dark:hover:bg-gray-800/50 transition-colors duration-200">
+    <td className={TABLE_BODY_CELL}>
+      <DealerCell dealer={row.dealer} />
+    </td>
+    <td className={TABLE_BODY_CELL}>
+      <InfoCell row={row} isAdmin={isAdmin} appCurrencyCode={appCurrencyCode} />
+    </td>
+    <td className={TABLE_BODY_CELL}>
+      <UserCell meta={row.meta} />
+    </td>
+    <td className={TABLE_BODY_CELL}>
+      <TermCell meta={row.meta} />
+    </td>
+    <td className="px-6 py-5 align-middle border-b border-gray-200 dark:border-gray-700">
+      <StatusCell status={row.status} />
+    </td>
+  </tr>
 );
 
 const DesktopOverviewTable = ({ items, isAdmin, appCurrencyCode }) => (
   <div className="hidden lg:block bg-white dark:bg-gray-900 overflow-hidden rounded-[24px] shadow-[0px_4px_16px_rgba(0,0,0,0.08)] dark:shadow-[0px_4px_20px_rgba(0,0,0,0.06)] border border-gray-100 dark:border-gray-800">
-    <TableHeader />
-    <div className="max-h-[600px] overflow-y-auto custom-scrollbar">
-      {items.map((item, index) => {
-        const row = mapItemToRow(item, index, isAdmin, appCurrencyCode);
-        return <TableRow key={row.id} row={row} isAdmin={isAdmin} appCurrencyCode={appCurrencyCode} />;
-      })}
+    <div className="max-h-[600px] overflow-y-auto overflow-x-auto custom-scrollbar [scrollbar-gutter:stable]">
+      <table className="w-full min-w-[960px] table-fixed border-collapse">
+        <colgroup>
+          <col className="w-[14%]" />
+          <col className="w-[36%]" />
+          <col className="w-[20%]" />
+          <col className="w-[18%]" />
+          <col className="w-[12%]" />
+        </colgroup>
+        <thead className="sticky top-0 z-10">
+          <tr>
+            <th className={TABLE_HEAD_CELL}>Dealer</th>
+            <th className={TABLE_HEAD_CELL}>Info</th>
+            <th className={TABLE_HEAD_CELL}>User</th>
+            <th className={TABLE_HEAD_CELL}>Term</th>
+            <th className="px-6 py-4 text-left text-sm font-semibold text-[#374151] dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((item, index) => {
+            const row = mapItemToRow(item, index, isAdmin, appCurrencyCode);
+            return (
+              <TableRow
+                key={row.id}
+                row={row}
+                isAdmin={isAdmin}
+                appCurrencyCode={appCurrencyCode}
+              />
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   </div>
 );
