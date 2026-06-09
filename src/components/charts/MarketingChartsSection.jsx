@@ -171,7 +171,13 @@ export const MarketingChartsSection = () => {
         <div className="space-y-6">
           <MarketingChartsTotals
             totals={data.totals}
-            termBudgetAllocation={periodType === 'term' ? data.term_budget_allocation : null}
+            budgetAllocation={
+              periodType === 'term'
+                ? data.term_budget_allocation
+                : periodType === 'year'
+                  ? data.year_budget_allocation
+                  : null
+            }
             isAdmin={isAdmin}
             currencyCode={currency}
           />

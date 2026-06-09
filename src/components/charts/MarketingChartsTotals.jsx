@@ -41,8 +41,6 @@ const cards = [
     border: 'border-purple-200 dark:border-purple-800',
     text: 'text-purple-700 dark:text-purple-300',
     iconBg: 'bg-purple-100 dark:bg-purple-900/40',
-    dataSource: 'term_budget_allocation',
-    valueKey: 'allocated_budget_total_jpy',
   },
   {
     key: 'total_cost',
@@ -68,7 +66,7 @@ const cards = [
 
 export const MarketingChartsTotals = ({
   totals,
-  termBudgetAllocation,
+  budgetAllocation,
   isAdmin = false,
   currencyCode = '',
 }) => {
@@ -77,17 +75,17 @@ export const MarketingChartsTotals = ({
   const visibleCards = cards.filter((c) => {
     if (c.key === 'actual_cost' || c.key === 'support_cost') return true;
     if (c.key === 'allocated_budget') {
-      return termBudgetAllocation?.allocated_budget_total_jpy != null;
+      return budgetAllocation?.allocated_budget_total_jpy != null;
     }
     return false;
   });
 
   return (
     <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${visibleCards.length >= 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'}`}>
-      {visibleCards.map(({ key, label, icon: Icon, useMoneyGlyph, bg, border, text, iconBg, dataSource, valueKey }, index) => {
+      {visibleCards.map(({ key, label, icon: Icon, useMoneyGlyph, bg, border, text, iconBg }, index) => {
         const value =
-          dataSource === 'term_budget_allocation'
-            ? termBudgetAllocation?.[valueKey]
+          key === 'allocated_budget'
+            ? budgetAllocation?.allocated_budget_total_jpy
             : totals[key];
         
         return (
