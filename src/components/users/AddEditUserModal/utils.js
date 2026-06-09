@@ -1,3 +1,33 @@
+import { normalizeStatusValue } from './constants';
+
+export const getFormInitialValues = (editData, { loggedInCountryId = '', isEditMode = false } = {}) => {
+  if (!isEditMode || !editData) {
+    return {
+      name: '',
+      email: '',
+      mobile: '',
+      gender: '',
+      company_id: '',
+      country_id: loggedInCountryId,
+      password: '',
+      is_admin: '',
+      status: '',
+    };
+  }
+
+  return {
+    name: editData.name || '',
+    email: editData.email || '',
+    mobile: editData.mobile || '',
+    gender: editData.gender || '',
+    company_id: editData.company_id || '',
+    country_id: editData.country_id || '',
+    password: '',
+    is_admin: editData.is_admin ?? '',
+    status: normalizeStatusValue(editData.status),
+  };
+};
+
 /**
  * Prepares form data for API submission
  * @param {Object} values - Form values from Formik
@@ -7,15 +37,20 @@
  */
 export const prepareFormData = (values, isEditMode, editData, { forceAdminRole = false } = {}) => {
   if (isEditMode) {
-    // API only accepts: user_id, name, mobile, status
-    return {
+    const payload = {
       id: editData.id,
       name: values.name,
       mobile: values.mobile,
       status: values.status,
     };
-  }
 
+    const password = String(values.password ?? '').trim();
+    if (password) {
+      payload.password = password;
+    }
+
+    return payload;
+  }
   const { company_id, is_admin, ...rest } = values;
 
   if (forceAdminRole) {

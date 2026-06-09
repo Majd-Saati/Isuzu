@@ -133,22 +133,20 @@ export const UserFormFields = ({
         />
       )}
 
-      {/* Password - Only show in create mode */}
-      {!isEditMode && (
-        <PasswordField
-          label="Password"
-          name="password"
-          placeholder="Enter password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.errors.password}
-          touched={formik.submitCount > 0}
-          showPassword={showPassword}
-          onTogglePassword={() => setShowPassword(!showPassword)}
-          disabled={isLoading}
-        />
-      )}
+      {/* Password - required on create, optional on update */}
+      <PasswordField
+        label={isEditMode ? 'Password (Optional)' : 'Password'}
+        name="password"
+        placeholder={isEditMode ? 'Leave blank to keep current password' : 'Enter password'}
+        value={formik.values.password}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.errors.password}
+        touched={formik.submitCount > 0}
+        showPassword={showPassword}
+        onTogglePassword={() => setShowPassword(!showPassword)}
+        disabled={isLoading}
+      />
 
       {/* Role and Status - create mode */}
       {!isEditMode && !forceAdminRole && (

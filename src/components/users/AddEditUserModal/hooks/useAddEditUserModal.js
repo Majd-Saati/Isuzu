@@ -4,8 +4,8 @@ import { useFormik } from 'formik';
 import { useCreateUser, useUpdateUser } from '@/hooks/api/useUsers';
 import { useDealers } from '@/hooks/api/useCompanies';
 import { createUserSchema } from '../validation';
-import { formatGenderLabel, formatRoleLabel, formatStatusLabel } from '../constants';
-import { prepareFormData, resetSelectedNames } from '../utils';
+import { formatGenderLabel, formatRoleLabel, formatStatusLabel, normalizeStatusValue } from '../constants';
+import { prepareFormData, resetSelectedNames, getFormInitialValues } from '../utils';
 
 export const useAddEditUserModal = ({ isOpen, onClose, editData = null, forceAdminRole = false }) => {
   const isEditMode = !!editData;
@@ -38,17 +38,7 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null, forceAdm
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
   const formik = useFormik({
-    initialValues: {
-      name: editData?.name || '',
-      email: editData?.email || '',
-      mobile: editData?.mobile || '',
-      gender: editData?.gender || '',
-      company_id: editData?.company_id || '',
-      country_id: isEditMode ? editData?.country_id || '' : loggedInCountryId,
-      password: '',
-      is_admin: editData?.is_admin ?? '',
-      status: editData?.status ?? '',
-    },
+    initialValues: getFormInitialValues(editData, { loggedInCountryId, isEditMode }),
     validationSchema: createUserSchema(isEditMode, { forceAdminRole }),
     enableReinitialize: true,
     validateOnChange: true,
@@ -115,22 +105,30 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null, forceAdm
     setShowStatusDropdown(false);
   };
 
-  // Set selected names when editData changes
+  // Sync dropdown labels when opening edit modal
   useEffect(() => {
-    if (editData?.company_id && dealers.length > 0) {
-      const company = dealers.find(c => String(c.id) === String(editData.company_id));
+    if (!isOpen || !editData) return;
+
+    if (editData.company_id && dealers.length > 0) {
+      const company = dealers.find((c) => String(c.id) === String(editData.company_id));
       if (company) setSelectedCompanyName(company.label);
+    } else {
+      setSelectedCompanyName(editData.company_name || '');
     }
-    if (editData?.gender) {
+
+    if (editData.gender) {
       setSelectedGenderName(formatGenderLabel(editData.gender));
     }
-    if (editData?.is_admin !== undefined) {
+
+    if (editData.is_admin !== undefined && editData.is_admin !== null && editData.is_admin !== '') {
       setSelectedRoleName(formatRoleLabel(editData.is_admin));
     }
-    if (editData?.status !== undefined) {
-      setSelectedStatusName(formatStatusLabel(editData.status));
+
+    const status = normalizeStatusValue(editData.status);
+    if (status) {
+      setSelectedStatusName(formatStatusLabel(status));
     }
-  }, [editData, dealers]);
+  }, [isOpen, editData, dealers]);
 
   const handleClose = () => {
     if (!isLoading) {

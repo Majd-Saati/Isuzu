@@ -23,9 +23,17 @@ export const formatRoleLabel = (isAdmin) => {
   return (isAdmin === '1' || isAdmin === 1) ? 'Admin' : 'User';
 };
 
+export const normalizeStatusValue = (status) => {
+  if (status === undefined || status === null || status === '') return '';
+  if (status === '1' || status === 1 || status === 'active') return '1';
+  if (status === '0' || status === 0 || status === 'inactive') return '0';
+  return String(status);
+};
+
 export const formatStatusLabel = (status) => {
-  if (status === undefined || status === '') return '';
-  return (status === '1' || status === 1) ? 'Active' : 'Inactive';
+  const normalized = normalizeStatusValue(status);
+  if (!normalized) return '';
+  return normalized === '1' ? 'Active' : 'Inactive';
 };
 
 

@@ -24,8 +24,6 @@ export const AdministratorsTable = ({
   onItemsPerPageChange,
   currentUserId
 }) => {
-  const formattedAdmins = administrators.map(formatAdministrator);
-  
   const currentPage = pagination?.page || 1;
   const totalPages = pagination?.total_pages || 1;
   const totalItems = pagination?.total || administrators.length;
@@ -44,47 +42,49 @@ export const AdministratorsTable = ({
 
       {/* Table Body */}
       <div>
-        {formattedAdmins.map((admin, index) => (
+        {administrators.map((admin, index) => {
+          const display = formatAdministrator(admin);
+          return (
           <div key={admin.id}>
             {/* Desktop View */}
             <div 
-              className={`hidden lg:grid grid-cols-5 transition-all duration-200 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 ${index < formattedAdmins.length - 1 ? 'border-t border-gray-200 dark:border-gray-700' : ''}`}
+              className={`hidden lg:grid grid-cols-5 transition-all duration-200 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 ${index < administrators.length - 1 ? 'border-t border-gray-200 dark:border-gray-700' : ''}`}
             >
               {/* Administrator Column */}
               <div className="px-8 py-8 flex items-center gap-4 first:border-l-0 border-l border-gray-200 dark:border-gray-700">
                 <div className="relative">
                   <img
-                    src={admin.avatar}
+                    src={display.avatar}
                     className="w-11 h-11 rounded-full object-cover shadow-md ring-2 ring-gray-100 dark:ring-gray-700"
-                    alt={admin.name}
+                    alt={display.name}
                   />
-                  {admin.hasNotification && (
+                  {display.hasNotification && (
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse"></div>
                   )}
                 </div>
-                <span className="text-base text-[#374151] dark:text-gray-200 font-medium">{admin.name}</span>
+                <span className="text-base text-[#374151] dark:text-gray-200 font-medium">{display.name}</span>
               </div>
 
               {/* Role Column */}
               <div className="px-8 py-8 flex items-center first:border-l-0 border-l border-gray-200 dark:border-gray-700">
-                <span className="text-sm text-[#6B7280] dark:text-gray-300 font-medium">{admin.role}</span>
+                <span className="text-sm text-[#6B7280] dark:text-gray-300 font-medium">{display.role}</span>
               </div>
 
               {/* Assigned Column */}
               <div className="px-8 py-8 flex items-center first:border-l-0 border-l border-gray-200 dark:border-gray-700">
-                <span className="text-sm text-[#6B7280] dark:text-gray-300 font-medium">{admin.assigned}</span>
+                <span className="text-sm text-[#6B7280] dark:text-gray-300 font-medium">{display.assigned}</span>
               </div>
 
               {/* Status Column */}
               <div className="px-8 py-8 flex items-center first:border-l-0 border-l border-gray-200">
                 <span 
                   className={`px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide shadow-sm ${
-                    admin.status === 'active' 
+                    display.status === 'active' 
                       ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700 border border-green-200' 
                       : 'bg-gradient-to-r from-red-50 to-red-100 text-red-700 border border-red-200'
                   }`}
                 >
-                  {admin.status === 'active' ? 'Active' : 'Inactive'}
+                  {display.status === 'active' ? 'Active' : 'Inactive'}
                 </span>
               </div>
 
@@ -99,14 +99,14 @@ export const AdministratorsTable = ({
                 </button>
                 
                 <button className={`p-2.5 rounded-lg transition-all duration-200 hover:shadow-sm group relative ${
-                  admin.hasNotification 
+                  display.hasNotification 
                     ? 'bg-gradient-to-r from-amber-50 dark:from-amber-900/20 to-yellow-50 dark:to-yellow-900/20 hover:from-amber-100 dark:hover:from-amber-900/30 hover:to-yellow-100 dark:hover:to-yellow-900/30 shadow-sm' 
                     : 'hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}>
                   <Bell className={`w-5 h-5 transition-colors ${
-                    admin.hasNotification ? 'text-amber-600 dark:text-amber-400' : 'text-[#6B7280] dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
+                    display.hasNotification ? 'text-amber-600 dark:text-amber-400' : 'text-[#6B7280] dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
                   }`} />
-                  {admin.hasNotification && (
+                  {display.hasNotification && (
                     <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse" />
                   )}
                 </button>
@@ -131,39 +131,39 @@ export const AdministratorsTable = ({
             </div>
 
             {/* Mobile/Tablet Card View */}
-            <div className={`lg:hidden p-6 transition-all duration-200 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 ${index < formattedAdmins.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}>
+            <div className={`lg:hidden p-6 transition-all duration-200 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 ${index < administrators.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}>
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
                   <div className="relative">
                     <img
-                      src={admin.avatar}
+                      src={display.avatar}
                       className="w-12 h-12 rounded-full object-cover shadow-md ring-2 ring-gray-100 dark:ring-gray-700"
-                      alt={admin.name}
+                      alt={display.name}
                     />
-                    {admin.hasNotification && (
+                    {display.hasNotification && (
                       <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse"></div>
                     )}
                   </div>
                   <div>
-                    <h3 className="text-base text-[#374151] dark:text-gray-200 font-medium">{admin.name}</h3>
-                    <p className="text-sm text-[#6B7280] dark:text-gray-300 mt-0.5">{admin.role}</p>
+                    <h3 className="text-base text-[#374151] dark:text-gray-200 font-medium">{display.name}</h3>
+                    <p className="text-sm text-[#6B7280] dark:text-gray-300 mt-0.5">{display.role}</p>
                   </div>
                 </div>
                 <span 
                   className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide shadow-sm ${
-                    admin.status === 'active' 
+                    display.status === 'active' 
                       ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700 border border-green-200' 
                       : 'bg-gradient-to-r from-red-50 to-red-100 text-red-700 border border-red-200'
                   }`}
                 >
-                  {admin.status === 'active' ? 'Active' : 'Inactive'}
+                  {display.status === 'active' ? 'Active' : 'Inactive'}
                 </span>
               </div>
 
               <div className="mb-4">
                 <div className="flex items-center justify-between py-2">
                   <span className="text-sm text-[#9CA3AF] dark:text-gray-500">Assigned</span>
-                  <span className="text-sm text-[#374151] dark:text-gray-200 font-medium">{admin.assigned}</span>
+                  <span className="text-sm text-[#374151] dark:text-gray-200 font-medium">{display.assigned}</span>
                 </div>
               </div>
 
@@ -177,17 +177,17 @@ export const AdministratorsTable = ({
                 </button>
                 
                 <button className={`flex-1 p-2.5 rounded-lg transition-all duration-200 hover:shadow-sm group relative flex items-center justify-center gap-2 ${
-                  admin.hasNotification 
+                  display.hasNotification 
                     ? 'bg-gradient-to-r from-amber-50 dark:from-amber-900/20 to-yellow-50 dark:to-yellow-900/20 hover:from-amber-100 dark:hover:from-amber-900/30 hover:to-yellow-100 dark:hover:to-yellow-900/30 shadow-sm' 
                     : 'hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}>
                   <Bell className={`w-4 h-4 transition-colors ${
-                    admin.hasNotification ? 'text-amber-600 dark:text-amber-400' : 'text-[#6B7280] dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
+                    display.hasNotification ? 'text-amber-600 dark:text-amber-400' : 'text-[#6B7280] dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
                   }`} />
                   <span className={`text-sm transition-colors ${
-                    admin.hasNotification ? 'text-amber-600 dark:text-amber-400' : 'text-[#6B7280] dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
+                    display.hasNotification ? 'text-amber-600 dark:text-amber-400' : 'text-[#6B7280] dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
                   }`}>Notify</span>
-                  {admin.hasNotification && (
+                  {display.hasNotification && (
                     <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-gray-900 animate-pulse" />
                   )}
                 </button>
@@ -215,7 +215,8 @@ export const AdministratorsTable = ({
               </div>
             </div>
           </div>
-        ))}
+        );
+        })}
       </div>
 
       {/* Pagination */}

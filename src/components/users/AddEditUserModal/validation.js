@@ -24,7 +24,13 @@ export const createUserSchema = (isEditMode, { forceAdminRole = false } = {}) =>
   // Create: country comes from logged-in admin user, not the form
   country_id: Yup.string().notRequired(),
   password: isEditMode
-    ? Yup.string().notRequired()
+    ? Yup.string()
+        .notRequired()
+        .test(
+          'min-length',
+          'Password must be at least 6 characters',
+          (value) => !value || String(value).length >= 6
+        )
     : Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
   is_admin:
     isEditMode || forceAdminRole
