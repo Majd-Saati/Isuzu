@@ -5,7 +5,7 @@
  * @param {Object} editData - Original edit data
  * @returns {Object} Prepared data for API
  */
-export const prepareFormData = (values, isEditMode, editData) => {
+export const prepareFormData = (values, isEditMode, editData, { forceAdminRole = false } = {}) => {
   if (isEditMode) {
     // API only accepts: user_id, name, mobile, status
     return {
@@ -15,8 +15,14 @@ export const prepareFormData = (values, isEditMode, editData) => {
       status: values.status,
     };
   }
-  // Create user - send all fields
-  return { ...values };
+
+  const { company_id, is_admin, ...rest } = values;
+
+  if (forceAdminRole) {
+    return { ...rest, is_admin: 1 };
+  }
+
+  return { ...rest, company_id, is_admin };
 };
 
 /**

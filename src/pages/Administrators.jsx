@@ -5,7 +5,7 @@ import { AdministratorsTableSkeleton } from '@/components/administrators/Adminis
 import { AdministratorsTableEmpty } from '@/components/administrators/AdministratorsTableEmpty';
 import { AddEditUserModal } from '@/components/users/AddEditUserModal';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
-import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '@/hooks/api/useUsers';
+import { useUsers, useDeleteUser } from '@/hooks/api/useUsers';
 import { Search, Plus, X } from 'lucide-react';
 
 const Administrators = () => {
@@ -34,8 +34,6 @@ const Administrators = () => {
     search: searchTerm || undefined,
   });
 
-  const createUserMutation = useCreateUser();
-  const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
 
   const administrators = data?.users || [];
@@ -73,19 +71,6 @@ const Administrators = () => {
     setDeletingAdmin(null);
     setDeleteError('');
   }, []);
-
-  // Submit handler
-  const handleSubmitAdmin = useCallback((values) => {
-    const mutation = editingAdmin ? updateUserMutation : createUserMutation;
-    mutation.mutate(
-      { ...values, isAdmin: true },
-      {
-        onSuccess: () => {
-          closeModal();
-        },
-      }
-    );
-  }, [editingAdmin, updateUserMutation, createUserMutation, closeModal]);
 
   // Delete handler
   const handleConfirmDelete = useCallback(() => {
@@ -217,10 +202,8 @@ const Administrators = () => {
       <AddEditUserModal
         isOpen={showModal}
         onClose={closeModal}
-        onSubmit={handleSubmitAdmin}
         editData={editingAdmin}
-        role="admin"
-        isSubmitting={createUserMutation.isPending || updateUserMutation.isPending}
+        forceAdminRole
       />
 
       {/* Delete Confirmation Modal */}

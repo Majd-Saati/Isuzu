@@ -7,7 +7,7 @@ import { createUserSchema } from '../validation';
 import { formatGenderLabel, formatRoleLabel, formatStatusLabel } from '../constants';
 import { prepareFormData, resetSelectedNames } from '../utils';
 
-export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
+export const useAddEditUserModal = ({ isOpen, onClose, editData = null, forceAdminRole = false }) => {
   const isEditMode = !!editData;
   const currentUser = useSelector((state) => state.auth.user);
   const loggedInCountryId = String(currentUser?.country_id ?? '').trim();
@@ -49,7 +49,7 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
       is_admin: editData?.is_admin ?? '',
       status: editData?.status ?? '',
     },
-    validationSchema: createUserSchema(isEditMode),
+    validationSchema: createUserSchema(isEditMode, { forceAdminRole }),
     enableReinitialize: true,
     validateOnChange: true,
     validateOnBlur: false,
@@ -58,7 +58,7 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null }) => {
       const valuesForApi = isEditMode
         ? values
         : { ...values, country_id: loggedInCountryId || String(values.country_id ?? '').trim() };
-      const data = prepareFormData(valuesForApi, isEditMode, editData);
+      const data = prepareFormData(valuesForApi, isEditMode, editData, { forceAdminRole });
 
       mutation.mutate(data, {
         onSuccess: () => {

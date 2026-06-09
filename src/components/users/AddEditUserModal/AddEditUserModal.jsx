@@ -4,7 +4,7 @@ import { ModalHeader } from './components/ModalHeader';
 import { UserFormFields } from './components/UserFormFields';
 import { ModalFooter } from './components/ModalFooter';
 
-export const AddEditUserModal = ({ isOpen, onClose, editData = null }) => {
+export const AddEditUserModal = ({ isOpen, onClose, editData = null, forceAdminRole = false }) => {
   const {
     isEditMode,
     isLoading,
@@ -30,7 +30,7 @@ export const AddEditUserModal = ({ isOpen, onClose, editData = null }) => {
     handleRoleSelect,
     handleStatusSelect,
     handleClose,
-  } = useAddEditUserModal({ isOpen, onClose, editData });
+  } = useAddEditUserModal({ isOpen, onClose, editData, forceAdminRole });
 
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget && !isLoading) {
@@ -58,6 +58,7 @@ export const AddEditUserModal = ({ isOpen, onClose, editData = null }) => {
         <form onSubmit={formik.handleSubmit} className="flex flex-col flex-1 overflow-hidden">
           <UserFormFields
             isEditMode={isEditMode}
+            forceAdminRole={forceAdminRole}
             formik={formik}
             isLoading={isLoading}
             showGenderDropdown={showGenderDropdown}

@@ -7,6 +7,7 @@ import { GENDER_OPTIONS, ROLE_OPTIONS, STATUS_OPTIONS } from '../constants';
 
 export const UserFormFields = ({
   isEditMode,
+  forceAdminRole = false,
   formik,
   isLoading,
   // Dropdown states
@@ -110,8 +111,8 @@ export const UserFormFields = ({
         />
       )}
 
-      {/* Company Dropdown - Only show in create mode */}
-      {!isEditMode && (
+      {/* Company Dropdown - create mode for non-admin users only */}
+      {!isEditMode && !forceAdminRole && (
         <CustomDropdown
           label="Company"
           placeholder="Select company"
@@ -149,8 +150,8 @@ export const UserFormFields = ({
         />
       )}
 
-      {/* Role and Status - Only show in create mode */}
-      {!isEditMode && (
+      {/* Role and Status - create mode */}
+      {!isEditMode && !forceAdminRole && (
         <div className="grid grid-cols-2 gap-4">
           <CustomDropdown
             label="Role"
@@ -180,6 +181,23 @@ export const UserFormFields = ({
             disabled={isLoading}
           />
         </div>
+      )}
+
+      {/* Status only - create administrator */}
+      {!isEditMode && forceAdminRole && (
+        <CustomDropdown
+          label="Status"
+          placeholder="Select status"
+          selectedValue={selectedStatusName}
+          isOpen={showStatusDropdown}
+          onToggle={() => setShowStatusDropdown(!showStatusDropdown)}
+          onClose={() => setShowStatusDropdown(false)}
+          options={STATUS_OPTIONS}
+          onSelect={(option) => handleStatusSelect(option.value)}
+          error={formik.errors.status}
+          touched={formik.submitCount > 0}
+          disabled={isLoading}
+        />
       )}
 
       {/* Status - Full width in edit mode */}
