@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { optionalPasswordSchema, requiredPasswordSchema } from '@/validations/loginValidation';
 
 export const createUserSchema = (isEditMode, { forceAdminRole = false } = {}) => Yup.object({
   name: Yup.string()
@@ -23,15 +24,7 @@ export const createUserSchema = (isEditMode, { forceAdminRole = false } = {}) =>
         }),
   // Create: country comes from logged-in admin user, not the form
   country_id: Yup.string().notRequired(),
-  password: isEditMode
-    ? Yup.string()
-        .notRequired()
-        .test(
-          'min-length',
-          'Password must be at least 6 characters',
-          (value) => !value || String(value).length >= 6
-        )
-    : Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+  password: isEditMode ? optionalPasswordSchema : requiredPasswordSchema,
   is_admin:
     isEditMode || forceAdminRole
       ? Yup.string().notRequired()
