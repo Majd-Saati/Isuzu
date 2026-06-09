@@ -16,8 +16,16 @@ const RECENT_OPS_PARAM_KEYS = [
 ];
 
 export const overviewService = {
-  getOverview: async () => {
-    return apiClient.get('/overview');
+  getOverview: async (params = {}) => {
+    const query = {};
+    const termId = params.term_id;
+    const year = params.year;
+    if (termId != null && String(termId).trim() !== '') {
+      query.term_id = termId;
+    } else if (year != null && String(year).trim() !== '') {
+      query.year = year;
+    }
+    return apiClient.get('/overview', { params: query });
   },
 
   /** GET /recent_operations — dashboard “Overview Recently” table */

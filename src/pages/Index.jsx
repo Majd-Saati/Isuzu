@@ -19,7 +19,7 @@ import { SectionNav } from '@/components/SectionNav';
 import { useCharts } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
 import { useCompanies } from '@/hooks/api/useCompanies';
-import { ClipboardList, Building2 } from 'lucide-react';
+import { ClipboardList, Building2, Calendar } from 'lucide-react';
 import { isAdminUser } from '@/lib/permissions';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { buildMediaUrl } from '@/lib/api/config';
@@ -209,8 +209,18 @@ const Index = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = isAdminUser(user);
   const { currency } = useCurrency();
+  const [dealersTermId, setDealersTermId] = useState('');
+  const [dealersYear, setDealersYear] = useState('');
 
-  const { data, isLoading, isError } = useOverview();
+  const { data: dealersTermsData } = useTerms({ perPage: 100 });
+  const dealersTerms = dealersTermsData?.terms ?? [];
+  const currentYear = new Date().getFullYear();
+  const dealersYearOptions = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
+
+  const { data, isLoading, isError } = useOverview({
+    term_id: dealersTermId || undefined,
+    year: !dealersTermId && dealersYear ? dealersYear : undefined,
+  });
 
 
 
@@ -414,6 +424,53 @@ const Index = () => {
 
         <div id="isuzu-dealers" className="mt-[52px] max-md:mt-10">
           <SectionTitle title="ISUZU Dealers" showButton={true} />
+        </div>
+
+        <div className="mt-5 flex flex-wrap items-end gap-4 w-full max-w-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-5 py-4 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)]">
+          <div className="flex flex-col gap-1.5 min-w-[200px] flex-1">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              <ClipboardList className="w-4 h-4 text-[#E60012]" />
+              Term
+            </label>
+            <select
+              value={dealersTermId}
+              onChange={(e) => {
+                setDealersTermId(e.target.value);
+                if (e.target.value) setDealersYear('');
+              }}
+              disabled={!!dealersYear}
+              className={`${selectClass} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              <option value="">All terms</option>
+              {dealersTerms.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name || `Term ${t.id}`}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col gap-1.5 min-w-[200px] flex-1">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              <Calendar className="w-4 h-4 text-[#E60012]" />
+              Year
+            </label>
+            <select
+              value={dealersYear}
+              onChange={(e) => {
+                setDealersYear(e.target.value);
+                if (e.target.value) setDealersTermId('');
+              }}
+              disabled={!!dealersTermId}
+              className={`${selectClass} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              <option value="">All years</option>
+              {dealersYearOptions.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="mt-7 md:mt-9">
