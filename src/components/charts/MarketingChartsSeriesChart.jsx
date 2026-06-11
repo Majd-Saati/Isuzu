@@ -154,8 +154,7 @@ export const MarketingChartsSeriesChart = ({
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (!active || !payload?.length) return null;
-    const total = payload.reduce((sum, entry) => sum + (entry.value || 0), 0);
-    
+
     return (
       <div className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl p-4 min-w-[200px] animate-fade-in">
         <p className="font-bold text-gray-900 dark:text-gray-100 mb-3 text-base border-b border-gray-200 dark:border-gray-700 pb-2">
@@ -180,12 +179,6 @@ export const MarketingChartsSeriesChart = ({
                 </span>
               </div>
             ))}
-          <div className="flex justify-between gap-4 pt-2 border-t border-gray-200 dark:border-gray-700 mt-2">
-            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Total</span>
-            <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
-              {formatChartsCurrency(total, isAdmin, currencyCode)}
-            </span>
-          </div>
         </div>
       </div>
     );
@@ -264,7 +257,7 @@ export const MarketingChartsSeriesChart = ({
     >
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-base md:text-lg font-bold text-gray-900 dark:text-gray-100">
-          Expenditure & Supprt Breakdown
+          Expenditure & Support Breakdown
         </h3>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-xs text-gray-500 dark:text-gray-400">

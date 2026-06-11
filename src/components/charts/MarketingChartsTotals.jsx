@@ -34,7 +34,7 @@ const cards = [
   },
   {
     key: 'allocated_budget',
-    label: 'Allocated Budget',
+    label: 'Budget',
     icon: Wallet,
     gradient: 'bg-gradient-to-br from-purple-500 to-violet-600',
     bg: 'bg-purple-50 dark:bg-purple-900/20',

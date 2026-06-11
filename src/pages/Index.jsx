@@ -377,13 +377,11 @@ const Index = () => {
 
 
   const dashboardSections = [
-    { id: 'dealer-efficiency', label: 'Dealer Efficiency' },
-    { id: 'support-allocation-efficiency', label: 'Support vs Allocation' },
-    { id: 'marketing-charts', label: 'Marketing Charts' },
-    { id: 'two-years-compare', label: 'Two Years Compare' },
-    { id: 'reporting-table', label: 'Reporting Table' },
-    { id: 'overview-recently', label: 'Overview of Recent Activities' },
+    { id: 'marketing-charts', label: 'Marketing Expenditure vs Support' },
+    { id: 'two-years-compare', label: 'Year-on-Year Support Cost' },
     { id: 'isuzu-dealers', label: 'ISUZU Dealers' },
+    { id: 'overview-recently', label: 'Overview of Recent Activities' },
+    { id: 'reporting-table', label: 'Reporting' },
   ];
 
   return (
@@ -391,91 +389,87 @@ const Index = () => {
       <SectionNav sections={dashboardSections} />
       <div className="flex w-full flex-col items-stretch mt-[19px] px-5 max-w-full">
 
-        {/* Shared Company + Term filter linked to Dealer Efficiency + Support vs Allocation */}
-        <DealerSupportChartsSection />
-
-        {/* Marketing API Charts - by month, term, or year */}
+        {/* 1. Marketing Expenditure vs Support */}
         <section id="marketing-charts" className="py-12 border-b border-gray-200 dark:border-gray-700">
           <MarketingChartsSection />
         </section>
 
-        {/* Two years comparison - Support cost (JPY) */}
+        {/* 2. Year-on-Year Support Cost */}
         <section id="two-years-compare" className="py-12 border-b border-gray-200 dark:border-gray-700">
           <TwoYearsCompareChart />
         </section>
 
-        {/* Reporting Table */}
+        {/* 3. ISUZU Dealers (scorecards) */}
+        <section id="isuzu-dealers" className="py-12 border-b border-gray-200 dark:border-gray-700">
+          <SectionTitle title="ISUZU Dealers" showButton={true} />
+
+          <div className="mt-5 flex flex-wrap items-end gap-4 w-full max-w-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-5 py-4 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)]">
+            <div className="flex flex-col gap-1.5 min-w-[200px] flex-1">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                <ClipboardList className="w-4 h-4 text-[#E60012]" />
+                Term
+              </label>
+              <select
+                value={dealersTermId}
+                onChange={(e) => {
+                  setDealersTermId(e.target.value);
+                  if (e.target.value) setDealersYear('');
+                }}
+                disabled={!!dealersYear}
+                className={`${selectClass} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                <option value="">All terms</option>
+                {dealersTerms.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name || `Term ${t.id}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5 min-w-[200px] flex-1">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                <Calendar className="w-4 h-4 text-[#E60012]" />
+                Year
+              </label>
+              <select
+                value={dealersYear}
+                onChange={(e) => {
+                  setDealersYear(e.target.value);
+                  if (e.target.value) setDealersTermId('');
+                }}
+                disabled={!!dealersTermId}
+                className={`${selectClass} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                <option value="">All years</option>
+                {dealersYearOptions.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-7 md:mt-9">
+            {renderDealersSection()}
+          </div>
+        </section>
+
+        {/* 4. Overview of Recent Activities */}
+        <section id="overview-recently" className="py-12 border-b border-gray-200 dark:border-gray-700">
+          <SectionTitle title="Overview of Recent Activities" />
+          <div className="mt-6 md:mt-8">
+            <OverviewRecentlySection />
+          </div>
+        </section>
+
+        {/* 5. Reporting */}
         <section id="reporting-table" className="py-12 border-b border-gray-200 dark:border-gray-700">
           <ReportingTable />
         </section>
 
-        <div id="overview-recently" className="mt-[52px] max-md:mt-10">
-          <SectionTitle title="Overview Recently" />
-
-      </div>
-
-
-
-      <div className="mt-6 md:mt-8">
-
-        <OverviewRecentlySection />
-
-        </div>
-
-        <div id="isuzu-dealers" className="mt-[52px] max-md:mt-10">
-          <SectionTitle title="ISUZU Dealers" showButton={true} />
-        </div>
-
-        <div className="mt-5 flex flex-wrap items-end gap-4 w-full max-w-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-5 py-4 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)]">
-          <div className="flex flex-col gap-1.5 min-w-[200px] flex-1">
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-              <ClipboardList className="w-4 h-4 text-[#E60012]" />
-              Term
-            </label>
-            <select
-              value={dealersTermId}
-              onChange={(e) => {
-                setDealersTermId(e.target.value);
-                if (e.target.value) setDealersYear('');
-              }}
-              disabled={!!dealersYear}
-              className={`${selectClass} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              <option value="">All terms</option>
-              {dealersTerms.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name || `Term ${t.id}`}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col gap-1.5 min-w-[200px] flex-1">
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-              <Calendar className="w-4 h-4 text-[#E60012]" />
-              Year
-            </label>
-            <select
-              value={dealersYear}
-              onChange={(e) => {
-                setDealersYear(e.target.value);
-                if (e.target.value) setDealersTermId('');
-              }}
-              disabled={!!dealersTermId}
-              className={`${selectClass} w-full disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              <option value="">All years</option>
-              {dealersYearOptions.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="mt-7 md:mt-9">
-          {renderDealersSection()}
-        </div>
+        {/* Dealer Efficiency + Support vs Allocation (below main dashboard sequence) */}
+        <DealerSupportChartsSection />
 
       </div>
     </>
