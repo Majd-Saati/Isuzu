@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { formatDealerCardMoney } from '@/lib/dashboardMoney';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 
@@ -20,8 +20,8 @@ function getTermNameDisplay(label) {
 
 export const DealerCard = ({
   name,
-  avatar,
-  flag,
+  logo = null,
+  flag = null,
   terms = [],
   budget = null,
   support = 0,
@@ -29,6 +29,14 @@ export const DealerCard = ({
   isAdmin = false,
   currencyCode = '',
 }) => {
+  const [logoError, setLogoError] = useState(false);
+
+  useEffect(() => {
+    setLogoError(false);
+  }, [logo]);
+
+  const showLogo = logo && !logoError;
+  const nameInitial = name?.charAt(0)?.toUpperCase() || '?';
   const hasTerms = terms.length > 0;
 
   const costRows = [
@@ -50,15 +58,16 @@ export const DealerCard = ({
           <div className="flex items-center gap-3.5 text-base md:text-lg text-[#F38088] font-bold flex-1 min-w-0 group-hover:text-[#e8566e] transition-colors">
 
             <div className="relative">
-              {avatar ? (
+              {showLogo ? (
                 <img
-                  src={avatar}
+                  src={logo}
                   className="aspect-[1] object-contain w-11 shrink-0 rounded-full ring-2 ring-pink-100 dark:ring-pink-900/30 group-hover:ring-pink-200 dark:group-hover:ring-pink-800/50 transition-all shadow-md hover:shadow-lg"
                   alt={name}
+                  onError={() => setLogoError(true)}
                 />
               ) : (
                 <div className="flex aspect-[1] w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#E60012] to-[#C00010] text-sm font-bold text-white ring-2 ring-pink-100 dark:ring-pink-900/30 shadow-md">
-                  {name?.charAt(0)?.toUpperCase() || '?'}
+                  {nameInitial}
                 </div>
               )}
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-900 shadow-sm"></div>

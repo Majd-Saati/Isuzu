@@ -366,8 +366,7 @@ const Index = () => {
 
       return {
         name: dealer.company_name,
-        avatar: getDealerLogoUrl(dealer.logo),
-        flag: getDealerLogoUrl(dealer.logo),
+        logo: getDealerLogoUrl(dealer.logo),
         terms: termSummaries,
         budget,
         support,
