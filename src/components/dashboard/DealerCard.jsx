@@ -23,15 +23,19 @@ export const DealerCard = ({
   avatar,
   flag,
   terms = [],
+  budget = null,
   support = 0,
   expense = 0,
-  estimatedCost = 0,
-  totalCost = 0,
   isAdmin = false,
   currencyCode = '',
 }) => {
-
   const hasTerms = terms.length > 0;
+
+  const costRows = [
+    budget != null ? { label: 'Budget:', value: budget } : null,
+    { label: 'Actual:', value: expense },
+    { label: 'Support:', value: support },
+  ].filter(Boolean);
 
 
 
@@ -145,28 +149,16 @@ export const DealerCard = ({
           <div className="w-full sm:w-auto sm:shrink-0 sm:self-stretch bg-gradient-to-br from-amber-50/80 dark:from-amber-900/20 via-amber-50/60 dark:via-amber-900/15 to-amber-100/60 dark:to-amber-900/20 flex flex-col justify-center px-3 sm:px-4 py-3.5 sm:py-4 rounded-xl border border-amber-100/50 dark:border-amber-800/30 shadow-sm min-w-0 sm:min-w-[11rem]">
 
             <div className="grid grid-cols-[auto_auto] gap-x-3 gap-y-2.5 items-center text-xs sm:text-sm">
-
-              <div className="text-[#9CA3AF] dark:text-gray-400 font-medium whitespace-nowrap">Support:</div>
-              <div className="text-[#1F2937] dark:text-gray-200 text-sm sm:text-base font-bold tabular-nums text-right whitespace-nowrap">
-                {formatDealerCardMoney(support, isAdmin, currencyCode)}
-              </div>
-
-              <div className="text-[#9CA3AF] dark:text-gray-400 font-medium whitespace-nowrap">Actual:</div>
-              <div className="text-[#1F2937] dark:text-gray-200 text-sm sm:text-base font-bold tabular-nums text-right whitespace-nowrap">
-                {formatDealerCardMoney(expense, isAdmin, currencyCode)}
-              </div>
-
-              <div className="text-[#9CA3AF] dark:text-gray-400 font-medium whitespace-nowrap">Estimated:</div>
-              <div className="text-[#1F2937] dark:text-gray-200 text-sm sm:text-base font-bold tabular-nums text-right whitespace-nowrap">
-                {formatDealerCardMoney(estimatedCost, isAdmin, currencyCode)}
-              </div>
-            </div>
-
-            <div className="mt-2.5 pt-2.5 border-t border-amber-200/60 dark:border-amber-800/40 grid grid-cols-[auto_auto] gap-x-3 items-baseline">
-              <div className="text-[#9CA3AF] dark:text-gray-400 text-xs sm:text-sm font-bold whitespace-nowrap">Total Cost:</div>
-              <div className="text-[#F97316] dark:text-orange-400 text-base sm:text-lg font-bold tabular-nums text-right whitespace-nowrap">
-                {formatDealerCardMoney(totalCost, isAdmin, currencyCode)}
-              </div>
+              {costRows.map((row) => (
+                <React.Fragment key={row.label}>
+                  <div className="text-[#9CA3AF] dark:text-gray-400 font-medium whitespace-nowrap">
+                    {row.label}
+                  </div>
+                  <div className="text-[#1F2937] dark:text-gray-200 text-sm sm:text-base font-bold tabular-nums text-right whitespace-nowrap">
+                    {formatDealerCardMoney(row.value, isAdmin, currencyCode)}
+                  </div>
+                </React.Fragment>
+              ))}
             </div>
 
           </div>

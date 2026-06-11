@@ -497,7 +497,7 @@ export const OverviewRecentlySection = () => {
               </select>
             </label>
             <span className="text-gray-500 dark:text-gray-500">
-              {rangeStart}â€“{rangeEnd} of {total}
+              {rangeStart}-{rangeEnd} of {total}
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">

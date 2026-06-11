@@ -26,6 +26,19 @@ import { buildMediaUrl } from '@/lib/api/config';
 
 const getLogoUrl = (path) => buildMediaUrl(path);
 
+const getDealerBudget = (dealer) => {
+  const raw =
+    dealer?.costs?.allocated_budget_total_jpy ??
+    dealer?.costs?.allocated_budget_total ??
+    dealer?.costs?.budget_total ??
+    dealer?.allocated_budget_total_jpy ??
+    dealer?.term_budget_allocation?.allocated_budget_total_jpy;
+
+  if (raw == null || raw === '') return null;
+  const num = Number(raw);
+  return Number.isNaN(num) ? null : num;
+};
+
 const buildDealerChartData = (totals, title) => {
   if (!totals) return null;
   const actual = Number(totals.actual_cost) || 0;
@@ -299,33 +312,17 @@ const Index = () => {
 
 
       const support = dealer.costs?.support_cost_total ?? 0;
-
       const expense = dealer.costs?.actual_cost_total ?? 0;
-
-      const estimatedCost = dealer.costs?.estimated_cost_total ?? 0;
-
-      const totalCost = dealer.costs?.total_cost ?? 0;
-
-
+      const budget = getDealerBudget(dealer);
 
       return {
-
         name: dealer.company_name,
-
         avatar: getLogoUrl(dealer.logo),
-
         flag: getLogoUrl(dealer.logo),
-
         terms: termSummaries,
-
+        budget,
         support,
-
         expense,
-
-        estimatedCost,
-
-        totalCost,
-
       };
 
     });
