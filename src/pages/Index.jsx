@@ -1,25 +1,16 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { PerformanceChart } from '@/components/dashboard/PerformanceChart';
 import { OverviewRecentlySection } from '@/components/dashboard/OverviewRecentlySection';
 import { DealerCard } from '@/components/dashboard/DealerCard';
 import { DealerCardSkeleton } from '@/components/dashboard/DealerCardSkeleton';
 import { DealerCardsEmpty } from '@/components/dashboard/DealerCardsEmpty';
 import { SectionTitle } from '@/components/dashboard/SectionTitle';
-import { SectionHeader } from '@/components/dashboard/SectionHeader';
 import { useOverview } from '@/hooks/api/useOverview';
-import { DealerEfficiencyChart } from '@/components/dashboard/DealerEfficiencyChart';
-import { DealerEfficiencyChartSkeleton } from '@/components/dashboard/DealerEfficiencyChartSkeleton';
-import { DealerEfficiencyChartEmpty } from '@/components/dashboard/DealerEfficiencyChartEmpty';
 import { ReportingTable } from '@/components/dashboard/ReportingTable';
-import { ReportingTableSkeleton } from '@/components/dashboard/ReportingTableSkeleton';
-import { ReportingTableEmpty } from '@/components/dashboard/ReportingTableEmpty';
 import { MarketingChartsSection, TwoYearsCompareChart } from '@/components/charts';
 import { SectionNav } from '@/components/SectionNav';
-import { useCharts } from '@/hooks/api/useCharts';
 import { useTerms } from '@/hooks/api/useTerms';
-import { useCompanies } from '@/hooks/api/useCompanies';
-import { ClipboardList, Building2, Calendar } from 'lucide-react';
+import { ClipboardList, Calendar } from 'lucide-react';
 import { isAdminUser } from '@/lib/permissions';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { buildMediaUrl } from '@/lib/api/config';
@@ -82,6 +73,10 @@ const getDealerBudget = (dealer, isAdmin = false, budgetContext = {}) => {
   return hasBudgetField ? total : null;
 };
 
+const selectClass =
+  'px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[160px] cursor-pointer';
+
+/*
 const buildDealerChartData = (totals, title) => {
   if (!totals) return null;
   const actual = Number(totals.actual_cost) || 0;
@@ -115,9 +110,6 @@ const buildSupportVsAllocationChartData = (totals, allocationSource, title) => {
 const chartCardClass =
   'bg-white dark:bg-gray-900 rounded-none p-6 md:p-7 w-full border border-gray-100 dark:border-gray-800 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)] hover:shadow-[0px_8px_32px_rgba(0,0,0,0.12)] dark:hover:shadow-[0px_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300 animate-fade-in';
 
-const selectClass =
-  'px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E60012]/50 focus:border-[#E60012] min-w-[160px] cursor-pointer';
-
 const DealerSupportChartsSection = () => {
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
@@ -150,7 +142,6 @@ const DealerSupportChartsSection = () => {
     `By Term (${termLabel})`
   );
 
-  // Single shared Company + Term filter toolbar, linked to both charts below
   const filter = (
     <div className="flex flex-wrap items-end gap-4 w-full max-w-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-5 py-4 shadow-[0px_4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0px_6px_24px_rgba(0,0,0,0.3)]">
       {isAdmin && (
@@ -232,12 +223,10 @@ const DealerSupportChartsSection = () => {
 
   return (
     <section className="mt-[38px] max-md:mt-8 pb-12 border-b border-gray-200 dark:border-gray-700">
-      {/* Shared Company + Term filter toolbar, linked to both charts */}
       <div className="mb-8">
         {filter}
       </div>
 
-      {/* Both charts on the same row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div id="dealer-efficiency">
           <SectionHeader title="Dealer Efficiency" />
@@ -259,7 +248,7 @@ const DealerSupportChartsSection = () => {
     </section>
   );
 };
-
+*/
 
 const Index = () => {
   const user = useSelector((state) => state.auth.user);
@@ -514,7 +503,7 @@ const Index = () => {
         </section>
 
         {/* Dealer Efficiency + Support vs Allocation (below main dashboard sequence) */}
-        <DealerSupportChartsSection />
+        {/* <DealerSupportChartsSection /> */}
 
       </div>
     </>
