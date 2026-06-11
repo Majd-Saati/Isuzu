@@ -38,16 +38,24 @@ export const companiesService = {
     });
   },
 
-  updateCompany: async ({ id, ...data }) => {
+  updateCompany: async (payload) => {
+    const companyId = payload.company_id ?? payload.id;
     const formData = new FormData();
-    formData.append('name', data.name);
-    formData.append('country_id', data.country_id);
-    
-    if (data.logo) {
-      formData.append('logo', data.logo);
+    formData.append('company_id', companyId);
+
+    if (payload.name != null && String(payload.name).trim() !== '') {
+      formData.append('name', payload.name);
     }
-    
-    return apiClient.post(`/update_company/${id}`, formData, {
+
+    if (payload.country_id != null && String(payload.country_id).trim() !== '') {
+      formData.append('country_id', payload.country_id);
+    }
+
+    if (payload.logo) {
+      formData.append('logo', payload.logo);
+    }
+
+    return apiClient.post('/update_company', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
