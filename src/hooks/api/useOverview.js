@@ -14,6 +14,9 @@ export const useOverview = (params = {}) => {
     queryFn: () => overviewService.getOverview(params),
     select: (data) => ({
       dealersSummary: data?.body?.dealers_summary || [],
+      yearTerms: data?.body?.year_terms || [],
+      term: data?.body?.term ?? null,
+      year: data?.body?.year ?? null,
     }),
   });
 };

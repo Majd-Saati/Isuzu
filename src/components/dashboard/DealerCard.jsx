@@ -50,38 +50,33 @@ export const DealerCard = ({
           <div className="flex items-center gap-3.5 text-base md:text-lg text-[#F38088] font-bold flex-1 min-w-0 group-hover:text-[#e8566e] transition-colors">
 
             <div className="relative">
-
-              <img
-
-                src={avatar}
-
-                className="aspect-[1] object-contain w-11 shrink-0 rounded-full ring-2 ring-pink-100 dark:ring-pink-900/30 group-hover:ring-pink-200 dark:group-hover:ring-pink-800/50 transition-all shadow-md hover:shadow-lg"
-
-                alt={name}
-
-              />
-
+              {avatar ? (
+                <img
+                  src={avatar}
+                  className="aspect-[1] object-contain w-11 shrink-0 rounded-full ring-2 ring-pink-100 dark:ring-pink-900/30 group-hover:ring-pink-200 dark:group-hover:ring-pink-800/50 transition-all shadow-md hover:shadow-lg"
+                  alt={name}
+                />
+              ) : (
+                <div className="flex aspect-[1] w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#E60012] to-[#C00010] text-sm font-bold text-white ring-2 ring-pink-100 dark:ring-pink-900/30 shadow-md">
+                  {name?.charAt(0)?.toUpperCase() || '?'}
+                </div>
+              )}
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-900 shadow-sm"></div>
-
             </div>
 
             <div className="text-ellipsis truncate flex-1">{name}</div>
 
           </div>
 
-          <div className="flex items-center justify-center w-10 shrink-0 group-hover:scale-110 transition-transform">
-
-            <img
-
-              src={flag}
-
-              className="aspect-[1.56] object-contain w-10 rounded-md shadow-sm"
-
-              alt="Flag"
-
-            />
-
-          </div>
+          {flag ? (
+            <div className="flex items-center justify-center w-10 shrink-0 group-hover:scale-110 transition-transform">
+              <img
+                src={flag}
+                className="aspect-[1.56] object-contain w-10 rounded-md shadow-sm"
+                alt="Flag"
+              />
+            </div>
+          ) : null}
 
         </div>
 

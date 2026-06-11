@@ -24,19 +24,62 @@ import { isAdminUser } from '@/lib/permissions';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { buildMediaUrl } from '@/lib/api/config';
 
-const getLogoUrl = (path) => buildMediaUrl(path);
+const getDealerLogoUrl = (path) => {
+  const s = String(path ?? '').trim();
+  if (!s || s === '-') return null;
+  return buildMediaUrl(s);
+};
 
-const getDealerBudget = (dealer) => {
-  const raw =
-    dealer?.costs?.allocated_budget_total_jpy ??
-    dealer?.costs?.allocated_budget_total ??
-    dealer?.costs?.budget_total ??
-    dealer?.allocated_budget_total_jpy ??
-    dealer?.term_budget_allocation?.allocated_budget_total_jpy;
-
+const getTermBudgetValue = (term, isAdmin) => {
+  const raw = isAdmin ? term.budget_allocation_jpy : term.budget_allocation;
   if (raw == null || raw === '') return null;
   const num = Number(raw);
   return Number.isNaN(num) ? null : num;
+};
+
+/** IDs of terms that belong to the selected year (from overview `year_terms`). */
+const getYearTermIdSet = (yearTerms) => {
+  if (!Array.isArray(yearTerms) || yearTerms.length === 0) return null;
+  const ids = yearTerms
+    .map((t) => t?.id ?? t?.term_id)
+    .filter((id) => id != null && String(id).trim() !== '')
+    .map((id) => String(id));
+  return ids.length > 0 ? new Set(ids) : null;
+};
+
+/** Keep dealer terms that match the active term or year filter. */
+const filterDealerTermsByBudgetContext = (terms, { selectedTermId, selectedYear, yearTerms } = {}) => {
+  if (!Array.isArray(terms) || !terms.length) return [];
+
+  if (selectedTermId) {
+    return terms.filter((t) => String(t.term_id) === String(selectedTermId));
+  }
+
+  if (selectedYear) {
+    const yearTermIds = getYearTermIdSet(yearTerms);
+    if (!yearTermIds) return [];
+    return terms.filter((t) => yearTermIds.has(String(t.term_id)));
+  }
+
+  return terms;
+};
+
+const getDealerBudget = (dealer, isAdmin = false, budgetContext = {}) => {
+  const terms = Array.isArray(dealer?.terms) ? dealer.terms : [];
+  const filteredTerms = filterDealerTermsByBudgetContext(terms, budgetContext);
+  if (!filteredTerms.length) return null;
+
+  let hasBudgetField = false;
+  let total = 0;
+
+  for (const term of filteredTerms) {
+    const value = getTermBudgetValue(term, isAdmin);
+    if (value == null) continue;
+    hasBudgetField = true;
+    total += value;
+  }
+
+  return hasBudgetField ? total : null;
 };
 
 const buildDealerChartData = (totals, title) => {
@@ -285,6 +328,12 @@ const Index = () => {
 
 
 
+    const budgetContext = {
+      selectedTermId: dealersTermId || null,
+      selectedYear: !dealersTermId && dealersYear ? dealersYear : null,
+      yearTerms: data?.yearTerms || [],
+    };
+
     const mappedDealers = dealers.map((dealer) => {
 
       const terms = Array.isArray(dealer.terms)
@@ -299,9 +348,9 @@ const Index = () => {
 
         : [];
 
+      const termsForFilter = filterDealerTermsByBudgetContext(terms, budgetContext);
 
-
-      const termSummaries = terms.map((term) => ({
+      const termSummaries = termsForFilter.map((term) => ({
 
         label: term.term_name,
 
@@ -313,12 +362,12 @@ const Index = () => {
 
       const support = dealer.costs?.support_cost_total ?? 0;
       const expense = dealer.costs?.actual_cost_total ?? 0;
-      const budget = getDealerBudget(dealer);
+      const budget = getDealerBudget(dealer, isAdmin, budgetContext);
 
       return {
         name: dealer.company_name,
-        avatar: getLogoUrl(dealer.logo),
-        flag: getLogoUrl(dealer.logo),
+        avatar: getDealerLogoUrl(dealer.logo),
+        flag: getDealerLogoUrl(dealer.logo),
         terms: termSummaries,
         budget,
         support,
