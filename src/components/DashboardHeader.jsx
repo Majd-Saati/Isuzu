@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bell, LogOut, User, Settings, UserCircle, ChevronDown } from 'lucide-react';
+import { Bell, LogOut, User, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LogoutModal from './LogoutModal';
 import NotificationsPanel from './NotificationsPanel';
@@ -76,32 +76,8 @@ const DashboardHeader = () => {
                       </span>
                     </div>
 
-                    {/* Menu Items */}
-                    <div className="py-1">
-                      <button
-                        onClick={() => {
-                          setShowProfileMenu(false);
-                          // Navigate to profile
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors text-left"
-                      >
-                        <UserCircle className="w-4 h-4 text-gray-600" />
-                        <span className="text-sm text-foreground">My Profile</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowProfileMenu(false);
-                          // Navigate to settings
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors text-left"
-                      >
-                        <Settings className="w-4 h-4 text-gray-600" />
-                        <span className="text-sm text-foreground">Settings</span>
-                      </button>
-                    </div>
-
                     {/* Logout */}
-                    <div className="border-t border-gray-200 pt-1">
+                    <div className="py-1">
                       <button
                         onClick={() => {
                           setShowProfileMenu(false);

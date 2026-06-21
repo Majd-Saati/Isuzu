@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { User, ChevronDown, Settings, HelpCircle, Mail, LogOut } from 'lucide-react';
+import { User, ChevronDown, LogOut } from 'lucide-react';
 
 export const UserMenuDropdown = ({ 
   showUserMenu, 
@@ -41,21 +41,6 @@ export const UserMenuDropdown = ({
                 <p className="text-xs text-gray-500 dark:text-gray-400">{userEmail || 'No email'}</p>
               </div>
             </div>
-          </div>
-
-          <div className="py-2">
-            <button className="w-full px-4 py-3 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3">
-              <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              Settings
-            </button>
-            <button className="w-full px-4 py-3 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3">
-              <Mail className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              Messages
-            </button>
-            <button className="w-full px-4 py-3 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3">
-              <HelpCircle className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              Help & Support
-            </button>
           </div>
 
           <div className="border-t border-gray-200 dark:border-gray-700 py-2">
