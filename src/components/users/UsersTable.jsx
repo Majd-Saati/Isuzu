@@ -1,12 +1,13 @@
 import React from 'react';
-import { Edit2, Trash2, User, Mail, Phone, Building2 } from 'lucide-react';
+import { Edit2, Trash2, User, Mail, Phone, Building2, KeyRound } from 'lucide-react';
 import { CustomPagination } from '@/components/ui/CustomPagination';
 
 export const UsersTable = ({ 
   users, 
   pagination, 
-  onEdit, 
+  onEdit,
   onDelete,
+  onUpdatePassword,
   onPageChange,
   onItemsPerPageChange,
   currentUserId
@@ -133,6 +134,13 @@ export const UsersTable = ({
                       title="Edit user"
                     >
                       <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => onUpdatePassword?.(user)}
+                      className="p-2 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20 text-amber-600 dark:text-amber-400 transition-all hover:scale-110 active:scale-95"
+                      title="Update password"
+                    >
+                      <KeyRound className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => onDelete?.(user)}

@@ -4,6 +4,7 @@ import { AdministratorsTable } from '@/components/administrators/AdministratorsT
 import { AdministratorsTableSkeleton } from '@/components/administrators/AdministratorsTableSkeleton';
 import { AdministratorsTableEmpty } from '@/components/administrators/AdministratorsTableEmpty';
 import { AddEditUserModal } from '@/components/users/AddEditUserModal';
+import { UpdatePasswordModal } from '@/components/users/UpdatePasswordModal';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 import { useUsers, useDeleteUser } from '@/hooks/api/useUsers';
 import { Search, Plus, X } from 'lucide-react';
@@ -18,6 +19,8 @@ const Administrators = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingAdmin, setDeletingAdmin] = useState(null);
   const [deleteError, setDeleteError] = useState('');
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordAdmin, setPasswordAdmin] = useState(null);
 
   // Pagination
   const [page, setPage] = useState(1);
@@ -53,6 +56,16 @@ const Administrators = () => {
   const closeModal = useCallback(() => {
     setShowModal(false);
     setEditingAdmin(null);
+  }, []);
+
+  const openPasswordModal = useCallback((admin) => {
+    setPasswordAdmin(admin);
+    setShowPasswordModal(true);
+  }, []);
+
+  const closePasswordModal = useCallback(() => {
+    setShowPasswordModal(false);
+    setPasswordAdmin(null);
   }, []);
 
   const openDeleteModal = useCallback((admin) => {
@@ -130,6 +143,7 @@ const Administrators = () => {
         pagination={pagination}
         onEdit={openEditModal}
         onDelete={openDeleteModal}
+        onUpdatePassword={openPasswordModal}
         onPageChange={handlePageChange}
         onItemsPerPageChange={handleItemsPerPageChange}
         currentUserId={currentUser?.id}
@@ -204,6 +218,13 @@ const Administrators = () => {
         onClose={closeModal}
         editData={editingAdmin}
         forceAdminRole
+      />
+
+      {/* Update Password Modal */}
+      <UpdatePasswordModal
+        isOpen={showPasswordModal}
+        onClose={closePasswordModal}
+        user={passwordAdmin}
       />
 
       {/* Delete Confirmation Modal */}

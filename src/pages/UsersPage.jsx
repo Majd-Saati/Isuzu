@@ -5,6 +5,7 @@ import { UsersTableSkeleton } from '@/components/users/UsersTableSkeleton';
 import { UsersTableEmpty } from '@/components/users/UsersTableEmpty';
 import { UsersPageHeader, UsersActionBar } from '@/components/users';
 import { AddEditUserModal } from '@/components/users/AddEditUserModal';
+import { UpdatePasswordModal } from '@/components/users/UpdatePasswordModal';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 import { useUsers, useDeleteUser } from '@/hooks/api/useUsers';
 import { useDealers } from '@/hooks/api/useCompanies';
@@ -19,6 +20,8 @@ const UsersPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingUser, setDeletingUser] = useState(null);
   const [deleteError, setDeleteError] = useState('');
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordUser, setPasswordUser] = useState(null);
 
   // Pagination
   const [page, setPage] = useState(1);
@@ -62,6 +65,16 @@ const UsersPage = () => {
   const closeModal = useCallback(() => {
     setShowModal(false);
     setEditingUser(null);
+  }, []);
+
+  const openPasswordModal = useCallback((user) => {
+    setPasswordUser(user);
+    setShowPasswordModal(true);
+  }, []);
+
+  const closePasswordModal = useCallback(() => {
+    setShowPasswordModal(false);
+    setPasswordUser(null);
   }, []);
 
   const openDeleteModal = useCallback((user) => {
@@ -159,6 +172,7 @@ const UsersPage = () => {
         pagination={pagination}
         onEdit={openEditModal}
         onDelete={openDeleteModal}
+        onUpdatePassword={openPasswordModal}
         onPageChange={handlePageChange}
         onItemsPerPageChange={handleItemsPerPageChange}
         currentUserId={currentUser?.id}
@@ -203,6 +217,13 @@ const UsersPage = () => {
 
       {/* Add/Edit User Modal */}
       <AddEditUserModal isOpen={showModal} onClose={closeModal} editData={editingUser} />
+
+      {/* Update Password Modal */}
+      <UpdatePasswordModal
+        isOpen={showPasswordModal}
+        onClose={closePasswordModal}
+        user={passwordUser}
+      />
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal

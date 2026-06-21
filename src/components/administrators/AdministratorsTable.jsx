@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit2, Bell, Trash2 } from 'lucide-react';
+import { Edit2, Bell, Trash2, KeyRound } from 'lucide-react';
 import { CustomPagination } from '@/components/ui/CustomPagination';
 
 /**
@@ -18,8 +18,9 @@ const formatAdministrator = (admin) => ({
 export const AdministratorsTable = ({ 
   administrators = [], 
   pagination,
-  onEdit, 
+  onEdit,
   onDelete,
+  onUpdatePassword,
   onPageChange,
   onItemsPerPageChange,
   currentUserId
@@ -97,7 +98,15 @@ export const AdministratorsTable = ({
                 >
                   <Edit2 className="w-5 h-5 text-[#6B7280] dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
                 </button>
-                
+
+                <button
+                  onClick={() => onUpdatePassword?.(admin)}
+                  className="p-2.5 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-all duration-200 hover:shadow-sm group"
+                  title="Update password"
+                >
+                  <KeyRound className="w-5 h-5 text-[#6B7280] dark:text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors" />
+                </button>
+
                 <button className={`p-2.5 rounded-lg transition-all duration-200 hover:shadow-sm group relative ${
                   display.hasNotification 
                     ? 'bg-gradient-to-r from-amber-50 dark:from-amber-900/20 to-yellow-50 dark:to-yellow-900/20 hover:from-amber-100 dark:hover:from-amber-900/30 hover:to-yellow-100 dark:hover:to-yellow-900/30 shadow-sm' 
@@ -175,7 +184,15 @@ export const AdministratorsTable = ({
                   <Edit2 className="w-4 h-4 text-[#6B7280] dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
                   <span className="text-sm text-[#6B7280] dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400">Edit</span>
                 </button>
-                
+
+                <button
+                  onClick={() => onUpdatePassword?.(admin)}
+                  className="flex-1 p-2.5 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-all duration-200 hover:shadow-sm group flex items-center justify-center gap-2"
+                >
+                  <KeyRound className="w-4 h-4 text-[#6B7280] dark:text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors" />
+                  <span className="text-sm text-[#6B7280] dark:text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400">Password</span>
+                </button>
+
                 <button className={`flex-1 p-2.5 rounded-lg transition-all duration-200 hover:shadow-sm group relative flex items-center justify-center gap-2 ${
                   display.hasNotification 
                     ? 'bg-gradient-to-r from-amber-50 dark:from-amber-900/20 to-yellow-50 dark:to-yellow-900/20 hover:from-amber-100 dark:hover:from-amber-900/30 hover:to-yellow-100 dark:hover:to-yellow-900/30 shadow-sm' 
