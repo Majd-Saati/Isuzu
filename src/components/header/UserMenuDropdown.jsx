@@ -1,15 +1,18 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { useSelector } from 'react-redux';
-import { User, ChevronDown, LogOut } from 'lucide-react';
+import { User, ChevronDown, LogOut, KeyRound } from 'lucide-react';
+import { UpdatePasswordModal } from '@/components/users/UpdatePasswordModal';
 
-export const UserMenuDropdown = ({ 
-  showUserMenu, 
-  setShowUserMenu, 
+export const UserMenuDropdown = ({
+  showUserMenu,
+  setShowUserMenu,
   userMenuRef,
-  onLogoutClick 
+  onLogoutClick
 }) => {
   const user = useSelector((state) => state.auth.user);
-  
+  const [showPasswordModal, setShowPasswordModal] = React.useState(false);
+
   const userName = user?.name || 'User';
   const userEmail = user?.email || '';
   const userRole = user?.is_admin === '1' || user?.is_admin === 1 ? 'Administrator' : 'User';
@@ -47,6 +50,16 @@ export const UserMenuDropdown = ({
             <button
               onClick={() => {
                 setShowUserMenu(false);
+                setShowPasswordModal(true);
+              }}
+              className="w-full px-4 py-3 text-left text-sm text-[#344251] dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3 font-semibold"
+            >
+              <KeyRound className="w-4 h-4 text-[#E60012]" />
+              Change Password
+            </button>
+            <button
+              onClick={() => {
+                setShowUserMenu(false);
                 onLogoutClick();
               }}
               className="w-full px-4 py-3 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-3 font-semibold"
@@ -56,6 +69,15 @@ export const UserMenuDropdown = ({
             </button>
           </div>
         </div>
+      )}
+
+      {createPortal(
+        <UpdatePasswordModal
+          isOpen={showPasswordModal}
+          onClose={() => setShowPasswordModal(false)}
+          user={user}
+        />,
+        document.body
       )}
     </div>
   );
