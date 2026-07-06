@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import { optionalPasswordSchema, requiredPasswordSchema } from '@/validations/loginValidation';
 
-export const createUserSchema = (isEditMode, { forceAdminRole = false } = {}) => Yup.object({
+export const createUserSchema = (isEditMode, { forceAdminRole = false, forceUserRole = false } = {}) => Yup.object({
   name: Yup.string()
     .required('Name is required')
     .min(2, 'Name must be at least 2 characters')
@@ -26,7 +26,7 @@ export const createUserSchema = (isEditMode, { forceAdminRole = false } = {}) =>
   country_id: Yup.string().notRequired(),
   password: isEditMode ? optionalPasswordSchema : requiredPasswordSchema,
   is_admin:
-    isEditMode || forceAdminRole
+    isEditMode || forceAdminRole || forceUserRole
       ? Yup.string().notRequired()
       : Yup.string().required('Role is required'),
   status: Yup.string()

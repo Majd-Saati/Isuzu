@@ -35,7 +35,7 @@ export const getFormInitialValues = (editData, { loggedInCountryId = '', isEditM
  * @param {Object} editData - Original edit data
  * @returns {Object} Prepared data for API
  */
-export const prepareFormData = (values, isEditMode, editData, { forceAdminRole = false } = {}) => {
+export const prepareFormData = (values, isEditMode, editData, { forceAdminRole = false, forceUserRole = false } = {}) => {
   if (isEditMode) {
     const payload = {
       id: editData.id,
@@ -55,6 +55,11 @@ export const prepareFormData = (values, isEditMode, editData, { forceAdminRole =
 
   if (forceAdminRole) {
     return { ...rest, is_admin: 1 };
+  }
+
+  // Adding from Users page: always a User role, no company omission
+  if (forceUserRole) {
+    return { ...rest, company_id, is_admin: 0 };
   }
 
   return { ...rest, company_id, is_admin };

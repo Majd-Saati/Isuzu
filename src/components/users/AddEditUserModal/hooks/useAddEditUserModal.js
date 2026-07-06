@@ -7,7 +7,7 @@ import { createUserSchema } from '../validation';
 import { formatGenderLabel, formatRoleLabel, formatStatusLabel, normalizeStatusValue } from '../constants';
 import { prepareFormData, resetSelectedNames, getFormInitialValues } from '../utils';
 
-export const useAddEditUserModal = ({ isOpen, onClose, editData = null, forceAdminRole = false }) => {
+export const useAddEditUserModal = ({ isOpen, onClose, editData = null, forceAdminRole = false, forceUserRole = false }) => {
   const isEditMode = !!editData;
   const currentUser = useSelector((state) => state.auth.user);
   const loggedInCountryId = String(currentUser?.country_id ?? '').trim();
@@ -39,7 +39,7 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null, forceAdm
 
   const formik = useFormik({
     initialValues: getFormInitialValues(editData, { loggedInCountryId, isEditMode }),
-    validationSchema: createUserSchema(isEditMode, { forceAdminRole }),
+    validationSchema: createUserSchema(isEditMode, { forceAdminRole, forceUserRole }),
     enableReinitialize: true,
     validateOnChange: true,
     validateOnBlur: false,
@@ -48,7 +48,7 @@ export const useAddEditUserModal = ({ isOpen, onClose, editData = null, forceAdm
       const valuesForApi = isEditMode
         ? values
         : { ...values, country_id: loggedInCountryId || String(values.country_id ?? '').trim() };
-      const data = prepareFormData(valuesForApi, isEditMode, editData, { forceAdminRole });
+      const data = prepareFormData(valuesForApi, isEditMode, editData, { forceAdminRole, forceUserRole });
 
       mutation.mutate(data, {
         onSuccess: () => {

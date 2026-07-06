@@ -8,6 +8,7 @@ import { GENDER_OPTIONS, ROLE_OPTIONS, STATUS_OPTIONS } from '../constants';
 export const UserFormFields = ({
   isEditMode,
   forceAdminRole = false,
+  forceUserRole = false,
   formik,
   isLoading,
   // Dropdown states
@@ -148,8 +149,8 @@ export const UserFormFields = ({
         disabled={isLoading}
       />
 
-      {/* Role and Status - create mode */}
-      {!isEditMode && !forceAdminRole && (
+      {/* Role and Status - create mode (User + Admin roles selectable) */}
+      {!isEditMode && !forceAdminRole && !forceUserRole && (
         <div className="grid grid-cols-2 gap-4">
           <CustomDropdown
             label="Role"
@@ -181,8 +182,8 @@ export const UserFormFields = ({
         </div>
       )}
 
-      {/* Status only - create administrator */}
-      {!isEditMode && forceAdminRole && (
+      {/* Status only - role is forced (create administrator, or create user from Users page) */}
+      {!isEditMode && (forceAdminRole || forceUserRole) && (
         <CustomDropdown
           label="Status"
           placeholder="Select status"

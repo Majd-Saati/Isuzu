@@ -215,8 +215,8 @@ const UsersPage = () => {
         </div>
       )}
 
-      {/* Add/Edit User Modal */}
-      <AddEditUserModal isOpen={showModal} onClose={closeModal} editData={editingUser} />
+      {/* Add/Edit User Modal - adding from Users page always creates a User (not admin) */}
+      <AddEditUserModal isOpen={showModal} onClose={closeModal} editData={editingUser} forceUserRole />
 
       {/* Update Password Modal */}
       <UpdatePasswordModal
