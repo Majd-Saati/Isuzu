@@ -74,6 +74,7 @@ const transformActivity = (apiActivity) => {
   return {
     id: parseInt(apiActivity.id),
     name: apiActivity.name,
+    logo: apiActivity.logo || null,
     hasComment: false,
     commentCount: 0,
     hasAddIcon: true,

@@ -1,7 +1,7 @@
 import React from 'react';
-import { MessageCircle, FileText, PlusCircle, ChevronDown } from 'lucide-react';
+import { MessageCircle, FileText, PlusCircle, ChevronDown, ImageOff, Image as ImageIcon, X } from 'lucide-react';
 import { Checkbox } from '../../../ui/Checkbox';
-import logo from '../../../../asstes/images/logo.png';
+import { buildMediaUrl } from '@/lib/api/config';
 import { getAmountColorByStatus, isDeniedBudgetStatus } from '../utils';
 import { formatMoneyFromContext } from '@/lib/dashboardMoney';
 import { statusStyles, statusOptions } from '../constants';
@@ -26,6 +26,11 @@ export const ActivityTableRow = ({
 }) => {
   const key = (activity.status || '').toLowerCase();
   const style = statusStyles[key] || statusStyles['working on it'];
+
+  const logoUrl = buildMediaUrl(activity.logo);
+  const [logoError, setLogoError] = React.useState(false);
+  const [showLogoModal, setShowLogoModal] = React.useState(false);
+  const showLogo = logoUrl && !logoError;
 
   const calculateDropdownPosition = (button) => {
     const rect = button.getBoundingClientRect();
@@ -84,13 +89,79 @@ export const ActivityTableRow = ({
         </div>
       </td>
       <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-24">
-        <div className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center shadow-md ring-1 ring-gray-200 dark:ring-gray-700 hover:scale-110 transition-transform cursor-pointer">
-          <img 
-            src={logo} 
-            alt="Assign" 
-            className="w-6 h-6 object-contain" 
-          />
-        </div>
+        <button
+          type="button"
+          onClick={() => showLogo && setShowLogoModal(true)}
+          disabled={!showLogo}
+          title={showLogo ? 'View logo' : 'No logo'}
+          className={`w-8 h-8 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center shadow-md ring-1 ring-gray-200 dark:ring-gray-700 overflow-hidden transition-transform ${
+            showLogo ? 'hover:scale-110 cursor-pointer' : 'cursor-default'
+          }`}
+        >
+          {showLogo ? (
+            <img
+              src={logoUrl}
+              alt="Activity logo"
+              className="w-6 h-6 object-contain"
+              onError={() => setLogoError(true)}
+            />
+          ) : (
+            <ImageOff className="w-4 h-4 text-gray-300 dark:text-gray-600" />
+          )}
+        </button>
+        {showLogoModal && showLogo && (
+          <>
+            {/* Backdrop */}
+            <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-[10000] transition-opacity duration-200" />
+
+            {/* Modal */}
+            <div
+              className="fixed inset-0 z-[10001] flex items-center justify-center p-4"
+              onClick={() => setShowLogoModal(false)}
+            >
+              <div
+                className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg animate-scale-in flex flex-col max-h-[85vh]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b-2 border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-12 h-12 rounded-full bg-[#E60012]/10 flex items-center justify-center flex-shrink-0">
+                      <ImageIcon className="w-6 h-6 text-[#E60012]" />
+                    </div>
+                    <div className="min-w-0">
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 truncate">
+                        Company logo
+                      </h2>
+                      {activity.name && (
+                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                          {activity.name}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowLogoModal(false)}
+                    className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-all hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-lg hover:rotate-90 duration-300 flex-shrink-0"
+                    title="Close"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Body */}
+                <div className="p-6 overflow-auto flex items-center justify-center bg-gray-50/50 dark:bg-gray-800/50">
+                  <img
+                    src={logoUrl}
+                    alt={activity.name ? `${activity.name} logo` : 'Activity logo'}
+                    className="max-w-full max-h-[60vh] object-contain rounded-lg"
+                  />
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </td>
       <td className="py-4 px-6 border-r-2 border-gray-200 dark:border-gray-700 w-40">
         <div className="text-xs text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors">
