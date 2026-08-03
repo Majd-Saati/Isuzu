@@ -13,6 +13,7 @@ import {
   UsersPage,
   Countries,
   Calendar,
+  Reminders,
   Terms,
 } from './lazyComponents';
 import { ROUTES } from './routes';
@@ -39,6 +40,7 @@ export const AppRouter = () => (
         <Route path={ROUTES.COUNTRIES} element={<AdminGuard><Countries /></AdminGuard>} />
         <Route path={ROUTES.USERS} element={<AdminGuard><UsersPage /></AdminGuard>} />
         <Route path={ROUTES.CALENDAR} element={<PermissionGuard><Calendar /></PermissionGuard>} />
+        <Route path={ROUTES.REMINDERS} element={<AdminGuard><Reminders /></AdminGuard>} />
         <Route path={ROUTES.TERMS} element={<AdminGuard><Terms /></AdminGuard>} />
       </Route>
 

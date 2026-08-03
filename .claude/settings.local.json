@@ -7,7 +7,8 @@
       "Bash(git -C \"C:/Users/malsaati/Desktop/New folder \\(2\\)/isuzu/Isuzu\" status)",
       "Bash(npx eslint *)",
       "Bash(npx esbuild *)",
-      "Bash(Get-ChildItem -Recurse -Path \"src/components/marketing\" -Name)"
+      "Bash(Get-ChildItem -Recurse -Path \"src/components/marketing\" -Name)",
+      "Bash(npx vite *)"
     ]
   }
 }

@@ -33,6 +33,12 @@ export const otherNavigation = [
     icon: 'https://api.builder.io/api/v1/image/assets/132ea46dcd5a44718cd3517d9e4e8249/776f48d8d283b3a0a1917e4791cc021387617f71?placeholderIfAbsent=true'
   },
   {
+    id: 'reminders',
+    label: 'Reminders',
+    path: '/reminders',
+    icon: 'https://api.builder.io/api/v1/image/assets/132ea46dcd5a44718cd3517d9e4e8249/776f48d8d283b3a0a1917e4791cc021387617f71?placeholderIfAbsent=true'
+  },
+  {
     id: 'countries',
     label: 'Countries',
     path: '/countries',

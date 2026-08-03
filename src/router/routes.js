@@ -16,8 +16,9 @@ export const ROUTES = {
   USERS: '/users',
   COUNTRIES: '/countries',
   CALENDAR: '/calendar',
+  REMINDERS: '/reminders',
   TERMS: '/terms',
-  
+
   // Fallback
   NOT_FOUND: '*',
 };
@@ -56,6 +57,10 @@ export const ROUTE_METADATA = {
   },
   [ROUTES.CALENDAR]: {
     title: 'Calendar',
+    requiresAuth: true,
+  },
+  [ROUTES.REMINDERS]: {
+    title: 'Reminders',
     requiresAuth: true,
   },
   [ROUTES.TERMS]: {

@@ -46,6 +46,7 @@ const ROUTE_PERMISSIONS = {
   '/companies': null, // Admin only
   '/users': null, // Admin only
   '/administrators': null, // Admin only
+  '/reminders': null, // Admin only
 };
 
 /**

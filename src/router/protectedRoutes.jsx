@@ -8,6 +8,7 @@ import {
   UsersPage,
   Countries,
   Calendar,
+  Reminders,
   Terms,
 } from './lazyComponents';
 
@@ -27,6 +28,7 @@ export const protectedRoutesConfig = [
   { path: ROUTES.USERS, element: <UsersPage /> },
   { path: ROUTES.COUNTRIES, element: <Countries /> },
   { path: ROUTES.CALENDAR, element: <Calendar /> },
+  { path: ROUTES.REMINDERS, element: <Reminders /> },
   { path: ROUTES.TERMS, element: <Terms /> },
 ];
 
