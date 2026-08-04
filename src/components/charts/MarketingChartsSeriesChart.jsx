@@ -28,8 +28,9 @@ const loadExportUtils = async () => {
   return exportUtils;
 };
 
-// Only keep actual and support costs for this chart. Other metrics commented out intentionally.
+// Keep estimated, actual and support costs for this chart. Other metrics commented out intentionally.
 const COLORS = {
+  estimated_cost: '#06b6d4',
   actual_cost: '#10b981',
   support_cost: '#3b82f6',
   // total_cost: '#f59e0b',
@@ -37,6 +38,7 @@ const COLORS = {
 };
 
 const METRICS = [
+  { key: 'estimated_cost', name: 'Estimated Cost', color: COLORS.estimated_cost },
   { key: 'actual_cost', name: 'Actual Cost', color: COLORS.actual_cost },
   { key: 'support_cost', name: 'Support Cost', color: COLORS.support_cost },
   // { key: 'total_cost', name: 'Total cost', color: COLORS.total_cost },
@@ -61,6 +63,7 @@ export const MarketingChartsSeriesChart = ({
 
   const chartData = series.map((item) => ({
     label: item.label || item.period,
+    estimated_cost: Number(item.estimated_cost) || 0,
     actual_cost: Number(item.actual_cost) || 0,
     support_cost: Number(item.support_cost) || 0,
     total_cost: Number(item.total_cost) || 0,
@@ -380,10 +383,15 @@ export const MarketingChartsSeriesChart = ({
         </ResponsiveContainer>
       </div>
 
-      {/* Quick stats: only Actual and Support cards shown per request */}
-      <div className="grid grid-cols-2 md:grid-cols-2 gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+      {/* Quick stats: Estimated, Actual and Support averages */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
         {stats
-          .filter(({ key }) => key === 'actual_cost' || key === 'support_cost')
+          .filter(
+            ({ key }) =>
+              key === 'estimated_cost' ||
+              key === 'actual_cost' ||
+              key === 'support_cost'
+          )
           .map(({ key, name, color, avg }) => (
             <div key={key} className="text-center">
               <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Avg {name}</div>
