@@ -5,15 +5,16 @@ import { ReminderFormFields } from './components/ReminderFormFields';
 import { ModalFooter } from './components/ModalFooter';
 
 /**
- * Modal containing the Formik-powered "Send Reminder" form.
+ * Modal containing the Formik-powered "Send Announcement" composer.
+ * Recipients are chosen inside the form via a searchable "To" field.
  *
  * @param {boolean}  isOpen
  * @param {Function} onClose
- * @param {Array}    selectedDealers - dealers the reminder will target
- * @param {Function} onSend          - receives the built reminders array
+ * @param {Array}    dealers - full dealer list to choose recipients from
+ * @param {Function} onSend  - receives the built announcements array
  */
-export const SendReminderModal = ({ isOpen, onClose, selectedDealers = [], onSend }) => {
-  const { formik, handleClose } = useSendReminderModal({ selectedDealers, onSend, onClose });
+export const SendReminderModal = ({ isOpen, onClose, dealers = [], onSend }) => {
+  const { formik, handleClose } = useSendReminderModal({ dealers, onSend, onClose });
 
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) handleClose();
@@ -27,10 +28,10 @@ export const SendReminderModal = ({ isOpen, onClose, selectedDealers = [], onSen
       onClick={handleBackdropClick}
     >
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col animate-scale-in transform transition-all">
-        <ModalHeader onClose={handleClose} dealerCount={selectedDealers.length} />
+        <ModalHeader onClose={handleClose} />
 
         <form onSubmit={formik.handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-          <ReminderFormFields formik={formik} selectedDealers={selectedDealers} />
+          <ReminderFormFields formik={formik} dealers={dealers} />
           <ModalFooter onCancel={handleClose} isSubmitting={formik.isSubmitting} />
         </form>
       </div>

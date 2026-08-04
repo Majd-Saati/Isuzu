@@ -1,7 +1,7 @@
 import React from 'react';
 import { Input } from '@/components/ui/Input';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { SelectedDealersChips } from './SelectedDealersChips';
+import { RecipientsField } from './RecipientsField';
 import { TYPE_OPTIONS, PRIORITY_OPTIONS } from '../constants';
 
 const selectClass =
@@ -10,14 +10,22 @@ const selectClass =
 /**
  * Body of the Send Reminder form (Formik-driven fields).
  */
-export const ReminderFormFields = ({ formik, selectedDealers }) => {
-  const { values, errors, touched, handleChange, handleBlur } = formik;
+export const ReminderFormFields = ({ formik, dealers }) => {
+  const { values, errors, touched, handleChange, handleBlur, setFieldValue, setFieldTouched } =
+    formik;
   const showError = (field) => touched[field] && errors[field];
 
   return (
     <div className="flex-1 overflow-y-auto p-6 space-y-5">
       {/* Recipients */}
-      <SelectedDealersChips dealers={selectedDealers} />
+      <RecipientsField
+        dealers={dealers}
+        value={values.recipients}
+        onChange={(ids) => setFieldValue('recipients', ids, true)}
+        onBlur={() => setFieldTouched('recipients', true)}
+        error={errors.recipients}
+        touched={touched.recipients}
+      />
 
       {/* Title */}
       <div>

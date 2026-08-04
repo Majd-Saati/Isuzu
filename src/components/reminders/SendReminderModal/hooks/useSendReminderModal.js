@@ -3,17 +3,17 @@ import { sendReminderSchema } from '../validation';
 import { INITIAL_VALUES } from '../constants';
 
 /**
- * Encapsulates the Send Reminder form logic.
+ * Encapsulates the Send Announcement form logic (recipients + message).
  *
- * On submit it builds one reminder object per selected dealer (since there is
- * no backend yet) and hands them to the caller via onSend.
+ * On submit it builds one announcement object per selected dealer (since there
+ * is no backend yet) and hands them to the caller via onSend.
  *
  * @param {Object}   params
- * @param {Array}    params.selectedDealers - dealers to send the reminder to
- * @param {Function} params.onSend          - receives the built reminders array
- * @param {Function} params.onClose         - closes the modal
+ * @param {Array}    params.dealers - full dealer list to resolve recipient ids
+ * @param {Function} params.onSend  - receives the built announcements array
+ * @param {Function} params.onClose - closes the modal
  */
-export const useSendReminderModal = ({ selectedDealers = [], onSend, onClose }) => {
+export const useSendReminderModal = ({ dealers = [], onSend, onClose }) => {
   const formik = useFormik({
     initialValues: INITIAL_VALUES,
     validationSchema: sendReminderSchema,
@@ -23,7 +23,11 @@ export const useSendReminderModal = ({ selectedDealers = [], onSend, onClose }) 
       const timestamp = Date.now();
       const createdAt = new Date().toISOString();
 
-      const newReminders = selectedDealers.map((dealer, index) => ({
+      const recipients = dealers.filter((d) =>
+        values.recipients.includes(d.id)
+      );
+
+      const newReminders = recipients.map((dealer, index) => ({
         id: timestamp + index,
         title: values.title.trim(),
         message: values.message.trim(),

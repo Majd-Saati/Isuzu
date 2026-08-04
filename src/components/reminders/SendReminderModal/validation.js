@@ -4,6 +4,9 @@ import * as Yup from 'yup';
  * Validation schema for the Send Reminder form.
  */
 export const sendReminderSchema = Yup.object({
+  recipients: Yup.array()
+    .of(Yup.mixed())
+    .min(1, 'Select at least one recipient'),
   title: Yup.string()
     .trim()
     .required('Title is required')

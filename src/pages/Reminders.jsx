@@ -3,12 +3,10 @@ import { CheckCircle2 } from 'lucide-react';
 import {
   RemindersPageHeader,
   RemindersActionBar,
-  DealerSelectPanel,
   RemindersTable,
   RemindersTableEmpty,
   SendReminderModal,
   useReminders,
-  useDealerSelection,
 } from '@/components/reminders';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 import { mockDealers } from '@/data/mockRemindersData';
@@ -36,26 +34,12 @@ const Reminders = () => {
     removeReminder,
   } = useReminders();
 
-  // Dealer checkbox selection for sending reminders
-  const {
-    selectedDealers,
-    selectedCount,
-    isSelected,
-    toggleDealer,
-    allSelected,
-    toggleAll,
-    clearSelection,
-  } = useDealerSelection(mockDealers);
-
   // Modal + feedback state
   const [showSendModal, setShowSendModal] = useState(false);
   const [deletingReminder, setDeletingReminder] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
 
-  const openSendModal = useCallback(() => {
-    if (selectedCount > 0) setShowSendModal(true);
-  }, [selectedCount]);
-
+  const openSendModal = useCallback(() => setShowSendModal(true), []);
   const closeSendModal = useCallback(() => setShowSendModal(false), []);
 
   const handleSend = useCallback(
@@ -65,10 +49,9 @@ const Reminders = () => {
       setSuccessMessage(
         `Announcement sent to ${count} dealer${count > 1 ? 's' : ''} successfully.`
       );
-      clearSelection();
       window.setTimeout(() => setSuccessMessage(''), 4000);
     },
-    [addReminders, clearSelection]
+    [addReminders]
   );
 
   const handleConfirmDelete = useCallback(() => {
@@ -80,34 +63,17 @@ const Reminders = () => {
 
   return (
     <>
-      <RemindersPageHeader stats={stats} />
+      <RemindersPageHeader stats={stats} onNewAnnouncement={openSendModal} />
 
-      {/* Step 1: Dealer selection + send trigger */}
-      <DealerSelectPanel
-        dealers={mockDealers}
-        isSelected={isSelected}
-        onToggleDealer={toggleDealer}
-        allSelected={allSelected}
-        onToggleAll={toggleAll}
-        selectedCount={selectedCount}
-        onSendClick={openSendModal}
-      />
-
-      {/* Step 2: Announcement history (filters + table) */}
+      {/* Announcement history (filters + table) */}
       <section className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm mb-8 overflow-hidden">
-        <div className="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 px-5 py-4">
-          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#E60012] text-xs font-semibold text-white">
-            2
-          </span>
-          <div>
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-              Announcement history
-            </h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Review announcements you have already sent and their delivery
-              status.
-            </p>
-          </div>
+        <div className="border-b border-gray-200 dark:border-gray-800 px-5 py-4">
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            Announcement history
+          </h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Review announcements you have already sent and their delivery status.
+          </p>
         </div>
 
         <RemindersActionBar
@@ -158,11 +124,11 @@ const Reminders = () => {
         </div>
       )}
 
-      {/* Send Reminder Modal (Formik form) */}
+      {/* Send Announcement composer (Formik form) */}
       <SendReminderModal
         isOpen={showSendModal}
         onClose={closeSendModal}
-        selectedDealers={selectedDealers}
+        dealers={mockDealers}
         onSend={handleSend}
       />
 

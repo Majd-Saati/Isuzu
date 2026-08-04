@@ -1,16 +1,14 @@
 import React from 'react';
 import { X } from 'lucide-react';
 
-export const ModalHeader = ({ onClose, dealerCount }) => (
+export const ModalHeader = ({ onClose }) => (
   <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
     <div>
       <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-        Send Announcement
+        New Announcement
       </h2>
       <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-        {dealerCount === 1
-          ? 'This announcement will be sent to 1 dealer.'
-          : `This announcement will be sent to ${dealerCount} dealers.`}
+        Choose the recipients and compose your message.
       </p>
     </div>
     <button
