@@ -55,6 +55,7 @@ const transformToDealers = (companies) => {
     label: company.name,
     color: DEALER_COLORS[index % DEALER_COLORS.length],
     logo: company.logo,
+    unreadCommentsCount: Number(company.unread_comments_count) || 0,
   }));
 };
 

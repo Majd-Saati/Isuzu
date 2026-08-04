@@ -77,6 +77,7 @@ const transformActivity = (apiActivity) => {
     logo: apiActivity.logo || null,
     hasComment: false,
     commentCount: 0,
+    unreadCommentsCount: Number(apiActivity.unread_comments_count) || 0,
     hasAddIcon: true,
     duration: {
       start: apiActivity.starts_at,

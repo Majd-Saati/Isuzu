@@ -43,11 +43,18 @@ export const normalizeCalendarData = (body) => {
  */
 export const computeSummaryStats = (calendarData) => {
   if (!calendarData) {
-    return { totalCost: 0, totalIncentive: 0, totalActualCost: 0, totalSupportCost: 0 };
+    return {
+      totalCost: 0,
+      totalIncentive: 0,
+      totalEstimatedCost: 0,
+      totalActualCost: 0,
+      totalSupportCost: 0,
+    };
   }
 
   let totalCost = 0;
   let totalIncentive = 0;
+  let totalEstimatedCost = 0;
   let totalActualCost = 0;
   let totalSupportCost = 0;
 
@@ -56,11 +63,18 @@ export const computeSummaryStats = (calendarData) => {
       totalCost += parseFloat(activity.total_cost) || 0;
       totalIncentive += parseFloat(activity.incentive) || 0;
       Object.values(activity.monthly || {}).forEach((monthData) => {
+        totalEstimatedCost += parseFloat(monthData.estimated_cost) || 0;
         totalActualCost += parseFloat(monthData.actual_cost) || 0;
         totalSupportCost += parseFloat(monthData.support_cost) || 0;
       });
     });
   });
 
-  return { totalCost, totalIncentive, totalActualCost, totalSupportCost };
+  return {
+    totalCost,
+    totalIncentive,
+    totalEstimatedCost,
+    totalActualCost,
+    totalSupportCost,
+  };
 };

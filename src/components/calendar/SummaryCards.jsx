@@ -2,6 +2,7 @@ import React from 'react';
 import { formatDealerCardMoney } from '@/lib/dashboardMoney';
 
 export const SummaryCards = ({
+  totalEstimatedCost,
   totalActualCost,
   totalSupportCost,
   allocatedBudget,
@@ -9,6 +10,20 @@ export const SummaryCards = ({
   currencyCode = '',
 }) => {
   const cards = [
+    {
+      label: 'Estimated Cost',
+      value: totalEstimatedCost,
+      gradient: 'from-cyan-50 to-white',
+      darkGradient: 'dark:from-gray-800 dark:to-gray-900',
+      border: 'border-cyan-100',
+      darkBorder: 'dark:border-gray-700',
+      textColor: 'text-[#06b6d4]',
+      darkTextColor: 'dark:text-cyan-400',
+      bgColor: 'bg-cyan-100',
+      darkBgColor: 'dark:bg-gray-700',
+      dotColor: 'bg-[#06b6d4]',
+      darkDotColor: 'dark:bg-cyan-400',
+    },
     {
       label: 'Actual Cost',
       value: totalActualCost,
@@ -53,8 +68,15 @@ export const SummaryCards = ({
     },
   ].filter((card) => card.label !== 'Allocated Budget' || allocatedBudget != null);
 
+  const gridColsClass =
+    cards.length >= 4
+      ? 'lg:grid-cols-4'
+      : cards.length === 3
+        ? 'lg:grid-cols-3'
+        : 'lg:grid-cols-2';
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${gridColsClass}`}>
       {cards.map((card, index) => (
         <div
           key={index}

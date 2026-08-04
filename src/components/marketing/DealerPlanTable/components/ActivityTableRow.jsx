@@ -82,9 +82,18 @@ export const ActivityTableRow = ({
           <button
             onClick={() => onOpenDrawer(activity)}
             className="relative flex-shrink-0 p-1 rounded-lg hover:bg-[#E60012]/10 transition-all duration-200"
-            title="View Details"
+            title={
+              activity.unreadCommentsCount > 0
+                ? `${activity.unreadCommentsCount} unread comment${activity.unreadCommentsCount > 1 ? 's' : ''}`
+                : 'View Details'
+            }
           >
             <MessageCircle className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-[#E60012] transition-colors" />
+            {activity.unreadCommentsCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-1 inline-flex items-center justify-center rounded-full bg-[#E60012] text-white text-[10px] font-bold leading-none shadow-sm ring-2 ring-white dark:ring-gray-900">
+                {activity.unreadCommentsCount > 99 ? '99+' : activity.unreadCommentsCount}
+              </span>
+            )}
           </button>
         </div>
       </td>

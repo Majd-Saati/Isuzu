@@ -91,6 +91,7 @@ const Calendar = () => {
       </div>
 
       <SummaryCards
+        totalEstimatedCost={summaryStats.totalEstimatedCost}
         totalActualCost={summaryStats.totalActualCost}
         totalSupportCost={summaryStats.totalSupportCost}
         allocatedBudget={termBudgetAllocation?.allocated_budget_total_jpy}

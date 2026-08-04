@@ -45,7 +45,11 @@ export const CalendarTable = ({ plans = [], months = [], isAdmin = false, curren
                 const monthData = activity.monthly || {};
                 const hasData = (m) => {
                   const d = monthData[m.key] || {};
-                  return (parseFloat(d.actual_cost) || 0) > 0 || (parseFloat(d.support_cost) || 0) > 0;
+                  return (
+                    (parseFloat(d.estimated_cost) || 0) > 0 ||
+                    (parseFloat(d.actual_cost) || 0) > 0 ||
+                    (parseFloat(d.support_cost) || 0) > 0
+                  );
                 };
                 const cellBg = (m) =>
                   hasData(m) ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800/50';

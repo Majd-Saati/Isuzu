@@ -206,13 +206,21 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                             : 'hover:bg-gray-100 dark:hover:bg-gray-700 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-600'
                         }`}
                       >
-                        <div 
-                          className="w-3 h-3 rounded-full shadow-md flex-shrink-0" 
+                        <div
+                          className="w-3 h-3 rounded-full shadow-md flex-shrink-0"
                           style={{ backgroundColor: dealer.color }}
                         />
-                        <span className={`text-sm font-medium transition-colors truncate ${isDealerActive ? 'text-[#E60012]' : 'text-[#848E9A] group-hover:text-[#E60012]'}`}>
+                        <span className={`flex-1 text-sm font-medium transition-colors truncate text-left ${isDealerActive ? 'text-[#E60012]' : 'text-[#848E9A] group-hover:text-[#E60012]'}`}>
                           {dealer.label}
                         </span>
+                        {dealer.unreadCommentsCount > 0 && (
+                          <span
+                            className="flex-shrink-0 min-w-[18px] h-[18px] px-1.5 inline-flex items-center justify-center rounded-full bg-[#E60012] text-white text-[11px] font-bold leading-none shadow-sm"
+                            title={`${dealer.unreadCommentsCount} unread comment${dealer.unreadCommentsCount > 1 ? 's' : ''}`}
+                          >
+                            {dealer.unreadCommentsCount > 99 ? '99+' : dealer.unreadCommentsCount}
+                          </span>
+                        )}
                       </button>
                     );
                   })
