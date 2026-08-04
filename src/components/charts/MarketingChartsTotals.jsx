@@ -1,5 +1,5 @@
 import React from 'react';
-import { DollarSign, TrendingUp, Award, Wallet, TrendingDown } from 'lucide-react';
+import { DollarSign, TrendingUp, Award, Wallet, TrendingDown, Calculator } from 'lucide-react';
 import { MoneyGlyph } from '@/components/dashboard/MoneyGlyph';
 import { formatChartsCurrency } from '@/lib/dashboardMoney';
 
@@ -11,6 +11,16 @@ const formatCompact = (value) => {
 };
 
 const cards = [
+  {
+    key: 'estimated_cost',
+    label: 'Estimated Cost',
+    icon: Calculator,
+    gradient: 'bg-gradient-to-br from-cyan-500 to-sky-600',
+    bg: 'bg-cyan-50 dark:bg-cyan-900/20',
+    border: 'border-cyan-200 dark:border-cyan-800',
+    text: 'text-cyan-700 dark:text-cyan-300',
+    iconBg: 'bg-cyan-100 dark:bg-cyan-900/40',
+  },
   {
     key: 'actual_cost',
     label: 'Actual Cost',
@@ -73,6 +83,7 @@ export const MarketingChartsTotals = ({
   if (!totals || typeof totals !== 'object') return null;
 
   const visibleCards = cards.filter((c) => {
+    if (c.key === 'estimated_cost') return totals.estimated_cost != null;
     if (c.key === 'actual_cost' || c.key === 'support_cost') return true;
     if (c.key === 'allocated_budget') {
       return budgetAllocation?.allocated_budget_total_jpy != null;
@@ -80,8 +91,15 @@ export const MarketingChartsTotals = ({
     return false;
   });
 
+  const gridColsClass =
+    visibleCards.length >= 4
+      ? 'lg:grid-cols-4'
+      : visibleCards.length === 3
+        ? 'lg:grid-cols-3'
+        : 'lg:grid-cols-2';
+
   return (
-    <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${visibleCards.length >= 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'}`}>
+    <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${gridColsClass}`}>
       {visibleCards.map(({ key, label, icon: Icon, useMoneyGlyph, bg, border, text, iconBg }, index) => {
         const value =
           key === 'allocated_budget'
