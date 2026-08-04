@@ -60,7 +60,7 @@ export const ROUTE_METADATA = {
     requiresAuth: true,
   },
   [ROUTES.REMINDERS]: {
-    title: 'Reminders',
+    title: 'Announcements',
     requiresAuth: true,
   },
   [ROUTES.TERMS]: {

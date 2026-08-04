@@ -42,7 +42,7 @@ export const ReminderFormFields = ({ formik, selectedDealers }) => {
         <textarea
           name="message"
           rows={4}
-          placeholder="Write the reminder details..."
+          placeholder="Write the announcement details..."
           value={values.message}
           onChange={handleChange}
           onBlur={handleBlur}

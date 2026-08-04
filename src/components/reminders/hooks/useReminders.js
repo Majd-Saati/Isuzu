@@ -71,6 +71,20 @@ export const useReminders = () => {
 
   const hasActiveFilters = Boolean(search || dealerId || type || status);
 
+  /**
+   * At-a-glance counts across ALL announcements (ignores filters) so the
+   * overview summary stays stable while the user searches or filters.
+   */
+  const stats = useMemo(
+    () => ({
+      total: reminders.length,
+      sent: reminders.filter((r) => r.status === 'sent').length,
+      read: reminders.filter((r) => r.status === 'read').length,
+      pending: reminders.filter((r) => r.status === 'pending').length,
+    }),
+    [reminders]
+  );
+
   // Apply filters
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -108,6 +122,7 @@ export const useReminders = () => {
     reminders: paginated,
     pagination,
     total,
+    stats,
 
     // filter state
     search,

@@ -19,6 +19,7 @@ const Reminders = () => {
     reminders,
     pagination,
     total,
+    stats,
     search,
     dealerId,
     type,
@@ -62,7 +63,7 @@ const Reminders = () => {
       addReminders(newReminders);
       const count = newReminders.length;
       setSuccessMessage(
-        `Reminder sent to ${count} dealer${count > 1 ? 's' : ''} successfully.`
+        `Announcement sent to ${count} dealer${count > 1 ? 's' : ''} successfully.`
       );
       clearSelection();
       window.setTimeout(() => setSuccessMessage(''), 4000);
@@ -79,9 +80,9 @@ const Reminders = () => {
 
   return (
     <>
-      <RemindersPageHeader />
+      <RemindersPageHeader stats={stats} />
 
-      {/* Dealer selection + send trigger */}
+      {/* Step 1: Dealer selection + send trigger */}
       <DealerSelectPanel
         dealers={mockDealers}
         isSelected={isSelected}
@@ -92,36 +93,52 @@ const Reminders = () => {
         onSendClick={openSendModal}
       />
 
-      {/* Filters */}
-      <RemindersActionBar
-        dealers={mockDealers}
-        search={search}
-        onSearchChange={handleSearchChange}
-        dealerId={dealerId}
-        onDealerChange={handleDealerFilter}
-        type={type}
-        onTypeChange={handleTypeFilter}
-        status={status}
-        onStatusChange={handleStatusFilter}
-        hasActiveFilters={hasActiveFilters}
-        onClearFilters={clearFilters}
-      />
+      {/* Step 2: Announcement history (filters + table) */}
+      <section className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm mb-8 overflow-hidden">
+        <div className="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 px-5 py-4">
+          <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#E60012] text-xs font-semibold text-white">
+            2
+          </span>
+          <div>
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+              Announcement history
+            </h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Review announcements you have already sent and their delivery
+              status.
+            </p>
+          </div>
+        </div>
 
-      {/* Reminders table / empty state */}
-      {total === 0 ? (
-        <RemindersTableEmpty
+        <RemindersActionBar
+          dealers={mockDealers}
+          search={search}
+          onSearchChange={handleSearchChange}
+          dealerId={dealerId}
+          onDealerChange={handleDealerFilter}
+          type={type}
+          onTypeChange={handleTypeFilter}
+          status={status}
+          onStatusChange={handleStatusFilter}
           hasActiveFilters={hasActiveFilters}
           onClearFilters={clearFilters}
         />
-      ) : (
-        <RemindersTable
-          reminders={reminders}
-          pagination={pagination}
-          onDelete={setDeletingReminder}
-          onPageChange={handlePageChange}
-          onItemsPerPageChange={handlePerPageChange}
-        />
-      )}
+
+        {total === 0 ? (
+          <RemindersTableEmpty
+            hasActiveFilters={hasActiveFilters}
+            onClearFilters={clearFilters}
+          />
+        ) : (
+          <RemindersTable
+            reminders={reminders}
+            pagination={pagination}
+            onDelete={setDeletingReminder}
+            onPageChange={handlePageChange}
+            onItemsPerPageChange={handlePerPageChange}
+          />
+        )}
+      </section>
 
       {/* Success toast */}
       {successMessage && (
@@ -154,10 +171,10 @@ const Reminders = () => {
         isOpen={!!deletingReminder}
         onClose={() => setDeletingReminder(null)}
         onConfirm={handleConfirmDelete}
-        title="Delete Reminder"
-        message="Are you sure you want to delete this reminder? This action cannot be undone."
+        title="Delete Announcement"
+        message="Are you sure you want to delete this announcement? This action cannot be undone."
         itemName={deletingReminder?.title}
-        confirmText="Delete Reminder"
+        confirmText="Delete Announcement"
       />
     </>
   );
