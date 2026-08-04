@@ -75,7 +75,10 @@ export const DealerPlanTable = ({
 
   const handleMarkPlanRead = () => {
     if (!plan.id || planUnreadCount === 0 || markCommentsReadMutation.isPending) return;
-    markCommentsReadMutation.mutate({ plan_id: plan.id });
+    markCommentsReadMutation.mutate(
+      { plan_id: plan.id },
+      { onSettled: () => setShowPlanMenu(false) }
+    );
   };
 
   return (

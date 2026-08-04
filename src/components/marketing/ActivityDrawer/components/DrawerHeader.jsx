@@ -23,18 +23,15 @@ export const DrawerHeader = ({
           <button
             onClick={onMarkAllRead}
             disabled={isMarkingRead}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-[#E60012] bg-[#E60012]/10 hover:bg-[#E60012]/20 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-            title="Mark all comments on this activity as read"
+            className="p-2 rounded-xl text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/40 hover:bg-emerald-200 dark:hover:bg-emerald-900/60 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            title={`Mark all ${unreadCount} comment${unreadCount > 1 ? 's' : ''} on this activity as read`}
+            aria-label="Mark all comments as read"
           >
             {isMarkingRead ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
-              <CheckCheck className="w-4 h-4" />
+              <CheckCheck className="w-5 h-5" />
             )}
-            <span className="hidden sm:inline">Mark all read</span>
-            <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-[#E60012] text-white text-[11px] font-bold leading-none">
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </span>
           </button>
         )}
         <button

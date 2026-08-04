@@ -1,7 +1,6 @@
 import React from 'react';
-import { ChevronDown, ChevronRight, Building2, Calendar, Edit2, Trash2, Plus, MoreVertical, CheckCheck } from 'lucide-react';
+import { ChevronDown, ChevronRight, Building2, Calendar, Edit2, Trash2, Plus, MoreVertical, CheckCheck, Loader2 } from 'lucide-react';
 import { formatDate } from '../utils';
-import { UnreadBadge } from '@/components/ui/UnreadBadge';
 
 export const PlanHeader = ({
   plan,
@@ -37,12 +36,6 @@ export const PlanHeader = ({
               <span className="text-xs font-normal text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
                 {plan.activities.length} activities
               </span>
-              {unreadCount > 0 && (
-                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#E60012] bg-[#E60012]/10 px-2 py-0.5 rounded-full">
-                  <UnreadBadge count={unreadCount} />
-                  unread
-                </span>
-              )}
             </div>
             
             {/* Plan Description */}
@@ -97,14 +90,19 @@ export const PlanHeader = ({
                   onClick={(e) => {
                     e.stopPropagation();
                     onMarkAllRead();
-                    onTogglePlanMenu();
                   }}
                   disabled={isMarkingRead}
-                  className="w-full px-4 py-3 text-left text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3 first:rounded-t-xl active:bg-gray-100 dark:active:bg-gray-700 disabled:opacity-60 border-b border-gray-100 dark:border-gray-800"
+                  className="w-full px-4 py-3 text-left text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3 first:rounded-t-xl active:bg-gray-100 dark:active:bg-gray-700 disabled:opacity-60 disabled:cursor-not-allowed border-b border-gray-100 dark:border-gray-800"
                 >
-                  <CheckCheck className="w-4 h-4 text-[#E60012] flex-shrink-0" />
+                  {isMarkingRead ? (
+                    <Loader2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 animate-spin" />
+                  ) : (
+                    <CheckCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                  )}
                   <span className="whitespace-nowrap">
-                    Mark all comments read ({unreadCount})
+                    {isMarkingRead
+                      ? 'Marking as read…'
+                      : `Mark all comments read (${unreadCount})`}
                   </span>
                 </button>
               )}

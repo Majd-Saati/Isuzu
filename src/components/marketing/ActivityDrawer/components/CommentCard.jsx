@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { MessageSquare, FileText, Clock, User, Upload, Trash2, CheckCheck } from 'lucide-react';
+import { MessageSquare, FileText, Clock, User, Upload, Trash2, CheckCheck, Loader2 } from 'lucide-react';
 import { formatDate } from '../utils/formatters';
 import { parseMediaPaths, resolveMediaUrl, mediaFileLabel } from '../utils/mediaUrls';
 
@@ -11,23 +11,22 @@ const isImageFile = (url) => {
 };
 
 /**
- * A comment is unread when it has no `admin_read_id` yet. Once an admin reads
- * it, the backend stamps that field with the reader's id (a real value), so a
- * present, non-empty, non-zero value means "already read".
+ * A comment is unread until the backend marks it read via the `has_read` flag.
+ * A null / empty / zero value means "not yet read".
  */
 const isCommentUnread = (item) => {
   if (!item) return false;
-  const readId = item.admin_read_id;
+  const readFlag = item.has_read;
   const hasValue =
-    readId !== null &&
-    readId !== undefined &&
-    readId !== '' &&
-    readId !== 0 &&
-    readId !== '0';
+    readFlag !== null &&
+    readFlag !== undefined &&
+    readFlag !== '' &&
+    readFlag !== 0 &&
+    readFlag !== '0';
   return !hasValue;
 };
 
-export const CommentCard = ({ item, onDelete, onMarkRead, icon: Icon = MessageSquare }) => {
+export const CommentCard = ({ item, onDelete, onMarkRead, isMarkingRead = false, icon: Icon = MessageSquare }) => {
   const mediaItems = parseMediaPaths(item.media)
     .map((path) => ({ url: resolveMediaUrl(path), label: mediaFileLabel(path) }))
     .filter((m) => m.url);
@@ -55,11 +54,16 @@ export const CommentCard = ({ item, onDelete, onMarkRead, icon: Icon = MessageSq
               {canMarkRead && (
                 <button
                   onClick={() => onMarkRead(item.id)}
-                  className="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/60 transition-all"
+                  disabled={isMarkingRead}
+                  className="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/60 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                   title="Mark this comment as read"
                   aria-label="Mark as read"
                 >
-                  <CheckCheck className="w-4 h-4" />
+                  {isMarkingRead ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <CheckCheck className="w-4 h-4" />
+                  )}
                 </button>
               )}
               {onDelete && (

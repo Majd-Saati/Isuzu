@@ -53,6 +53,13 @@ export const ActivityDrawer = ({
 
   const unreadCount = markedAllRead ? 0 : Number(activity?.unreadCommentsCount) || 0;
 
+  // Scope the loading spinner to whichever mark-read action is in flight.
+  const markReadVars = markCommentsReadMutation.isPending
+    ? markCommentsReadMutation.variables
+    : null;
+  const isMarkingActivity = markReadVars?.activity_id != null;
+  const markingCommentId = markReadVars?.comment_id ?? null;
+
   const handleMarkActivityRead = useCallback(() => {
     if (!activity?.id || markCommentsReadMutation.isPending) return;
     markCommentsReadMutation.mutate(
@@ -283,7 +290,7 @@ export const ActivityDrawer = ({
           onEdit={handleEditActivity}
           unreadCount={unreadCount}
           onMarkAllRead={handleMarkActivityRead}
-          isMarkingRead={markCommentsReadMutation.isPending}
+          isMarkingRead={isMarkingActivity}
         />
 
         {/* Tabs */}
@@ -327,6 +334,7 @@ export const ActivityDrawer = ({
               onClearMetaFilter={handleClearMetaFilter}
               onMetaCreated={refetchActivityMeta}
               onMarkCommentRead={unreadCount > 0 ? handleMarkCommentRead : undefined}
+              markingCommentId={markingCommentId}
             />
           ) : (
             <BudgetListTab

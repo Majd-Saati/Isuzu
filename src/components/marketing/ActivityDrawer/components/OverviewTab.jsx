@@ -32,6 +32,7 @@ export const OverviewTab = ({
   onClearMetaFilter,
   onMetaCreated,
   onMarkCommentRead,
+  markingCommentId = null,
   isAdmin = true,
 }) => {
   const [showAddCommentForm, setShowAddCommentForm] = useState(false);
@@ -294,6 +295,7 @@ export const OverviewTab = ({
                       item={item}
                       onDelete={onDeleteMeta}
                       onMarkRead={onMarkCommentRead}
+                      isMarkingRead={markingCommentId != null && String(item.id) === String(markingCommentId)}
                       icon={MessageSquare}
                     />
                   ))}
