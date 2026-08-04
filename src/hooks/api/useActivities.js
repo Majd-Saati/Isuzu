@@ -274,6 +274,27 @@ export const useCreateActivityMeta = () => {
   });
 };
 
+/**
+ * Mark admin comments as read at comment / activity / plan level.
+ * Refreshes every surface that shows an unread-comments count.
+ */
+export const useMarkCommentsRead = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: activitiesService.markCommentsRead,
+    onSuccess: () => {
+      // Activity rows + plan summaries (marketing-plans page)
+      queryClient.invalidateQueries({ queryKey: ['activities'], refetchType: 'active' });
+      // Sidebar company badges (['dealers']) and companies list share the same API response
+      queryClient.invalidateQueries({ queryKey: ['dealers'], refetchType: 'active' });
+      queryClient.invalidateQueries({ queryKey: ['companies'], refetchType: 'active' });
+      // Drawer comments (per-comment read state, if the backend exposes it)
+      queryClient.invalidateQueries({ queryKey: ['activityMeta'], refetchType: 'active' });
+    },
+  });
+};
+
 export const useDeleteMeta = (activityContext = {}) => {
   const queryClient = useQueryClient();
 

@@ -1,6 +1,7 @@
 import React from 'react';
-import { ChevronDown, ChevronRight, Building2, Calendar, Edit2, Trash2, Plus, MoreVertical } from 'lucide-react';
+import { ChevronDown, ChevronRight, Building2, Calendar, Edit2, Trash2, Plus, MoreVertical, CheckCheck } from 'lucide-react';
 import { formatDate } from '../utils';
+import { UnreadBadge } from '@/components/ui/UnreadBadge';
 
 export const PlanHeader = ({
   plan,
@@ -11,6 +12,9 @@ export const PlanHeader = ({
   onAddActivity,
   showPlanMenu,
   onTogglePlanMenu,
+  unreadCount = 0,
+  onMarkAllRead,
+  isMarkingRead = false,
 }) => {
   return (
     <div className="w-full px-4 sm:px-6 py-4 sm:py-5 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-all duration-200 border-b-2 border-gray-200 dark:border-gray-700">
@@ -33,6 +37,12 @@ export const PlanHeader = ({
               <span className="text-xs font-normal text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
                 {plan.activities.length} activities
               </span>
+              {unreadCount > 0 && (
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#E60012] bg-[#E60012]/10 px-2 py-0.5 rounded-full">
+                  <UnreadBadge count={unreadCount} />
+                  unread
+                </span>
+              )}
             </div>
             
             {/* Plan Description */}
@@ -81,6 +91,24 @@ export const PlanHeader = ({
               className="absolute right-0 top-full mt-2 bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 rounded-xl shadow-2xl z-[1000000] w-[200px] sm:w-auto sm:min-w-[180px] overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Mark all comments read */}
+              {unreadCount > 0 && typeof onMarkAllRead === 'function' && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMarkAllRead();
+                    onTogglePlanMenu();
+                  }}
+                  disabled={isMarkingRead}
+                  className="w-full px-4 py-3 text-left text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3 first:rounded-t-xl active:bg-gray-100 dark:active:bg-gray-700 disabled:opacity-60 border-b border-gray-100 dark:border-gray-800"
+                >
+                  <CheckCheck className="w-4 h-4 text-[#E60012] flex-shrink-0" />
+                  <span className="whitespace-nowrap">
+                    Mark all comments read ({unreadCount})
+                  </span>
+                </button>
+              )}
+
               {/* Add Activity */}
               <button
                 onClick={(e) => {

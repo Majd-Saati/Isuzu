@@ -1,4 +1,5 @@
 import React from 'react';
+import { useMarkCommentsRead } from '@/hooks/api/useActivities';
 import { AddActivityModal } from '../AddActivityModal';
 import { StatusUpdateModal } from '../StatusUpdateModal';
 import { ActivityDrawer } from '../ActivityDrawer';
@@ -64,6 +65,19 @@ export const DealerPlanTable = ({
     deletePlanMutation,
   } = useDealerPlanTable({ plan, autoOpenActivityId, onPlanDeleted });
 
+  // Plan-level unread comments = sum across its activities (API has no plan total).
+  const planUnreadCount = (plan.activities || []).reduce(
+    (sum, a) => sum + (Number(a.unreadCommentsCount) || 0),
+    0
+  );
+
+  const markCommentsReadMutation = useMarkCommentsRead();
+
+  const handleMarkPlanRead = () => {
+    if (!plan.id || planUnreadCount === 0 || markCommentsReadMutation.isPending) return;
+    markCommentsReadMutation.mutate({ plan_id: plan.id });
+  };
+
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-visible shadow-sm border-2 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 relative">
       {/* Plan Header */}
@@ -76,6 +90,9 @@ export const DealerPlanTable = ({
         onAddActivity={() => setShowAddActivityModal(true)}
         showPlanMenu={showPlanMenu}
         onTogglePlanMenu={() => setShowPlanMenu(!showPlanMenu)}
+        unreadCount={planUnreadCount}
+        onMarkAllRead={handleMarkPlanRead}
+        isMarkingRead={markCommentsReadMutation.isPending}
       />
 
       {/* Plan Content */}

@@ -134,5 +134,19 @@ export const activitiesService = {
   deleteMeta: async (metaId) => {
     return apiClient.post('/delete_activity_meta', { meta_id: metaId });
   },
+
+  /**
+   * Mark admin comments as read at one of three levels. Pass exactly one of:
+   *   { comment_id }  - a single comment
+   *   { activity_id } - every comment on an activity
+   *   { plan_id }     - every comment on a plan
+   */
+  markCommentsRead: async ({ comment_id, activity_id, plan_id } = {}) => {
+    const payload = {};
+    if (comment_id != null) payload.comment_id = comment_id;
+    if (activity_id != null) payload.activity_id = activity_id;
+    if (plan_id != null) payload.plan_id = plan_id;
+    return apiClient.post('/admin_comments_mark_read', payload);
+  },
 };
 

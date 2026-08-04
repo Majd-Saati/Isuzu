@@ -31,6 +31,7 @@ export const OverviewTab = ({
   metaType,
   onClearMetaFilter,
   onMetaCreated,
+  onMarkCommentRead,
   isAdmin = true,
 }) => {
   const [showAddCommentForm, setShowAddCommentForm] = useState(false);
@@ -288,7 +289,13 @@ export const OverviewTab = ({
               {comments.length > 0 ? (
                 <div className="space-y-3">
                   {comments.map((item, index) => (
-                    <CommentCard key={item.id || index} item={item} onDelete={onDeleteMeta} icon={MessageSquare} />
+                    <CommentCard
+                      key={item.id || index}
+                      item={item}
+                      onDelete={onDeleteMeta}
+                      onMarkRead={onMarkCommentRead}
+                      icon={MessageSquare}
+                    />
                   ))}
                 </div>
               ) : (

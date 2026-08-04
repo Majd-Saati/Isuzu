@@ -17,7 +17,7 @@ import { useActivityDrawerData } from './hooks/useActivityDrawerData';
 import { useActivityDrawerActions } from './hooks/useActivityDrawerActions';
 import { useActivityDrawerModals } from './hooks/useActivityDrawerModals';
 import { useDrawerResize } from './hooks/useDrawerResize';
-import { useUpdateActivity } from '@/hooks/api/useActivities';
+import { useUpdateActivity, useMarkCommentsRead } from '@/hooks/api/useActivities';
 import { toast } from 'sonner';
 
 export const ActivityDrawer = ({
@@ -37,6 +37,9 @@ export const ActivityDrawer = ({
   const [budgetFilterStatus, setBudgetFilterStatus] = useState(initialBudgetStatus || null);
   const [metaType, setMetaType] = useState(initialMetaType || null);
   const [showEditModal, setShowEditModal] = useState(false);
+  // Local override so the activity-level "unread" count clears immediately
+  // after marking, without waiting for the parent's captured activity to refresh.
+  const [markedAllRead, setMarkedAllRead] = useState(false);
   const drawerRef = useRef(null);
   const currentUser = useSelector((state) => state.auth.user);
   const isAdmin = isAdminUser(currentUser);
@@ -44,6 +47,27 @@ export const ActivityDrawer = ({
 
   // Update activity mutation
   const updateActivityMutation = useUpdateActivity();
+
+  // Mark-comments-read mutation (activity level + per comment)
+  const markCommentsReadMutation = useMarkCommentsRead();
+
+  const unreadCount = markedAllRead ? 0 : Number(activity?.unreadCommentsCount) || 0;
+
+  const handleMarkActivityRead = useCallback(() => {
+    if (!activity?.id || markCommentsReadMutation.isPending) return;
+    markCommentsReadMutation.mutate(
+      { activity_id: activity.id },
+      { onSuccess: () => setMarkedAllRead(true) }
+    );
+  }, [activity?.id, markCommentsReadMutation]);
+
+  const handleMarkCommentRead = useCallback(
+    (commentId) => {
+      if (commentId == null) return;
+      markCommentsReadMutation.mutate({ comment_id: commentId });
+    },
+    [markCommentsReadMutation]
+  );
 
   // Custom hooks
   const {
@@ -179,6 +203,7 @@ export const ActivityDrawer = ({
       setBudgetFilterType(null);
       setBudgetFilterStatus(null);
       setMetaType(null);
+      setMarkedAllRead(false);
     } else {
       if (initialBudgetType) {
         setActiveTab('budget');
@@ -251,11 +276,14 @@ export const ActivityDrawer = ({
         <DrawerResizeHandle onMouseDown={handleMouseDown} isDragging={isDragging} />
 
         {/* Drawer Header */}
-        <DrawerHeader 
-          activityName={activity?.name} 
-          onDelete={handleDeleteActivity} 
+        <DrawerHeader
+          activityName={activity?.name}
+          onDelete={handleDeleteActivity}
           onClose={onClose}
           onEdit={handleEditActivity}
+          unreadCount={unreadCount}
+          onMarkAllRead={handleMarkActivityRead}
+          isMarkingRead={markCommentsReadMutation.isPending}
         />
 
         {/* Tabs */}
@@ -298,6 +326,7 @@ export const ActivityDrawer = ({
               metaType={metaType}
               onClearMetaFilter={handleClearMetaFilter}
               onMetaCreated={refetchActivityMeta}
+              onMarkCommentRead={unreadCount > 0 ? handleMarkCommentRead : undefined}
             />
           ) : (
             <BudgetListTab
