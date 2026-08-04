@@ -6,6 +6,7 @@ import logo from "../../asstes/images/logo.png";
 import { mainNavigation, otherNavigation } from '../../data/navigationData';
 import { useDealers } from '@/hooks/api/useCompanies';
 import { AddEditCompanyModal } from '@/components/companies/AddEditCompanyModal';
+import { UnreadBadge } from '@/components/ui/UnreadBadge';
 import { canAccessRoute, isAdminUser } from '@/lib/permissions';
 
 export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
@@ -213,14 +214,7 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                         <span className={`flex-1 text-sm font-medium transition-colors truncate text-left ${isDealerActive ? 'text-[#E60012]' : 'text-[#848E9A] group-hover:text-[#E60012]'}`}>
                           {dealer.label}
                         </span>
-                        {dealer.unreadCommentsCount > 0 && (
-                          <span
-                            className="flex-shrink-0 min-w-[18px] h-[18px] px-1.5 inline-flex items-center justify-center rounded-full bg-[#E60012] text-white text-[11px] font-bold leading-none shadow-sm"
-                            title={`${dealer.unreadCommentsCount} unread comment${dealer.unreadCommentsCount > 1 ? 's' : ''}`}
-                          >
-                            {dealer.unreadCommentsCount > 99 ? '99+' : dealer.unreadCommentsCount}
-                          </span>
-                        )}
+                        <UnreadBadge count={dealer.unreadCommentsCount} pulse />
                       </button>
                     );
                   })

@@ -1,6 +1,7 @@
 import React from 'react';
 import { MessageCircle, FileText, PlusCircle, ChevronDown, ImageOff, Image as ImageIcon, X } from 'lucide-react';
 import { Checkbox } from '../../../ui/Checkbox';
+import { UnreadBadge } from '@/components/ui/UnreadBadge';
 import { buildMediaUrl } from '@/lib/api/config';
 import { getAmountColorByStatus, isDeniedBudgetStatus } from '../utils';
 import { formatMoneyFromContext } from '@/lib/dashboardMoney';
@@ -88,12 +89,18 @@ export const ActivityTableRow = ({
                 : 'View Details'
             }
           >
-            <MessageCircle className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-[#E60012] transition-colors" />
-            {activity.unreadCommentsCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-1 inline-flex items-center justify-center rounded-full bg-[#E60012] text-white text-[10px] font-bold leading-none shadow-sm ring-2 ring-white dark:ring-gray-900">
-                {activity.unreadCommentsCount > 99 ? '99+' : activity.unreadCommentsCount}
-              </span>
-            )}
+            <MessageCircle
+              className={`w-4 h-4 transition-colors ${
+                activity.unreadCommentsCount > 0
+                  ? 'text-[#E60012]'
+                  : 'text-gray-400 dark:text-gray-500 hover:text-[#E60012]'
+              }`}
+            />
+            <UnreadBadge
+              count={activity.unreadCommentsCount}
+              pulse
+              className="absolute -top-1.5 -right-1.5"
+            />
           </button>
         </div>
       </td>
