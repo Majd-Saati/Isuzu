@@ -351,6 +351,7 @@ const Index = () => {
 
       const support = dealer.costs?.support_cost_total ?? 0;
       const expense = dealer.costs?.actual_cost_total ?? 0;
+      const estimated = dealer.costs?.estimated_cost_total ?? null;
       const budget = getDealerBudget(dealer, isAdmin, budgetContext);
 
       return {
@@ -358,6 +359,7 @@ const Index = () => {
         logo: getDealerLogoUrl(dealer.logo),
         terms: termSummaries,
         budget,
+        estimated,
         support,
         expense,
       };

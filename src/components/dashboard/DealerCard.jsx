@@ -24,6 +24,7 @@ export const DealerCard = ({
   flag = null,
   terms = [],
   budget = null,
+  estimated = null,
   support = 0,
   expense = 0,
   isAdmin = false,
@@ -41,6 +42,7 @@ export const DealerCard = ({
 
   const costRows = [
     budget != null ? { label: 'Budget:', value: budget } : null,
+    estimated != null ? { label: 'Estimated:', value: estimated } : null,
     { label: 'Actual:', value: expense },
     { label: 'Support:', value: support },
   ].filter(Boolean);
