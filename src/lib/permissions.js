@@ -33,6 +33,7 @@ const NORMAL_USER_PERMISSIONS = [
   // Other
   'overview',
   'calendar_view',
+  'announcements_list',
 ];
 
 // Map routes/pages to required permissions
@@ -46,7 +47,7 @@ const ROUTE_PERMISSIONS = {
   '/companies': null, // Admin only
   '/users': null, // Admin only
   '/administrators': null, // Admin only
-  '/announcements': null, // Admin only
+  '/announcements': 'announcements_list', // Admins and normal users (different views)
 };
 
 /**

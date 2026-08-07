@@ -137,7 +137,7 @@ const Announcements = () => {
   }, [deletingAnnouncement, deleteMutation, closeDeleteModal]);
 
   const renderContent = () => {
-    if (isLoading) return <AnnouncementsTableSkeleton />;
+    if (isLoading) return <AnnouncementsTableSkeleton isAdmin={isAdmin} />;
     if (isError) return <AnnouncementsTableEmpty isError />;
     if (!announcements.length) {
       return <AnnouncementsTableEmpty hasActiveFilters={hasActiveFilters} onClearFilters={clearFilters} />;
@@ -146,10 +146,12 @@ const Announcements = () => {
       <AnnouncementsTable
         announcements={announcements}
         pagination={pagination}
+        isAdmin={isAdmin}
         onEdit={openEditModal}
         onDelete={setDeletingAnnouncement}
         onMarkRead={handleMarkRead}
         isMarkingRead={markReadMutation.isPending}
+        markingReadId={markReadMutation.isPending ? markReadMutation.variables : null}
         onPageChange={handlePageChange}
         onItemsPerPageChange={handleItemsPerPageChange}
       />
@@ -161,7 +163,7 @@ const Announcements = () => {
       <AnnouncementsPageHeader
         total={pagination?.total}
         unreadCount={data?.unreadCount}
-        onNewAnnouncement={openCreateModal}
+        onNewAnnouncement={isAdmin ? openCreateModal : undefined}
       />
 
       <section className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm mb-8 overflow-hidden">
@@ -175,6 +177,7 @@ const Announcements = () => {
         </div>
 
         <AnnouncementsActionBar
+          isAdmin={isAdmin}
           companies={companies}
           search={searchInput}
           onSearchChange={handleSearchChange}

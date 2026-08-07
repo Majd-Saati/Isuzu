@@ -40,7 +40,7 @@ export const AppRouter = () => (
         <Route path={ROUTES.COUNTRIES} element={<AdminGuard><Countries /></AdminGuard>} />
         <Route path={ROUTES.USERS} element={<AdminGuard><UsersPage /></AdminGuard>} />
         <Route path={ROUTES.CALENDAR} element={<PermissionGuard><Calendar /></PermissionGuard>} />
-        <Route path={ROUTES.ANNOUNCEMENTS} element={<AdminGuard><Announcements /></AdminGuard>} />
+        <Route path={ROUTES.ANNOUNCEMENTS} element={<PermissionGuard><Announcements /></PermissionGuard>} />
         <Route path={ROUTES.TERMS} element={<AdminGuard><Terms /></AdminGuard>} />
       </Route>
 

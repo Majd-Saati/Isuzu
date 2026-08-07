@@ -1,12 +1,18 @@
 import React from 'react';
 
-export const AnnouncementsTableSkeleton = () => (
+export const AnnouncementsTableSkeleton = ({ isAdmin }) => (
   <div className="overflow-hidden animate-fade-in">
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead className="bg-gray-50 dark:bg-gray-800/60 border-b border-gray-200 dark:border-gray-700">
           <tr>
-            {['Announcement', 'Audience', 'Recipients', 'Read / Unread', 'Date', 'Actions'].map((h) => (
+            {[
+              'Announcement',
+              'Audience',
+              ...(isAdmin ? ['Recipients', 'Read / Unread'] : []),
+              'Date',
+              'Actions',
+            ].map((h) => (
               <th key={h} className="text-left px-6 py-3.5">
                 <div className="h-3 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               </th>
@@ -28,12 +34,16 @@ export const AnnouncementsTableSkeleton = () => (
               <td className="px-6 py-4">
                 <div className="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded-md animate-pulse" />
               </td>
-              <td className="px-6 py-4">
-                <div className="h-3.5 w-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-              </td>
-              <td className="px-6 py-4">
-                <div className="h-3.5 w-28 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-              </td>
+              {isAdmin && (
+                <td className="px-6 py-4">
+                  <div className="h-3.5 w-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                </td>
+              )}
+              {isAdmin && (
+                <td className="px-6 py-4">
+                  <div className="h-3.5 w-28 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                </td>
+              )}
               <td className="px-6 py-4">
                 <div className="h-3.5 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               </td>
