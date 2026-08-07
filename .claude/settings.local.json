@@ -8,7 +8,10 @@
       "Bash(npx eslint *)",
       "Bash(npx esbuild *)",
       "Bash(Get-ChildItem -Recurse -Path \"src/components/marketing\" -Name)",
-      "Bash(npx vite *)"
+      "Bash(npx vite *)",
+      "Bash(curl -s \"https://marketing.5v.ae/api/announcements_list?page=1&per_page=5\" -H \"Content-Type: application/json\")",
+      "Bash(npm run *)",
+      "Bash(git check-ignore *)"
     ]
   }
 }

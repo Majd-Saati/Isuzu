@@ -16,7 +16,7 @@ export const ROUTES = {
   USERS: '/users',
   COUNTRIES: '/countries',
   CALENDAR: '/calendar',
-  REMINDERS: '/reminders',
+  ANNOUNCEMENTS: '/announcements',
   TERMS: '/terms',
 
   // Fallback
@@ -59,7 +59,7 @@ export const ROUTE_METADATA = {
     title: 'Calendar',
     requiresAuth: true,
   },
-  [ROUTES.REMINDERS]: {
+  [ROUTES.ANNOUNCEMENTS]: {
     title: 'Announcements',
     requiresAuth: true,
   },

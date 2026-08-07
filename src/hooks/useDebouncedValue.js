@@ -1,0 +1,13 @@
+import { useEffect, useState } from 'react';
+
+/** Returns `value`, updated only after `delay` ms have passed without it changing. */
+export const useDebouncedValue = (value, delay = 400) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timeout);
+  }, [value, delay]);
+
+  return debouncedValue;
+};

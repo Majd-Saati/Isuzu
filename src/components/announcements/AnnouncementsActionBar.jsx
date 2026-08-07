@@ -1,26 +1,27 @@
 import React from 'react';
 import { Search } from 'lucide-react';
-import {
-  REMINDER_TYPE_OPTIONS,
-  REMINDER_STATUS_OPTIONS,
-} from '@/data/mockRemindersData';
 
 const selectClass =
   'px-4 py-2.5 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#E60012]/40 focus:border-[#E60012] transition-colors cursor-pointer';
 
+const AUDIENCE_OPTIONS = [
+  { value: '1', label: 'All dealers' },
+  { value: '0', label: 'Specific company' },
+];
+
 /**
- * Filters bar for the announcements table: search + dealer / type / status.
+ * Filters bar for the announcements table: search + company / audience / unread-only.
  */
-export const RemindersActionBar = ({
-  dealers,
+export const AnnouncementsActionBar = ({
+  companies,
   search,
   onSearchChange,
-  dealerId,
-  onDealerChange,
-  type,
-  onTypeChange,
-  status,
-  onStatusChange,
+  companyId,
+  onCompanyChange,
+  forAll,
+  onForAllChange,
+  unreadOnly,
+  onUnreadOnlyChange,
   hasActiveFilters,
   onClearFilters,
 }) => (
@@ -38,50 +39,46 @@ export const RemindersActionBar = ({
     </div>
 
     <div className="flex items-center gap-3 ml-auto flex-wrap">
-      {/* Dealer filter */}
+      {/* Company filter */}
       <select
-        value={dealerId}
-        onChange={(e) => onDealerChange(e.target.value)}
-        aria-label="Filter by dealer"
+        value={companyId}
+        onChange={(e) => onCompanyChange(e.target.value)}
+        aria-label="Filter by company"
         className={selectClass}
       >
-        <option value="">All Dealers</option>
-        {dealers.map((dealer) => (
-          <option key={dealer.id} value={dealer.id}>
-            {dealer.label}
+        <option value="">All Companies</option>
+        {companies.map((company) => (
+          <option key={company.id} value={company.id}>
+            {company.name}
           </option>
         ))}
       </select>
 
-      {/* Type filter */}
+      {/* Audience filter */}
       <select
-        value={type}
-        onChange={(e) => onTypeChange(e.target.value)}
-        aria-label="Filter by type"
+        value={forAll}
+        onChange={(e) => onForAllChange(e.target.value)}
+        aria-label="Filter by audience"
         className={selectClass}
       >
-        <option value="">All Types</option>
-        {REMINDER_TYPE_OPTIONS.map((opt) => (
+        <option value="">All Audiences</option>
+        {AUDIENCE_OPTIONS.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
         ))}
       </select>
 
-      {/* Status filter */}
-      <select
-        value={status}
-        onChange={(e) => onStatusChange(e.target.value)}
-        aria-label="Filter by status"
-        className={selectClass}
-      >
-        <option value="">All Status</option>
-        {REMINDER_STATUS_OPTIONS.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
+      {/* Unread only */}
+      <label className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer select-none hover:border-gray-400 dark:hover:border-gray-600 transition-colors">
+        <input
+          type="checkbox"
+          checked={unreadOnly}
+          onChange={(e) => onUnreadOnlyChange(e.target.checked)}
+          className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-[#E60012] focus:ring-[#E60012]/40"
+        />
+        Unread only
+      </label>
 
       {hasActiveFilters && (
         <button

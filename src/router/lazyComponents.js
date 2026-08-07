@@ -22,7 +22,7 @@ export const Companies = lazy(() => import('../pages/Users')); // Companies page
 export const UsersPage = lazy(() => import('../pages/UsersPage')); // New Users page
 export const Countries = lazy(() => import('../pages/Countries'));
 export const Calendar = lazy(() => import('../pages/Calendar'));
-export const Reminders = lazy(() => import('../pages/Reminders'));
+export const Announcements = lazy(() => import('../pages/Announcements'));
 export const Terms = lazy(() => import('../pages/Terms'));
 export const NotFound = lazy(() => import('../pages/NotFound'));
 
