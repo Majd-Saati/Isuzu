@@ -8,7 +8,12 @@ import {
   AnnouncementsTableEmpty,
   AddEditAnnouncementModal,
 } from '@/components/announcements';
-import { useAnnouncements } from '@/hooks/api/useAnnouncements';
+import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
+import {
+  useAnnouncements,
+  useDeleteAnnouncement,
+  useMarkAnnouncementRead,
+} from '@/hooks/api/useAnnouncements';
 import { useCompanies } from '@/hooks/api/useCompanies';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { isAdminUser } from '@/lib/permissions';
@@ -34,6 +39,18 @@ const Announcements = () => {
   // Add/Edit modal
   const [showModal, setShowModal] = useState(false);
   const [editingAnnouncement, setEditingAnnouncement] = useState(null);
+
+  // Delete modal
+  const [deletingAnnouncement, setDeletingAnnouncement] = useState(null);
+  const deleteMutation = useDeleteAnnouncement();
+
+  const markReadMutation = useMarkAnnouncementRead();
+  const handleMarkRead = useCallback(
+    (announcement) => {
+      markReadMutation.mutate(announcement.id);
+    },
+    [markReadMutation]
+  );
 
   const { data, isLoading, isError } = useAnnouncements({
     page,
@@ -77,7 +94,7 @@ const Announcements = () => {
   }, []);
 
   const clearFilters = useCallback(() => {
-    setSearch('');
+    setSearchInput('');
     setCompanyId('');
     setForAll('');
     setUnreadOnly(false);
@@ -106,6 +123,19 @@ const Announcements = () => {
     setEditingAnnouncement(null);
   }, []);
 
+  const closeDeleteModal = useCallback(() => {
+    setDeletingAnnouncement(null);
+  }, []);
+
+  const handleConfirmDelete = useCallback(() => {
+    if (!deletingAnnouncement) return;
+    deleteMutation.mutate(deletingAnnouncement.id, {
+      onSuccess: () => {
+        closeDeleteModal();
+      },
+    });
+  }, [deletingAnnouncement, deleteMutation, closeDeleteModal]);
+
   const renderContent = () => {
     if (isLoading) return <AnnouncementsTableSkeleton />;
     if (isError) return <AnnouncementsTableEmpty isError />;
@@ -117,6 +147,9 @@ const Announcements = () => {
         announcements={announcements}
         pagination={pagination}
         onEdit={openEditModal}
+        onDelete={setDeletingAnnouncement}
+        onMarkRead={handleMarkRead}
+        isMarkingRead={markReadMutation.isPending}
         onPageChange={handlePageChange}
         onItemsPerPageChange={handleItemsPerPageChange}
       />
@@ -143,7 +176,7 @@ const Announcements = () => {
 
         <AnnouncementsActionBar
           companies={companies}
-          search={search}
+          search={searchInput}
           onSearchChange={handleSearchChange}
           companyId={companyId}
           onCompanyChange={handleCompanyChange}
@@ -163,6 +196,17 @@ const Announcements = () => {
         onClose={closeModal}
         editData={editingAnnouncement}
         companies={companies}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={!!deletingAnnouncement}
+        onClose={closeDeleteModal}
+        onConfirm={handleConfirmDelete}
+        title="Delete Announcement"
+        message="Are you sure you want to delete this announcement? This action cannot be undone."
+        itemName={deletingAnnouncement?.title}
+        confirmText="Delete Announcement"
+        isLoading={deleteMutation.isPending}
       />
     </>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Megaphone, Building2, Users, CalendarClock, Pencil } from 'lucide-react';
+import { Megaphone, Building2, Users, CalendarClock, Pencil, Trash2, MailOpen } from 'lucide-react';
 import { CustomPagination } from '@/components/ui/CustomPagination';
 
 const formatDate = (dateString) => {
@@ -32,6 +32,9 @@ export const AnnouncementsTable = ({
   announcements,
   pagination,
   onEdit,
+  onDelete,
+  onMarkRead,
+  isMarkingRead,
   onPageChange,
   onItemsPerPageChange,
 }) => (
@@ -104,7 +107,18 @@ export const AnnouncementsTable = ({
                 </div>
               </td>
               <td className="px-6 py-4">
-                <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center gap-1">
+                  {announcement.unread_count > 0 && (
+                    <button
+                      onClick={() => onMarkRead?.(announcement)}
+                      disabled={isMarkingRead}
+                      className="p-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Mark as read"
+                      aria-label="Mark as read"
+                    >
+                      <MailOpen className="w-4 h-4" />
+                    </button>
+                  )}
                   <button
                     onClick={() => onEdit?.(announcement)}
                     className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-[#E60012] dark:hover:text-[#E60012] transition-colors"
@@ -112,6 +126,14 @@ export const AnnouncementsTable = ({
                     aria-label="Edit announcement"
                   >
                     <Pencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => onDelete?.(announcement)}
+                    className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                    title="Delete announcement"
+                    aria-label="Delete announcement"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </td>

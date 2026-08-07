@@ -57,4 +57,12 @@ export const announcementsService = {
     }
     return apiClient.post('/announcement_update', payload);
   },
+
+  deleteAnnouncement: async (id) => {
+    return apiClient.post('/announcement_delete', { announcement_id: id });
+  },
+
+  markAnnouncementRead: async (id) => {
+    return apiClient.post('/announcement_mark_read', { announcement_id: id });
+  },
 };

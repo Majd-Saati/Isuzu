@@ -83,3 +83,25 @@ export const useUpdateAnnouncement = () => {
     },
   });
 };
+
+export const useDeleteAnnouncement = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: announcementsService.deleteAnnouncement,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['announcements'] });
+    },
+  });
+};
+
+export const useMarkAnnouncementRead = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: announcementsService.markAnnouncementRead,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['announcements'] });
+    },
+  });
+};
