@@ -1,7 +1,9 @@
 ﻿import React from 'react';
+import { useSelector } from 'react-redux';
 import { MessageSquare, FileText, Clock, User, Upload, Trash2, CheckCheck, Loader2 } from 'lucide-react';
 import { formatDate } from '../utils/formatters';
 import { parseMediaPaths, resolveMediaUrl, mediaFileLabel } from '../utils/mediaUrls';
+import { isAdminUser } from '@/lib/permissions';
 
 const isImageFile = (url) => {
   if (!url) return false;
@@ -34,6 +36,8 @@ export const CommentCard = ({
   icon: Icon = MessageSquare,
   highlighted = false,
 }) => {
+  const currentUser = useSelector((state) => state.auth.user);
+  const isAdmin = isAdminUser(currentUser);
   const mediaItems = parseMediaPaths(item.media)
     .map((path) => ({ url: resolveMediaUrl(path), label: mediaFileLabel(path) }))
     .filter((m) => m.url);
@@ -56,7 +60,7 @@ export const CommentCard = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <p className="text-sm text-gray-700 dark:text-gray-300 flex-1">
-              {unread && (
+              {isAdmin && unread && (
                 <span className="mr-2 inline-flex items-center rounded-full bg-[#E60012] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white align-middle">
                   New
                 </span>
