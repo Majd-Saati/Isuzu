@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { DollarSign, MessageSquare, FileText, Plus, ChevronDown, Loader2, AlertCircle, X } from 'lucide-react';
 import { formatCurrency } from '../utils/formatters';
 import { BudgetCard } from './BudgetCard';
@@ -34,6 +34,8 @@ export const OverviewTab = ({
   onMarkCommentRead,
   markingCommentId = null,
   isAdmin = true,
+  highlightBudgetId = null,
+  highlightMetaId = null,
 }) => {
   const [showAddCommentForm, setShowAddCommentForm] = useState(false);
   const [showAddEvidenceForm, setShowAddEvidenceForm] = useState(false);
@@ -43,8 +45,30 @@ export const OverviewTab = ({
   const { meta = [], budget = [] } = data || {};
 
   // Filter meta by type
-  const comments = meta.filter(item => item.type === 'comment');
-  const evidences = meta.filter(item => item.type === 'evidence');
+  const comments = useMemo(() => meta.filter(item => item.type === 'comment'), [meta]);
+  const evidences = useMemo(() => meta.filter(item => item.type === 'evidence'), [meta]);
+
+  // Deep-link: expand the section that contains the target id
+  useEffect(() => {
+    if (highlightBudgetId) {
+      setIsBudgetExpanded(true);
+      return;
+    }
+    if (!highlightMetaId) return;
+    const target = String(highlightMetaId);
+    const inComments = comments.some(
+      (item) => String(item.id ?? item.meta_id) === target
+    );
+    const inEvidences = evidences.some(
+      (item) => String(item.id ?? item.meta_id) === target
+    );
+    if (inComments) setIsCommentsExpanded(true);
+    else if (inEvidences) setIsEvidencesExpanded(true);
+    else {
+      setIsCommentsExpanded(true);
+      setIsEvidencesExpanded(true);
+    }
+  }, [highlightBudgetId, highlightMetaId, comments, evidences]);
 
   // Apply same filter logic as Budget tab (client-side) when a filter is active
   const visibleBudget = isAdmin ? budget : budget.filter(item => item.type !== 'support cost');
@@ -227,7 +251,17 @@ export const OverviewTab = ({
           {isBudgetExpanded && (
             <div className="space-y-3 animate-accordion-down">
               {displayBudgetEntries.map((item) => (
-                <BudgetCard key={item.id} item={item} onAccept={onAcceptBudget} onDecline={onDeclineBudget} onDelete={onDeleteBudget} />
+                <BudgetCard
+                  key={item.id ?? item.budget_id}
+                  item={item}
+                  onAccept={onAcceptBudget}
+                  onDecline={onDeclineBudget}
+                  onDelete={onDeleteBudget}
+                  highlighted={
+                    highlightBudgetId != null &&
+                    String(item.id ?? item.budget_id) === String(highlightBudgetId)
+                  }
+                />
               ))}
             </div>
           )}
@@ -297,6 +331,10 @@ export const OverviewTab = ({
                       onMarkRead={onMarkCommentRead}
                       isMarkingRead={markingCommentId != null && String(item.id) === String(markingCommentId)}
                       icon={MessageSquare}
+                      highlighted={
+                        highlightMetaId != null &&
+                        String(item.id ?? item.meta_id) === String(highlightMetaId)
+                      }
                     />
                   ))}
                 </div>
@@ -361,7 +399,16 @@ export const OverviewTab = ({
             {evidences.length > 0 ? (
               <div className="space-y-3">
                 {evidences.map((item, index) => (
-                  <CommentCard key={item.id || index} item={item} onDelete={onDeleteMeta} icon={FileText} />
+                  <CommentCard
+                    key={item.id || index}
+                    item={item}
+                    onDelete={onDeleteMeta}
+                    icon={FileText}
+                    highlighted={
+                      highlightMetaId != null &&
+                      String(item.id ?? item.meta_id) === String(highlightMetaId)
+                    }
+                  />
                 ))}
               </div>
             ) : (

@@ -7,13 +7,14 @@ import { getMonthsBreakdownFromRecord } from '../utils/budgetBreakdown';
 import { parseMediaPaths, resolveMediaUrl, mediaFileLabel } from '../utils/mediaUrls';
 import { isAdminUser } from '@/lib/permissions';
 
-export const BudgetCard = ({ item, showCreator = true, onAccept, onDecline, onDelete }) => {
+export const BudgetCard = ({ item, showCreator = true, onAccept, onDecline, onDelete, highlighted = false }) => {
   const currentUser = useSelector((state) => state.auth.user);
   const canAcceptBudget = isAdminUser(currentUser);
   const isEstimated = item.type === 'estimated cost';
   const isActual = item.type === 'actual cost';
   const isSupport = item.type === 'support cost';
   const isPending = (item.status || '').toLowerCase() === 'pending';
+  const budgetId = item.id ?? item.budget_id;
 
   const getStyles = () => {
     if (isEstimated) {
@@ -63,7 +64,12 @@ export const BudgetCard = ({ item, showCreator = true, onAccept, onDecline, onDe
     .filter(Boolean);
 
   return (
-    <div className={`p-4 rounded-xl border-2 ${styles.bg}`}>
+    <div
+      data-budget-id={budgetId != null ? String(budgetId) : undefined}
+      className={`p-4 rounded-xl border-2 ${styles.bg} ${
+        highlighted ? 'ring-2 ring-[#E60012] ring-offset-2 dark:ring-offset-gray-900' : ''
+      }`}
+    >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className={`p-2 rounded-lg ${styles.icon}`}>

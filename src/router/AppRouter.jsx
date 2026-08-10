@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { WithGuard } from '@/components/WithGuard';
 import { AdminGuard } from '@/components/AdminGuard';
 import { PermissionGuard } from '@/components/PermissionGuard';
-import { Layout, NotFound, Login } from './lazyComponents';
+import { Layout, NotFound, Login, RootEntry } from './lazyComponents';
 import {
   Index,
   MarketingPlans,
@@ -25,9 +25,9 @@ import { ROUTES } from './routes';
 export const AppRouter = () => (
   <Suspense fallback={null}>
     <Routes>
-      {/* Public routes */}
+      {/* Public routes — `/` handles deep links to marketing-plans when authenticated */}
       <Route path={ROUTES.LOGIN} element={<Login />} />
-      <Route path={ROUTES.ROOT} element={<Login />} />
+      <Route path={ROUTES.ROOT} element={<RootEntry />} />
 
       {/* Protected routes with layout */}
       <Route element={<WithGuard><Layout /></WithGuard>}>

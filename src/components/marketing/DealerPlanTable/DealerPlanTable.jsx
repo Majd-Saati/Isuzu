@@ -18,7 +18,10 @@ export const DealerPlanTable = ({
   onPlanDeleted, 
   showBudgetColumns = false, 
   showMediaUploadColumns = false, 
-  autoOpenActivityId = null 
+  autoOpenActivityId = null,
+  autoOpenPlanId = null,
+  highlightBudgetId = null,
+  highlightMetaId = null,
 }) => {
   const {
     // State
@@ -63,7 +66,12 @@ export const DealerPlanTable = ({
     createActivityMutation,
     updateStatusMutation,
     deletePlanMutation,
-  } = useDealerPlanTable({ plan, autoOpenActivityId, onPlanDeleted });
+  } = useDealerPlanTable({
+    plan,
+    autoOpenActivityId,
+    autoOpenPlanId,
+    onPlanDeleted,
+  });
 
   // Plan-level unread comments = sum across its activities (API has no plan total).
   const planUnreadCount = (plan.activities || []).reduce(
@@ -190,6 +198,8 @@ export const DealerPlanTable = ({
         initialMetaType={drawerMetaType}
         termStartDate={plan.start_date}
         termEndDate={plan.end_date}
+        highlightBudgetId={highlightBudgetId}
+        highlightMetaId={highlightMetaId}
       />
 
       <DeleteConfirmationModal

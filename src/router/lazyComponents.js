@@ -12,6 +12,7 @@ export const Layout = lazy(() =>
 
 // Public pages
 export const Login = lazy(() => import('../pages/Login'));
+export const RootEntry = lazy(() => import('../pages/RootEntry'));
 
 // Protected pages
 export const Index = lazy(() => import('../pages/Index'));

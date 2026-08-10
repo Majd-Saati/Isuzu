@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MarketingPlansTable } from '@/components/marketing/MarketingPlansTable';
 import { MarketingPlansTableSkeleton } from '@/components/marketing/MarketingPlansTableSkeleton';
@@ -6,9 +6,10 @@ import { MarketingPlansTableEmpty } from '@/components/marketing/MarketingPlansT
 import { MarketingPlansActionBar } from '@/components/marketing/MarketingPlansActionBar';
 import { AddPlanModal } from '@/components/marketing/AddPlanModal';
 import { CustomPagination } from '@/components/ui/CustomPagination';
-import { usePlans, useCreatePlan, useUpdatePlan } from '@/hooks/api/usePlans';
+import { usePlans, usePlan, useCreatePlan, useUpdatePlan } from '@/hooks/api/usePlans';
 import { useActivities } from '@/hooks/api/useActivities';
 import { useMarketingPlansFilters } from '@/hooks/useMarketingPlansFilters';
+import { parseMarketingPlansDeepLink } from '@/lib/marketingPlansDeepLink';
 
 const MarketingPlans = () => {
   // Plan modal state
@@ -19,15 +20,16 @@ const MarketingPlans = () => {
   // Search state
   const [searchTerm, setSearchTerm] = useState('');
 
-  // URL params for activity id and open drawer flag
+  // Deep-link: open drawer + scroll to budget/meta
   const [searchParams] = useSearchParams();
-  // support both `activity_id` and `activity` (export previously used `activity`)
-  const rawActivityParam = searchParams.get('activity_id') || searchParams.get('activity');
-  const openDrawerParam = searchParams.get('openDrawer') || searchParams.get('openDrawer');
-  // Only auto-open when openDrawer flag is present and truthy (e.g. '1' or 'true')
-  const activityIdFromUrl = rawActivityParam && ['1', 'true', 'yes'].includes((openDrawerParam || '1').toString().toLowerCase())
-    ? rawActivityParam
-    : null;
+  const deepLink = useMemo(
+    () => parseMarketingPlansDeepLink(searchParams),
+    [searchParams]
+  );
+  const activityIdFromUrl = deepLink.openDrawer ? deepLink.activityId : null;
+  const planIdFromUrl = deepLink.planId;
+  const budgetIdFromUrl = deepLink.budgetId;
+  const metaIdFromUrl = deepLink.metaId;
 
   // Filters and pagination from custom hook
   const {
@@ -44,7 +46,6 @@ const MarketingPlans = () => {
     terms,
     isAdmin,
   } = useMarketingPlansFilters();
-  console.log('isAdmin',isAdmin);
   
   // API mutations
   const createPlanMutation = useCreatePlan();
@@ -58,11 +59,29 @@ const MarketingPlans = () => {
     termId: termFilterId,
     search: searchTerm || undefined,
   });
-  const plans = data?.plans || [];
+  const listPlans = data?.plans || [];
   const pagination = data?.pagination;
 
-  // Fetch activities for all visible plans
-  const planIds = useMemo(() => plans.map((plan) => plan.id), [plans]);
+  // Ensure deep-linked plan is available even if not on the current page
+  const { data: deepPlan, isLoading: isLoadingDeepPlan } = usePlan(
+    planIdFromUrl && activityIdFromUrl ? planIdFromUrl : null
+  );
+
+  const plans = useMemo(() => {
+    if (!deepPlan?.id) return listPlans;
+    if (listPlans.some((p) => String(p.id) === String(deepPlan.id))) return listPlans;
+    return [deepPlan, ...listPlans];
+  }, [listPlans, deepPlan]);
+
+  // Fetch activities for all visible plans (+ deep-linked plan id)
+  const planIds = useMemo(() => {
+    const ids = plans.map((plan) => plan.id);
+    if (planIdFromUrl && !ids.some((id) => String(id) === String(planIdFromUrl))) {
+      return [...ids, planIdFromUrl];
+    }
+    return ids;
+  }, [plans, planIdFromUrl]);
+
   const { data: activitiesData, isLoading: isLoadingActivities } = useActivities({
     planIds,
     page: 1,
@@ -71,7 +90,10 @@ const MarketingPlans = () => {
   const activities = activitiesData?.activities || [];
   const plansSummary = activitiesData?.plans_summary || [];
 
-  const isLoading = isLoadingPlans || isLoadingActivities;
+  const isLoading =
+    isLoadingPlans ||
+    isLoadingActivities ||
+    (Boolean(planIdFromUrl && activityIdFromUrl) && isLoadingDeepPlan);
 
   // Modal handlers
   const openCreateModal = useCallback(() => {
@@ -130,6 +152,9 @@ const MarketingPlans = () => {
         showMediaUploadColumns
         onEditPlan={openEditModal}
         autoOpenActivityId={activityIdFromUrl}
+        autoOpenPlanId={planIdFromUrl}
+        highlightBudgetId={budgetIdFromUrl}
+        highlightMetaId={metaIdFromUrl}
       />
     );
   };

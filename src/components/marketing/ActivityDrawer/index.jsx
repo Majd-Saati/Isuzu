@@ -31,6 +31,8 @@ export const ActivityDrawer = ({
   initialMetaType,
   termStartDate,
   termEndDate,
+  highlightBudgetId = null,
+  highlightMetaId = null,
 }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [budgetFilterType, setBudgetFilterType] = useState(initialBudgetType || null);
@@ -40,7 +42,9 @@ export const ActivityDrawer = ({
   // Local override so the activity-level "unread" count clears immediately
   // after marking, without waiting for the parent's captured activity to refresh.
   const [markedAllRead, setMarkedAllRead] = useState(false);
+  const [didScrollToHighlight, setDidScrollToHighlight] = useState(false);
   const drawerRef = useRef(null);
+  const contentScrollRef = useRef(null);
   const currentUser = useSelector((state) => state.auth.user);
   const isAdmin = isAdminUser(currentUser);
   const queryClient = useQueryClient();
@@ -211,6 +215,7 @@ export const ActivityDrawer = ({
       setBudgetFilterStatus(null);
       setMetaType(null);
       setMarkedAllRead(false);
+      setDidScrollToHighlight(false);
     } else {
       if (initialBudgetType) {
         setActiveTab('budget');
@@ -221,8 +226,53 @@ export const ActivityDrawer = ({
         setActiveTab('overview');
         setMetaType(initialMetaType);
       }
+      // Deep-link scroll targets live on Overview
+      if (highlightBudgetId || highlightMetaId) {
+        setActiveTab('overview');
+      }
     }
-  }, [isOpen, initialBudgetType, initialBudgetStatus, initialMetaType]);
+  }, [isOpen, initialBudgetType, initialBudgetStatus, initialMetaType, highlightBudgetId, highlightMetaId]);
+
+  // Soft-scroll to budget_id / meta_id after drawer data loads
+  useEffect(() => {
+    if (!isOpen || didScrollToHighlight) return;
+    if (!highlightBudgetId && !highlightMetaId) return;
+    if (isLoadingMeta || isLoadingBudget) return;
+    if (activeTab !== 'overview') return;
+
+    const selector = highlightBudgetId
+      ? `[data-budget-id="${CSS.escape(String(highlightBudgetId))}"]`
+      : `[data-meta-id="${CSS.escape(String(highlightMetaId))}"]`;
+
+    let attempts = 0;
+    const maxAttempts = 12;
+    const tryScroll = () => {
+      attempts += 1;
+      const root = contentScrollRef.current || drawerRef.current;
+      const el = root?.querySelector(selector);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setDidScrollToHighlight(true);
+        return;
+      }
+      if (attempts < maxAttempts) {
+        window.setTimeout(tryScroll, 120);
+      }
+    };
+
+    const timer = window.setTimeout(tryScroll, 180);
+    return () => window.clearTimeout(timer);
+  }, [
+    isOpen,
+    didScrollToHighlight,
+    highlightBudgetId,
+    highlightMetaId,
+    isLoadingMeta,
+    isLoadingBudget,
+    activeTab,
+    metaData,
+    budgetListData,
+  ]);
 
   // Prevent body scroll when drawer is open
   useEffect(() => {
@@ -312,7 +362,7 @@ export const ActivityDrawer = ({
         </div>
 
         {/* Drawer Content */}
-        <div className="p-6 overflow-y-auto h-[calc(100%-168px)]">
+        <div ref={contentScrollRef} className="p-6 overflow-y-auto h-[calc(100%-168px)]">
           {activeTab === 'overview' ? (
             <OverviewTab
               data={metaData}
@@ -335,6 +385,8 @@ export const ActivityDrawer = ({
               onMetaCreated={refetchActivityMeta}
               onMarkCommentRead={unreadCount > 0 ? handleMarkCommentRead : undefined}
               markingCommentId={markingCommentId}
+              highlightBudgetId={highlightBudgetId}
+              highlightMetaId={highlightMetaId}
             />
           ) : (
             <BudgetListTab

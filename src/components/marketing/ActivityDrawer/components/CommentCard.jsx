@@ -26,16 +26,29 @@ const isCommentUnread = (item) => {
   return !hasValue;
 };
 
-export const CommentCard = ({ item, onDelete, onMarkRead, isMarkingRead = false, icon: Icon = MessageSquare }) => {
+export const CommentCard = ({
+  item,
+  onDelete,
+  onMarkRead,
+  isMarkingRead = false,
+  icon: Icon = MessageSquare,
+  highlighted = false,
+}) => {
   const mediaItems = parseMediaPaths(item.media)
     .map((path) => ({ url: resolveMediaUrl(path), label: mediaFileLabel(path) }))
     .filter((m) => m.url);
   const itemType = item?.type || item?.meta_type;
   const unread = isCommentUnread(item);
   const canMarkRead = unread && typeof onMarkRead === 'function' && item?.id != null;
+  const metaId = item?.id ?? item?.meta_id;
 
   return (
-    <div className="p-4 rounded-xl border-2 bg-slate-50/50 dark:bg-gray-800/50 border-slate-200 dark:border-gray-700 transition-colors">
+    <div
+      data-meta-id={metaId != null ? String(metaId) : undefined}
+      className={`p-4 rounded-xl border-2 bg-slate-50/50 dark:bg-gray-800/50 border-slate-200 dark:border-gray-700 transition-colors ${
+        highlighted ? 'ring-2 ring-[#E60012] ring-offset-2 dark:ring-offset-gray-900' : ''
+      }`}
+    >
       <div className="flex items-start gap-3">
         <div className="p-2 rounded-lg bg-slate-100 dark:bg-gray-700">
           <Icon className="w-4 h-4 text-slate-600 dark:text-gray-300" />
