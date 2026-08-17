@@ -1,0 +1,63 @@
+/**
+ * Single source of truth for the color assigned to each budget type on the
+ * calendar page, so the summary cards and the calendar month slots always match.
+ */
+export const BUDGET_TYPE_COLORS = {
+  estimated: {
+    gradient: 'from-cyan-50 to-white',
+    darkGradient: 'dark:from-gray-800 dark:to-gray-900',
+    border: 'border-cyan-100',
+    darkBorder: 'dark:border-gray-700',
+    textColor: 'text-[#06b6d4]',
+    darkTextColor: 'dark:text-cyan-400',
+    bgColor: 'bg-cyan-100',
+    darkBgColor: 'dark:bg-gray-700',
+    dotColor: 'bg-[#06b6d4]',
+    darkDotColor: 'dark:bg-cyan-400',
+    // Tint used behind the value inside a calendar month slot
+    slotBgColor: 'bg-cyan-50',
+    darkSlotBgColor: 'dark:bg-cyan-900/20',
+  },
+  actual: {
+    gradient: 'from-green-50 to-white',
+    darkGradient: 'dark:from-gray-800 dark:to-gray-900',
+    border: 'border-green-100',
+    darkBorder: 'dark:border-gray-700',
+    textColor: 'text-[#10B981]',
+    darkTextColor: 'dark:text-emerald-400',
+    bgColor: 'bg-green-100',
+    darkBgColor: 'dark:bg-gray-700',
+    dotColor: 'bg-[#10B981]',
+    darkDotColor: 'dark:bg-emerald-400',
+    slotBgColor: 'bg-green-50',
+    darkSlotBgColor: 'dark:bg-emerald-900/20',
+  },
+  support: {
+    gradient: 'from-blue-50 to-white',
+    darkGradient: 'dark:from-gray-800 dark:to-gray-900',
+    border: 'border-blue-100',
+    darkBorder: 'dark:border-gray-700',
+    textColor: 'text-[#3b82f6]',
+    darkTextColor: 'dark:text-blue-300',
+    bgColor: 'bg-blue-100',
+    darkBgColor: 'dark:bg-gray-700',
+    dotColor: 'bg-[#3b82f6]',
+    darkDotColor: 'dark:bg-blue-400',
+    slotBgColor: 'bg-blue-50',
+    darkSlotBgColor: 'dark:bg-blue-900/20',
+  },
+  allocated: {
+    gradient: 'from-purple-50 to-white',
+    darkGradient: 'dark:from-gray-800 dark:to-gray-900',
+    border: 'border-purple-100',
+    darkBorder: 'dark:border-gray-700',
+    textColor: 'text-[#9333ea]',
+    darkTextColor: 'dark:text-purple-300',
+    bgColor: 'bg-purple-100',
+    darkBgColor: 'dark:bg-gray-700',
+    dotColor: 'bg-[#9333ea]',
+    darkDotColor: 'dark:bg-purple-400',
+    slotBgColor: 'bg-purple-50',
+    darkSlotBgColor: 'dark:bg-purple-900/20',
+  },
+};

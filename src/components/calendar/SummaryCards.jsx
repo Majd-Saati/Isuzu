@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatDealerCardMoney } from '@/lib/dashboardMoney';
+import { BUDGET_TYPE_COLORS } from './budgetTypeColors';
 
 export const SummaryCards = ({
   totalEstimatedCost,
@@ -10,62 +11,10 @@ export const SummaryCards = ({
   currencyCode = '',
 }) => {
   const cards = [
-    {
-      label: 'Estimated Cost',
-      value: totalEstimatedCost,
-      gradient: 'from-cyan-50 to-white',
-      darkGradient: 'dark:from-gray-800 dark:to-gray-900',
-      border: 'border-cyan-100',
-      darkBorder: 'dark:border-gray-700',
-      textColor: 'text-[#06b6d4]',
-      darkTextColor: 'dark:text-cyan-400',
-      bgColor: 'bg-cyan-100',
-      darkBgColor: 'dark:bg-gray-700',
-      dotColor: 'bg-[#06b6d4]',
-      darkDotColor: 'dark:bg-cyan-400',
-    },
-    {
-      label: 'Actual Cost',
-      value: totalActualCost,
-      gradient: 'from-green-50 to-white',
-      darkGradient: 'dark:from-gray-800 dark:to-gray-900',
-      border: 'border-green-100',
-      darkBorder: 'dark:border-gray-700',
-      textColor: 'text-[#10B981]',
-      darkTextColor: 'dark:text-emerald-400',
-      bgColor: 'bg-green-100',
-      darkBgColor: 'dark:bg-gray-700',
-      dotColor: 'bg-[#10B981]',
-      darkDotColor: 'dark:bg-emerald-400',
-    },
-    {
-      label: 'Support Cost',
-      value: totalSupportCost,
-      gradient: 'from-blue-50 to-white',
-      darkGradient: 'dark:from-gray-800 dark:to-gray-900',
-      border: 'border-blue-100',
-      darkBorder: 'dark:border-gray-700',
-      textColor: 'text-[#3b82f6]',
-      darkTextColor: 'dark:text-blue-300',
-      bgColor: 'bg-blue-100',
-      darkBgColor: 'dark:bg-gray-700',
-      dotColor: 'bg-[#3b82f6]',
-      darkDotColor: 'dark:bg-blue-400',
-    },
-    {
-      label: 'Allocated Budget',
-      value: allocatedBudget,
-      gradient: 'from-purple-50 to-white',
-      darkGradient: 'dark:from-gray-800 dark:to-gray-900',
-      border: 'border-purple-100',
-      darkBorder: 'dark:border-gray-700',
-      textColor: 'text-[#9333ea]',
-      darkTextColor: 'dark:text-purple-300',
-      bgColor: 'bg-purple-100',
-      darkBgColor: 'dark:bg-gray-700',
-      dotColor: 'bg-[#9333ea]',
-      darkDotColor: 'dark:bg-purple-400',
-    },
+    { label: 'Estimated Cost', value: totalEstimatedCost, ...BUDGET_TYPE_COLORS.estimated },
+    { label: 'Actual Cost', value: totalActualCost, ...BUDGET_TYPE_COLORS.actual },
+    { label: 'Support Cost', value: totalSupportCost, ...BUDGET_TYPE_COLORS.support },
+    { label: 'Allocated Budget', value: allocatedBudget, ...BUDGET_TYPE_COLORS.allocated },
   ].filter((card) => card.label !== 'Allocated Budget' || allocatedBudget != null);
 
   const gridColsClass =
