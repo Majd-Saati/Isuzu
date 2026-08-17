@@ -60,24 +60,22 @@ export const UserFormFields = ({
         {formik.submitCount > 0 && <ErrorMessage message={formik.errors.name} />}
       </div>
 
-      {/* Email - Only show in create mode */}
-      {!isEditMode && (
-        <div>
-          <Input
-            label="Email Address"
-            name="email"
-            type="email"
-            placeholder="e.g., john@example.com"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.errors.email}
-            touched={formik.submitCount > 0}
-            disabled={isLoading}
-          />
-          {formik.submitCount > 0 && <ErrorMessage message={formik.errors.email} />}
-        </div>
-      )}
+      {/* Email */}
+      <div>
+        <Input
+          label="Email Address"
+          name="email"
+          type="email"
+          placeholder="e.g., john@example.com"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.errors.email}
+          touched={formik.submitCount > 0}
+          disabled={isLoading}
+        />
+        {formik.submitCount > 0 && <ErrorMessage message={formik.errors.email} />}
+      </div>
 
       {/* Mobile */}
       <div>

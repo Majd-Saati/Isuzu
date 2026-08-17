@@ -44,6 +44,13 @@ export const prepareFormData = (values, isEditMode, editData, { forceAdminRole =
       status: values.status,
     };
 
+    // Only send the email when it actually changed, so an unchanged address is
+    // never re-submitted for a uniqueness check against the user's own record.
+    const email = String(values.email ?? '').trim();
+    if (email && email !== String(editData.email ?? '').trim()) {
+      payload.email = email;
+    }
+
     const password = String(values.password ?? '').trim();
     if (password) {
       payload.password = password;

@@ -6,9 +6,7 @@ export const createUserSchema = (isEditMode, { forceAdminRole = false, forceUser
     .required('Name is required')
     .min(2, 'Name must be at least 2 characters')
     .max(100, 'Name must be less than 100 characters'),
-  email: isEditMode
-    ? Yup.string().notRequired()
-    : Yup.string().required('Email is required').email('Please enter a valid email address'),
+  email: Yup.string().required('Email is required').email('Please enter a valid email address'),
   mobile: Yup.string()
     .required('Mobile number is required'),
   gender: isEditMode
