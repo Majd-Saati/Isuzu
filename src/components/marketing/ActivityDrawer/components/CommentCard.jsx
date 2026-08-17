@@ -1,7 +1,9 @@
 ﻿import React from 'react';
+import { useSelector } from 'react-redux';
 import { MessageSquare, FileText, Clock, User, Upload, Trash2, CheckCheck, Loader2 } from 'lucide-react';
 import { formatDate } from '../utils/formatters';
 import { parseMediaPaths, resolveMediaUrl, mediaFileLabel } from '../utils/mediaUrls';
+import { isAdminUser } from '@/lib/permissions';
 
 const isImageFile = (url) => {
   if (!url) return false;
@@ -26,16 +28,31 @@ const isCommentUnread = (item) => {
   return !hasValue;
 };
 
-export const CommentCard = ({ item, onDelete, onMarkRead, isMarkingRead = false, icon: Icon = MessageSquare }) => {
+export const CommentCard = ({
+  item,
+  onDelete,
+  onMarkRead,
+  isMarkingRead = false,
+  icon: Icon = MessageSquare,
+  highlighted = false,
+}) => {
+  const currentUser = useSelector((state) => state.auth.user);
+  const isAdmin = isAdminUser(currentUser);
   const mediaItems = parseMediaPaths(item.media)
     .map((path) => ({ url: resolveMediaUrl(path), label: mediaFileLabel(path) }))
     .filter((m) => m.url);
   const itemType = item?.type || item?.meta_type;
   const unread = isCommentUnread(item);
   const canMarkRead = unread && typeof onMarkRead === 'function' && item?.id != null;
+  const metaId = item?.id ?? item?.meta_id;
 
   return (
-    <div className="p-4 rounded-xl border-2 bg-slate-50/50 dark:bg-gray-800/50 border-slate-200 dark:border-gray-700 transition-colors">
+    <div
+      data-meta-id={metaId != null ? String(metaId) : undefined}
+      className={`p-4 rounded-xl border-2 bg-slate-50/50 dark:bg-gray-800/50 border-slate-200 dark:border-gray-700 transition-colors ${
+        highlighted ? 'ring-2 ring-[#E60012] ring-offset-2 dark:ring-offset-gray-900' : ''
+      }`}
+    >
       <div className="flex items-start gap-3">
         <div className="p-2 rounded-lg bg-slate-100 dark:bg-gray-700">
           <Icon className="w-4 h-4 text-slate-600 dark:text-gray-300" />
@@ -43,7 +60,7 @@ export const CommentCard = ({ item, onDelete, onMarkRead, isMarkingRead = false,
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <p className="text-sm text-gray-700 dark:text-gray-300 flex-1">
-              {unread && (
+              {isAdmin && unread && (
                 <span className="mr-2 inline-flex items-center rounded-full bg-[#E60012] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white align-middle">
                   New
                 </span>

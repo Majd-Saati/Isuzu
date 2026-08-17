@@ -19,7 +19,7 @@ export const EvidenceModal = ({ evidences, activityName, activityId, onClose }) 
   };
 
   const handleViewActivity = () => {
-    navigate(`/marketing-plans?activity_id=${activityId}`);
+    navigate(`/marketing-plans?activity_id=${activityId}&openDrawer=1`);
     onClose();
   };
 

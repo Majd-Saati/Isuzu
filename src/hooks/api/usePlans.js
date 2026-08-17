@@ -22,6 +22,7 @@ export const usePlan = (id) => {
     queryKey: ['plan', id],
     queryFn: () => plansService.getPlan(id),
     enabled: !!id,
+    select: (data) => data?.body?.plan || data?.body || null,
   });
 };
 

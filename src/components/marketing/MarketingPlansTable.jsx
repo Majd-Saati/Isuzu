@@ -125,7 +125,20 @@ const transformPlanData = (apiPlan, activitiesForPlan = [], planSummary = null) 
   };
 };
 
-export const MarketingPlansTable = ({ plans = [], activities = [], plansSummary = [], onEditPlan, companies = [], terms = [], showBudgetColumns = false, showMediaUploadColumns = false, autoOpenActivityId = null }) => {
+export const MarketingPlansTable = ({
+  plans = [],
+  activities = [],
+  plansSummary = [],
+  onEditPlan,
+  companies = [],
+  terms = [],
+  showBudgetColumns = false,
+  showMediaUploadColumns = false,
+  autoOpenActivityId = null,
+  autoOpenPlanId = null,
+  highlightBudgetId = null,
+  highlightMetaId = null,
+}) => {
   // Group activities by plan_id
   const activitiesByPlan = useMemo(() => {
     const grouped = {};
@@ -171,6 +184,9 @@ export const MarketingPlansTable = ({ plans = [], activities = [], plansSummary 
           showBudgetColumns={showBudgetColumns}
           showMediaUploadColumns={showMediaUploadColumns}
           autoOpenActivityId={autoOpenActivityId}
+          autoOpenPlanId={autoOpenPlanId}
+          highlightBudgetId={highlightBudgetId}
+          highlightMetaId={highlightMetaId}
         />
       ))}
     </div>

@@ -186,9 +186,9 @@ export const exportReportToExcel = (reportData, filename = 'report') => {
       try {
         const { rowIndex, activity_id, plan_id } = meta;
         const params = new URLSearchParams();
-        if (activity_id) params.set('activity', String(activity_id));
-        if (plan_id) params.set('plan', String(plan_id));
-        if (termId) params.set('term', String(termId));
+        if (activity_id) params.set('activity_id', String(activity_id));
+        if (plan_id) params.set('plan_id', String(plan_id));
+        if (termId) params.set('term_id', String(termId));
         params.set('openDrawer', '1');
 
         const appOrigin = (typeof window !== 'undefined' && window.location?.origin) || '';

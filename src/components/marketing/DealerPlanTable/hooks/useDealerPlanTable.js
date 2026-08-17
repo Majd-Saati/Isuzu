@@ -3,7 +3,12 @@ import { useSelector } from 'react-redux';
 import { useCreateActivity, useUpdateActivityStatus } from '@/hooks/api/useActivities';
 import { useDeletePlan } from '@/hooks/api/usePlans';
 
-export const useDealerPlanTable = ({ plan, autoOpenActivityId, onPlanDeleted }) => {
+export const useDealerPlanTable = ({
+  plan,
+  autoOpenActivityId,
+  autoOpenPlanId = null,
+  onPlanDeleted,
+}) => {
   // Get user from Redux store
   const user = useSelector((state) => state.auth.user);
   const isAdmin = user?.is_admin === '1' || user?.is_admin === 1;
@@ -161,14 +166,15 @@ export const useDealerPlanTable = ({ plan, autoOpenActivityId, onPlanDeleted }) 
     setOpenStatusMenu(openStatusMenu === activityId ? null : activityId);
   };
 
-  // Auto-open drawer for activity_id from URL
+  // Auto-open drawer for activity_id from URL (optionally scoped to plan_id)
   useEffect(() => {
     if (!autoOpenActivityId) return;
     setAutoOpened(false);
-  }, [autoOpenActivityId]);
+  }, [autoOpenActivityId, autoOpenPlanId]);
 
   useEffect(() => {
     if (!autoOpenActivityId || autoOpened) return;
+    if (autoOpenPlanId && String(plan.id) !== String(autoOpenPlanId)) return;
     if (plan.activities && !showActivityDrawer) {
       const activity = plan.activities.find(a => parseInt(a.id) === parseInt(autoOpenActivityId));
       if (activity) {
@@ -177,7 +183,7 @@ export const useDealerPlanTable = ({ plan, autoOpenActivityId, onPlanDeleted }) 
         setAutoOpened(true);
       }
     }
-  }, [autoOpenActivityId, plan.activities, showActivityDrawer, autoOpened]);
+  }, [autoOpenActivityId, autoOpenPlanId, plan.id, plan.activities, showActivityDrawer, autoOpened]);
 
   // Close dropdown on scroll, resize, or click outside
   useEffect(() => {
