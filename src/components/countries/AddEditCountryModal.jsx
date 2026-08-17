@@ -60,13 +60,6 @@ export const AddEditCountryModal = ({ isOpen, onClose, editData = null }) => {
     }
   });
 
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget && !isLoading) {
-      formik.resetForm();
-      onClose();
-    }
-  };
-
   const handleClose = () => {
     if (!isLoading) {
       formik.resetForm();
@@ -79,7 +72,6 @@ export const AddEditCountryModal = ({ isOpen, onClose, editData = null }) => {
   return (
     <div 
       className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in"
-      onClick={handleBackdropClick}
     >
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md animate-scale-in transform transition-all">
         {/* Modal Header */}

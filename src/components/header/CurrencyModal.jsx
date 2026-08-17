@@ -40,10 +40,6 @@ export const CurrencyModal = ({ isOpen, onClose }) => {
     onClose();
   };
 
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) onClose();
-  };
-
   if (!isOpen) return null;
 
   const modal = (
@@ -55,7 +51,6 @@ export const CurrencyModal = ({ isOpen, onClose }) => {
     >
       <div
         className="absolute inset-0 bg-black/50 dark:bg-black/60 backdrop-blur-sm"
-        onClick={handleBackdropClick}
         aria-hidden="true"
       />
       <div className="relative z-10 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border-2 border-gray-200 dark:border-gray-700 w-full max-w-md p-6 animate-scale-in">

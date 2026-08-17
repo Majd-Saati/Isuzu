@@ -45,13 +45,6 @@ export const EditTermExchangeModal = ({ isOpen, onClose, editData }) => {
     },
   });
 
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget && !isLoading) {
-      formik.resetForm();
-      onClose();
-    }
-  };
-
   const handleClose = () => {
     if (!isLoading) {
       formik.resetForm();
@@ -64,7 +57,6 @@ export const EditTermExchangeModal = ({ isOpen, onClose, editData }) => {
   return (
     <div
       className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in"
-      onClick={handleBackdropClick}
     >
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md animate-scale-in transform transition-all">
         <div className="flex items-center justify-between p-6 border-b-2 border-gray-200 dark:border-gray-700 bg-gradient-to-r from-[#E60012]/5 dark:from-[#E60012]/10 to-transparent">

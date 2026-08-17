@@ -23,12 +23,6 @@ export const SetBudgetAllocationModal = ({
     preselectedTermId,
   });
 
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget && !isSubmitting && !formik.isSubmitting) {
-      handleClose();
-    }
-  };
-
   if (!isOpen) return null;
 
   const submitting = isSubmitting || formik.isSubmitting;
@@ -36,7 +30,6 @@ export const SetBudgetAllocationModal = ({
   return (
     <div
       className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-[10000] p-4 animate-fade-in"
-      onClick={handleBackdropClick}
       aria-modal="true"
       role="dialog"
     >

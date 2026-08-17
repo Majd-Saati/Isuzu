@@ -10,9 +10,8 @@ export const AddRequestModal = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/50"
-        onClick={onClose}
       />
       
       {/* Modal */}

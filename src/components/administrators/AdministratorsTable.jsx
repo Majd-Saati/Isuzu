@@ -12,15 +12,17 @@ const formatAdministrator = (admin) => ({
   role: admin.role || admin.role_name || 'Administrator',
   assigned: admin.assigned || admin.campaigns_count ? `${admin.campaigns_count} Campaigns` : '0 Campaigns',
   status: admin.status === '1' || admin.status === 1 || admin.status === 'active' ? 'active' : 'inactive',
-  hasNotification: admin.hasNotification || admin.has_notification || false,
+  // `admin_emails` = 1 means this administrator receives system emails
+  receivesEmails: admin.admin_emails === 1 || admin.admin_emails === '1',
 });
 
-export const AdministratorsTable = ({ 
-  administrators = [], 
+export const AdministratorsTable = ({
+  administrators = [],
   pagination,
   onEdit,
   onDelete,
   onUpdatePassword,
+  onEnableEmails,
   onPageChange,
   onItemsPerPageChange,
   currentUserId
@@ -107,17 +109,21 @@ export const AdministratorsTable = ({
                   <KeyRound className="w-5 h-5 text-[#6B7280] dark:text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors" />
                 </button>
 
-                <button className={`p-2.5 rounded-lg transition-all duration-200 hover:shadow-sm group relative ${
-                  display.hasNotification 
-                    ? 'bg-gradient-to-r from-amber-50 dark:from-amber-900/20 to-yellow-50 dark:to-yellow-900/20 hover:from-amber-100 dark:hover:from-amber-900/30 hover:to-yellow-100 dark:hover:to-yellow-900/30 shadow-sm' 
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}>
-                  <Bell className={`w-5 h-5 transition-colors ${
-                    display.hasNotification ? 'text-amber-600 dark:text-amber-400' : 'text-[#6B7280] dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
-                  }`} />
-                  {display.hasNotification && (
-                    <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse" />
-                  )}
+                <button
+                  onClick={() => onEnableEmails?.(admin)}
+                  className={`p-2.5 rounded-lg transition-all duration-200 hover:shadow-sm group ${
+                    display.receivesEmails
+                      ? 'bg-gradient-to-r from-amber-50 dark:from-amber-900/20 to-yellow-50 dark:to-yellow-900/20 shadow-sm hover:from-amber-100 dark:hover:from-amber-900/30 hover:to-yellow-100 dark:hover:to-yellow-900/30'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                  }`}
+                  title={display.receivesEmails ? 'Receiving email notifications — click to disable' : 'Not receiving emails — click to enable'}
+                >
+                  <Bell
+                    fill={display.receivesEmails ? 'currentColor' : 'none'}
+                    className={`w-5 h-5 transition-colors ${
+                      display.receivesEmails ? 'text-amber-600 dark:text-amber-400' : 'text-[#6B7280] dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
+                    }`}
+                  />
                 </button>
                 
                 <button 
@@ -193,20 +199,24 @@ export const AdministratorsTable = ({
                   <span className="text-sm text-[#6B7280] dark:text-gray-400 group-hover:text-amber-600 dark:group-hover:text-amber-400">Password</span>
                 </button>
 
-                <button className={`flex-1 p-2.5 rounded-lg transition-all duration-200 hover:shadow-sm group relative flex items-center justify-center gap-2 ${
-                  display.hasNotification 
-                    ? 'bg-gradient-to-r from-amber-50 dark:from-amber-900/20 to-yellow-50 dark:to-yellow-900/20 hover:from-amber-100 dark:hover:from-amber-900/30 hover:to-yellow-100 dark:hover:to-yellow-900/30 shadow-sm' 
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}>
-                  <Bell className={`w-4 h-4 transition-colors ${
-                    display.hasNotification ? 'text-amber-600 dark:text-amber-400' : 'text-[#6B7280] dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
-                  }`} />
+                <button
+                  onClick={() => onEnableEmails?.(admin)}
+                  className={`flex-1 p-2.5 rounded-lg transition-all duration-200 hover:shadow-sm group flex items-center justify-center gap-2 ${
+                    display.receivesEmails
+                      ? 'bg-gradient-to-r from-amber-50 dark:from-amber-900/20 to-yellow-50 dark:to-yellow-900/20 shadow-sm hover:from-amber-100 dark:hover:from-amber-900/30 hover:to-yellow-100 dark:hover:to-yellow-900/30'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                  }`}
+                  title={display.receivesEmails ? 'Receiving email notifications — tap to disable' : 'Not receiving emails — tap to enable'}
+                >
+                  <Bell
+                    fill={display.receivesEmails ? 'currentColor' : 'none'}
+                    className={`w-4 h-4 transition-colors ${
+                      display.receivesEmails ? 'text-amber-600 dark:text-amber-400' : 'text-[#6B7280] dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
+                    }`}
+                  />
                   <span className={`text-sm transition-colors ${
-                    display.hasNotification ? 'text-amber-600 dark:text-amber-400' : 'text-[#6B7280] dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
-                  }`}>Notify</span>
-                  {display.hasNotification && (
-                    <div className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-gray-900 animate-pulse" />
-                  )}
+                    display.receivesEmails ? 'text-amber-600 dark:text-amber-400' : 'text-[#6B7280] dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
+                  }`}>Emails</span>
                 </button>
                 
                 <button 

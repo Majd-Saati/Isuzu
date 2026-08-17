@@ -1,7 +1,7 @@
 // Single source of truth for API/media base URLs.
 // Set `VITE_API_BASE_URL` in `.env` (or CI secret at build time).
-// Fallback matches local `.env` only when the env var is missing.
-const FALLBACK_API_BASE_URL = 'https://marketing.5v.ae/api/';
+// Fallback is the production API when the env var is missing.
+const FALLBACK_API_BASE_URL = 'https://marketing.isuzu-tech.com/api/';
 
 const rawBase = import.meta.env.VITE_API_BASE_URL || FALLBACK_API_BASE_URL;
 

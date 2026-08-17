@@ -64,10 +64,6 @@ export const AddPlanModal = ({
     }
   }, [showTermDropdown]);
 
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget && !isSubmitting) handleClose();
-  };
-
   const handleTermSelect = (term) => {
     formik.setFieldValue('termId', term.id);
     setSelectedTermName(term.name);
@@ -102,7 +98,6 @@ export const AddPlanModal = ({
   return (
     <div
       className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in"
-      onClick={handleBackdropClick}
     >
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-scale-in transform transition-all">
         <AddPlanModalHeader mode={mode} onClose={handleClose} isSubmitting={isSubmitting} />

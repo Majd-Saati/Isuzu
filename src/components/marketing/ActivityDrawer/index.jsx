@@ -268,7 +268,6 @@ export const ActivityDrawer = ({
         className={`fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[9998] transition-opacity duration-300 ease-out ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
-        onClick={onClose}
       />
 
       {/* Drawer */}

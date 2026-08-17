@@ -10,7 +10,6 @@ export const AcceptBudgetModal = ({ isOpen, onClose, onConfirm, budget, isLoadin
       {/* Modal Backdrop */}
       <div
         className="fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm z-[10000] transition-opacity duration-200"
-        onClick={onClose}
       />
       
       {/* Modal */}

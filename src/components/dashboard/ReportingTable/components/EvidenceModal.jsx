@@ -25,13 +25,11 @@ export const EvidenceModal = ({ evidences, activityName, activityId, onClose }) 
 
   return (
     <>
-      <div 
+      <div
         className="fixed inset-0 bg-black/70 dark:bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4"
-        onClick={onClose}
       >
-        <div 
+        <div
           className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden border border-gray-200 dark:border-gray-700"
-          onClick={(e) => e.stopPropagation()}
           style={{ animation: 'modal-pop 0.25s ease-out' }}
         >
           {/* Header */}
@@ -226,9 +224,8 @@ export const EvidenceModal = ({ evidences, activityName, activityId, onClose }) 
 
       {/* Full-size Image Preview */}
       {selectedImage && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/95 flex items-center justify-center z-[60]"
-          onClick={() => setSelectedImage(null)}
         >
           {/* Top bar */}
           <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between bg-gradient-to-b from-black/80 to-transparent">
@@ -258,7 +255,6 @@ export const EvidenceModal = ({ evidences, activityName, activityId, onClose }) 
             src={selectedImage}
             alt="Full size preview"
             className="max-w-[95vw] max-h-[90vh] object-contain rounded-xl shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
           />
         </div>
       )}

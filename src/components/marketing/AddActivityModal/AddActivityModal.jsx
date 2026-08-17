@@ -52,18 +52,11 @@ export const AddActivityModal = ({
     initialActivity,
   });
 
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget && !isSubmitting && !formik.isSubmitting) {
-      onClose();
-    }
-  };
-
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-[10000] p-4 animate-fade-in"
-      onClick={handleBackdropClick}
     >
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md animate-scale-in transform transition-all">
         {/* Modal Header */}

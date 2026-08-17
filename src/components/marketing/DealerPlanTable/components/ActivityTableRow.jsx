@@ -133,11 +133,9 @@ export const ActivityTableRow = ({
             {/* Modal */}
             <div
               className="fixed inset-0 z-[10001] flex items-center justify-center p-4"
-              onClick={() => setShowLogoModal(false)}
             >
               <div
                 className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg animate-scale-in flex flex-col max-h-[85vh]"
-                onClick={(e) => e.stopPropagation()}
               >
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b-2 border-gray-200 dark:border-gray-700">

@@ -5,6 +5,7 @@ import { AdministratorsTableSkeleton } from '@/components/administrators/Adminis
 import { AdministratorsTableEmpty } from '@/components/administrators/AdministratorsTableEmpty';
 import { AddEditUserModal } from '@/components/users/AddEditUserModal';
 import { UpdatePasswordModal } from '@/components/users/UpdatePasswordModal';
+import { EnableAdminEmailsModal } from '@/components/administrators/EnableAdminEmailsModal';
 import { DeleteConfirmationModal } from '@/components/ui/DeleteConfirmationModal';
 import { useUsers, useDeleteUser } from '@/hooks/api/useUsers';
 import { Search, Plus, X } from 'lucide-react';
@@ -21,6 +22,8 @@ const Administrators = () => {
   const [deleteError, setDeleteError] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordAdmin, setPasswordAdmin] = useState(null);
+  const [showEnableEmailsModal, setShowEnableEmailsModal] = useState(false);
+  const [emailsAdmin, setEmailsAdmin] = useState(null);
 
   // Pagination
   const [page, setPage] = useState(1);
@@ -66,6 +69,16 @@ const Administrators = () => {
   const closePasswordModal = useCallback(() => {
     setShowPasswordModal(false);
     setPasswordAdmin(null);
+  }, []);
+
+  const openEnableEmailsModal = useCallback((admin) => {
+    setEmailsAdmin(admin);
+    setShowEnableEmailsModal(true);
+  }, []);
+
+  const closeEnableEmailsModal = useCallback(() => {
+    setShowEnableEmailsModal(false);
+    setEmailsAdmin(null);
   }, []);
 
   const openDeleteModal = useCallback((admin) => {
@@ -144,6 +157,7 @@ const Administrators = () => {
         onEdit={openEditModal}
         onDelete={openDeleteModal}
         onUpdatePassword={openPasswordModal}
+        onEnableEmails={openEnableEmailsModal}
         onPageChange={handlePageChange}
         onItemsPerPageChange={handleItemsPerPageChange}
         currentUserId={currentUser?.id}
@@ -225,6 +239,13 @@ const Administrators = () => {
         isOpen={showPasswordModal}
         onClose={closePasswordModal}
         user={passwordAdmin}
+      />
+
+      {/* Enable Email Notifications Modal */}
+      <EnableAdminEmailsModal
+        isOpen={showEnableEmailsModal}
+        onClose={closeEnableEmailsModal}
+        admin={emailsAdmin}
       />
 
       {/* Delete Confirmation Modal */}
