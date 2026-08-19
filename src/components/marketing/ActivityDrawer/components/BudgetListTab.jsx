@@ -22,15 +22,24 @@ export const BudgetListTab = ({
   activityEndDate,
   onBudgetCreated,
 }) => {
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(Boolean(filterType));
   const [isBudgetItemsExpanded, setIsBudgetItemsExpanded] = useState(true);
   const { budget: rawBudget = [], pagination } = data || {};
-  const budget = isAdmin ? rawBudget : rawBudget.filter(item => item.type !== 'support cost');
+  const allBudgets = isAdmin ? rawBudget : rawBudget.filter(item => item.type !== 'support cost');
+  const budget = filterType
+    ? allBudgets.filter((item) => {
+        const typeMatch = item.type === filterType;
+        const statusMatch = !filterStatus
+          ? true
+          : (item.status || '').toLowerCase() === String(filterStatus).toLowerCase();
+        return typeMatch && statusMatch;
+      })
+    : allBudgets;
 
-  // Separate costs by type
-  const estimatedCosts = budget.filter(item => item.type === 'estimated cost');
-  const actualCosts = budget.filter(item => item.type === 'actual cost');
-  const supportCosts = budget.filter(item => item.type === 'support cost');
+  // Separate costs by type (from full list so totals stay accurate with a column filter)
+  const estimatedCosts = allBudgets.filter(item => item.type === 'estimated cost');
+  const actualCosts = allBudgets.filter(item => item.type === 'actual cost');
+  const supportCosts = allBudgets.filter(item => item.type === 'support cost');
 
   // Calculate totals
   const totalEstimated = estimatedCosts.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
@@ -78,7 +87,8 @@ export const BudgetListTab = ({
           activityId={activityId}
           planId={planId}
           companyId={companyId}
-          existingBudgets={budget}
+          existingBudgets={allBudgets}
+          initialType={filterType}
           isAdmin={isAdmin}
           onSuccess={() => {
             setShowAddForm(false);
@@ -150,7 +160,7 @@ export const BudgetListTab = ({
               <List className="w-4 h-4 text-gray-400 dark:text-gray-500" />
               Budget Items
               <span className="text-xs font-normal text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
-                {pagination?.total || budget.length}
+                {filterType ? budget.length : (pagination?.total || allBudgets.length)}
               </span>
             </h3>
             <ChevronDown 

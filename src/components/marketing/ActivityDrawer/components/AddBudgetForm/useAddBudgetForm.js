@@ -10,13 +10,14 @@ export function useAddBudgetForm({
   planId,
   companyId,
   existingBudgets = [],
+  initialType = null,
   isAdmin = true,
   onSuccess,
   onCancel,
   activityStartDate,
   activityEndDate,
 }) {
-  const [type, setType] = useState('estimated cost');
+  const [type, setType] = useState(initialType || 'estimated cost');
   const [value, setValue] = useState('');
   const [description, setDescription] = useState('');
   const [media, setMedia] = useState([]);
@@ -95,16 +96,23 @@ export function useAddBudgetForm({
   );
 
   const defaultType = useMemo(() => {
+    const preferred = typeOptions.find((t) => t.value === initialType && t.canAdd);
+    if (preferred) return preferred.value;
     const available = typeOptions.find((t) => t.canAdd);
     return available ? available.value : 'estimated cost';
-  }, [typeOptions]);
+  }, [typeOptions, initialType]);
 
   useEffect(() => {
+    const preferred = typeOptions.find((t) => t.value === initialType && t.canAdd);
+    if (preferred) {
+      setType(preferred.value);
+      return;
+    }
     const currentTypeOption = typeOptions.find((t) => t.value === type);
     if (!currentTypeOption?.canAdd) {
       setType(defaultType);
     }
-  }, [type, typeOptions, defaultType]);
+  }, [type, typeOptions, defaultType, initialType]);
 
   const handleDistributeEvenly = () => {
     const totalValue = parseFloat(value) || 0;

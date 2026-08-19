@@ -6,22 +6,19 @@ export const useActivityDrawerData = ({
   activity,
   planId,
   companyId,
-  budgetFilterType,
-  budgetFilterStatus,
   metaType,
 }) => {
-  // Memoize query params for budget list
+  // Always fetch the full budget list. Column-click filters (type/status) are applied
+  // client-side so add-budget validation can still see estimated/actual prerequisites.
   const budgetQueryParams = useMemo(
     () => ({
       activityId: activity?.id,
       planId: planId,
       companyId: companyId,
-      type: budgetFilterType,
-      status: budgetFilterStatus,
       page: 1,
       perPage: 100,
     }),
-    [activity?.id, planId, companyId, budgetFilterType, budgetFilterStatus]
+    [activity?.id, planId, companyId]
   );
 
   // Memoize query params for meta (comments/evidences)

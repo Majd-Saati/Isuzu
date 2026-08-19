@@ -91,14 +91,12 @@ export const ActivityDrawer = ({
     isErrorBudget,
     refetchBudgetList,
   } = useActivityDrawerData({
-      isOpen,
-      activity,
-      planId,
-      companyId,
-      budgetFilterType,
-      budgetFilterStatus,
-      metaType,
-    });
+    isOpen,
+    activity,
+    planId,
+    companyId,
+    metaType,
+  });
 
   const { 
     updateBudgetStatusMutation, 
