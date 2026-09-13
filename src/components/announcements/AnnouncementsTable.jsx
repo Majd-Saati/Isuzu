@@ -1,5 +1,6 @@
 import React from 'react';
-import { Megaphone, Building2, Users, CalendarClock, Pencil, Trash2, MailOpen, Loader2 } from 'lucide-react';
+import { Megaphone, Building2, Users, CalendarClock, Pencil, Trash2, MailOpen, Loader2, Eye } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 import { CustomPagination } from '@/components/ui/CustomPagination';
 
 const formatDate = (dateString) => {
@@ -15,6 +16,36 @@ const formatDate = (dateString) => {
 
 const isAnnouncementRead = (announcement) =>
   announcement.has_read === true || announcement.has_read === 1 || announcement.has_read === '1';
+
+const AnnouncementTooltipBody = ({ announcement }) => {
+  const title = announcement?.title?.trim() || 'Announcement';
+  const body = announcement?.description?.trim() || 'No message content.';
+
+  return (
+    <div className="space-y-1.5 text-left">
+      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 break-words [overflow-wrap:anywhere]">
+        {title}
+      </p>
+      <p className="text-xs font-normal text-gray-600 dark:text-gray-300 whitespace-pre-wrap break-words [overflow-wrap:anywhere] max-h-[40vh] overflow-y-auto">
+        {body}
+      </p>
+    </div>
+  );
+};
+
+const AnnouncementFullTooltip = ({ announcement, children }) => (
+  <Tooltip delayDuration={200}>
+    <TooltipTrigger asChild>{children}</TooltipTrigger>
+    <TooltipContent
+      side="top"
+      align="start"
+      collisionPadding={12}
+      className="max-w-[min(24rem,calc(100vw-1.5rem))] px-3.5 py-3"
+    >
+      <AnnouncementTooltipBody announcement={announcement} />
+    </TooltipContent>
+  </Tooltip>
+);
 
 const AudienceBadge = ({ audienceType, companyName }) =>
   audienceType === 'all' ? (
@@ -77,14 +108,20 @@ export const AnnouncementsTable = ({
                   <div className="w-9 h-9 rounded-lg bg-[#E60012]/10 flex items-center justify-center flex-shrink-0">
                     <Megaphone className="w-5 h-5 text-[#E60012]" />
                   </div>
-                  <div className="min-w-0">
-                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {announcement.title || '—'}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[320px]">
-                      {announcement.description || '—'}
-                    </div>
-                  </div>
+                  <AnnouncementFullTooltip announcement={announcement}>
+                    <button
+                      type="button"
+                      className="min-w-0 max-w-[320px] text-left rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E60012]/40"
+                      aria-label="View full announcement"
+                    >
+                      <span className="block text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                        {announcement.title || '—'}
+                      </span>
+                      <span className="block text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {announcement.description || '—'}
+                      </span>
+                    </button>
+                  </AnnouncementFullTooltip>
                 </div>
               </td>
               <td className="px-6 py-4">
@@ -122,6 +159,15 @@ export const AnnouncementsTable = ({
               </td>
               <td className="px-6 py-4">
                 <div className="flex items-center justify-center gap-1">
+                  <AnnouncementFullTooltip announcement={announcement}>
+                    <button
+                      type="button"
+                      className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                      aria-label="View full announcement"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                  </AnnouncementFullTooltip>
                   {!isAdmin && !isAnnouncementRead(announcement) && (
                     <button
                       onClick={() => onMarkRead?.(announcement)}
