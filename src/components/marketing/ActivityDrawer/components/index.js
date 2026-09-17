@@ -13,3 +13,4 @@ export { OverviewTab } from './OverviewTab';
 export { BudgetListTab } from './BudgetListTab';
 export { DrawerHeader } from './DrawerHeader';
 export { DrawerResizeHandle } from './DrawerResizeHandle';
+export { DownloadMediaButton } from './DownloadMediaButton';

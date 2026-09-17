@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, Trash2, Edit2, CheckCheck, Loader2 } from 'lucide-react';
+import { DownloadMediaButton } from './DownloadMediaButton';
 
 export const DrawerHeader = ({
   activityName,
@@ -9,6 +10,10 @@ export const DrawerHeader = ({
   unreadCount = 0,
   onMarkAllRead,
   isMarkingRead = false,
+  companyId,
+  termId,
+  planId,
+  activityId,
 }) => {
   const showMarkRead = unreadCount > 0 && typeof onMarkAllRead === 'function';
 
@@ -34,6 +39,12 @@ export const DrawerHeader = ({
             )}
           </button>
         )}
+        <DownloadMediaButton
+          companyId={companyId}
+          termId={termId}
+          planId={planId}
+          activityId={activityId}
+        />
         <button
           onClick={onEdit}
           className="p-2 rounded-xl text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200"

@@ -193,6 +193,7 @@ export const DealerPlanTable = ({
         activity={selectedActivity}
         planId={plan.id}
         companyId={plan.company_id}
+        termId={plan.term_id}
         initialBudgetType={drawerBudgetFilter?.type}
         initialBudgetStatus={drawerBudgetFilter?.status}
         initialMetaType={drawerMetaType}

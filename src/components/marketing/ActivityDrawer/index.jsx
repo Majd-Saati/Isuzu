@@ -26,6 +26,7 @@ export const ActivityDrawer = ({
   activity,
   planId,
   companyId,
+  termId,
   initialBudgetType,
   initialBudgetStatus,
   initialMetaType,
@@ -338,6 +339,10 @@ export const ActivityDrawer = ({
           unreadCount={unreadCount}
           onMarkAllRead={handleMarkActivityRead}
           isMarkingRead={isMarkingActivity}
+          companyId={companyId}
+          termId={termId}
+          planId={planId}
+          activityId={activity?.id}
         />
 
         {/* Tabs */}
