@@ -59,7 +59,7 @@ export const CommentCard = ({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
-            <p className="text-sm text-gray-700 dark:text-gray-300 flex-1">
+            <p className="text-sm text-gray-700 dark:text-gray-300 flex-1 min-w-0 break-words">
               {isAdmin && unread && (
                 <span className="mr-2 inline-flex items-center rounded-full bg-[#E60012] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white align-middle">
                   New
