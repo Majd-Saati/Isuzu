@@ -62,6 +62,23 @@ export const useAnnouncements = (params = {}, options = {}) => {
   });
 };
 
+/**
+ * Unread announcements count for the current (non-admin) user, for the
+ * sidebar badge. Returns the numeric count via `select`.
+ */
+export const useUnreadAnnouncementsCount = (options = {}) => {
+  const { enabled = true, staleTime = 60 * 1000, refetchOnWindowFocus = true } = options;
+
+  return useQuery({
+    queryKey: ['announcements', 'unread-count'],
+    queryFn: announcementsService.getUnreadAnnouncementsCount,
+    select: (data) => Number(data?.body?.unread_announcements_count) || 0,
+    enabled: Boolean(enabled),
+    staleTime,
+    refetchOnWindowFocus,
+  });
+};
+
 export const useCreateAnnouncement = () => {
   const queryClient = useQueryClient();
 

@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp, Plus, ChevronLeft, ChevronRight } from 'lucide-
 import logo from "../../asstes/images/logo.png";
 import { mainNavigation, otherNavigation } from '../../data/navigationData';
 import { useDealers } from '@/hooks/api/useCompanies';
+import { useUnreadAnnouncementsCount } from '@/hooks/api/useAnnouncements';
 import { AddEditCompanyModal } from '@/components/companies/AddEditCompanyModal';
 import { UnreadBadge } from '@/components/ui/UnreadBadge';
 import { canAccessRoute, isAdminUser } from '@/lib/permissions';
@@ -22,6 +23,9 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
   
   // Fetch dealers only for admin users
   const { data: dealers = [] } = useDealers({ enabled: isAdmin });
+
+  // Unread announcements badge is shown for non-admin users only
+  const { data: unreadAnnouncementsCount = 0 } = useUnreadAnnouncementsCount({ enabled: !isAdmin });
   
   // Filter navigation items based on permissions
   const filteredMainNavigation = mainNavigation.filter((item) => {
@@ -251,6 +255,9 @@ export const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                   />
                   {!isCollapsed && (
                     <span className="text-sm leading-6 whitespace-nowrap flex-1 text-left">{item.label}</span>
+                  )}
+                  {!isCollapsed && item.id === 'announcements' && !isAdmin && (
+                    <UnreadBadge count={unreadAnnouncementsCount} noun="announcement" pulse />
                   )}
                 </button>
               ))}

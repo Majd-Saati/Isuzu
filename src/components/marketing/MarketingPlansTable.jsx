@@ -78,6 +78,7 @@ const transformActivity = (apiActivity) => {
     hasComment: false,
     commentCount: 0,
     unreadCommentsCount: Number(apiActivity.unread_comments_count) || 0,
+    pendingBudgetAllocationsCount: Number(apiActivity.pending_budget_allocations_count) || 0,
     hasAddIcon: true,
     duration: {
       start: apiActivity.starts_at,

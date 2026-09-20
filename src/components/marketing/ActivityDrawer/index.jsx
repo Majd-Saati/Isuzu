@@ -58,6 +58,10 @@ export const ActivityDrawer = ({
 
   const unreadCount = markedAllRead ? 0 : Number(activity?.unreadCommentsCount) || 0;
 
+  // Budget allocations still awaiting a decision on this activity (null-safe:
+  // the key may be absent on older API responses or a not-yet-loaded activity).
+  const pendingBudgetCount = Number(activity?.pendingBudgetAllocationsCount) || 0;
+
   // Scope the loading spinner to whichever mark-read action is in flight.
   const markReadVars = markCommentsReadMutation.isPending
     ? markCommentsReadMutation.variables
@@ -339,6 +343,7 @@ export const ActivityDrawer = ({
           unreadCount={unreadCount}
           onMarkAllRead={handleMarkActivityRead}
           isMarkingRead={isMarkingActivity}
+          pendingBudgetCount={pendingBudgetCount}
           companyId={companyId}
           termId={termId}
           planId={planId}

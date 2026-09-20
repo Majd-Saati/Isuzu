@@ -65,4 +65,12 @@ export const announcementsService = {
   markAnnouncementRead: async (id) => {
     return apiClient.post('/announcement_mark_read', { announcement_id: id });
   },
+
+  /**
+   * Number of announcements the current (non-admin) user has not read yet.
+   * Response body shape: { unread_announcements_count: number }.
+   */
+  getUnreadAnnouncementsCount: async () => {
+    return apiClient.get('/unread_number_announcements');
+  },
 };

@@ -10,13 +10,14 @@ import React from 'react';
  * @param {number}  count   - number of unread items
  * @param {boolean} pulse   - show the animated attention halo
  * @param {string}  className - extra classes (e.g. absolute positioning)
+ * @param {string}  noun    - singular noun for the accessible label (default "comment")
  */
-export const UnreadBadge = ({ count = 0, pulse = false, className = '' }) => {
+export const UnreadBadge = ({ count = 0, pulse = false, className = '', noun = 'comment' }) => {
   const value = Number(count) || 0;
   if (value <= 0) return null;
 
   const display = value > 99 ? '99+' : value;
-  const label = `${value} unread comment${value > 1 ? 's' : ''}`;
+  const label = `${value} unread ${noun}${value > 1 ? 's' : ''}`;
 
   return (
     <span
