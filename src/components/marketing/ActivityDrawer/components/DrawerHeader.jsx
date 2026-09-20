@@ -25,7 +25,7 @@ export const DrawerHeader = ({
       <div className="min-w-0">
         <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">Activity Details</h2>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 truncate">{activityName || 'Activity'}</p>
-        {true && (
+        {hasPending && (
           <span
             className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700/60 px-2.5 py-1 text-xs font-semibold text-amber-800 dark:text-amber-300"
             title={`${pendingCount} budget allocation${pendingCount > 1 ? 's' : ''} awaiting a decision`}
