@@ -95,6 +95,31 @@ const MarketingPlans = () => {
     isLoadingActivities ||
     (Boolean(planIdFromUrl && activityIdFromUrl) && isLoadingDeepPlan);
 
+  // Resolve the company/term scope for the page-level media download.
+  // Prefer an explicit filter selection; otherwise fall back to the single
+  // company/term shared by every plan currently in view (covers non-admins,
+  // whose company is implicit, and single-company/term listings).
+  const singleFieldId = (items, field) => {
+    const ids = [
+      ...new Set(
+        items
+          .map((item) => item?.[field])
+          .filter((v) => v != null && v !== '')
+          .map(String)
+      ),
+    ];
+    return ids.length === 1 ? ids[0] : null;
+  };
+
+  const downloadCompanyId = useMemo(
+    () => (companyFilterId != null ? companyFilterId : singleFieldId(plans, 'company_id')),
+    [companyFilterId, plans]
+  );
+  const downloadTermId = useMemo(
+    () => (termFilterId != null ? termFilterId : singleFieldId(plans, 'term_id')),
+    [termFilterId, plans]
+  );
+
   // Modal handlers
   const openCreateModal = useCallback(() => {
     setPlanModalMode('create');
@@ -189,6 +214,8 @@ const MarketingPlans = () => {
         search={searchTerm}
         onSearchChange={handleSearchChange}
         isAdmin={isAdmin}
+        downloadCompanyId={downloadCompanyId}
+        downloadTermId={downloadTermId}
       />
 
       {/* Content Separator */}

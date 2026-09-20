@@ -1,6 +1,7 @@
 import React from 'react';
 import { Plus, X } from 'lucide-react';
 import { FilterDropdown } from './FilterDropdown';
+import { PlanMediaDownloadButton } from './PlanMediaDownloadButton';
 
 /**
  * Action bar component for Marketing Plans page
@@ -13,6 +14,8 @@ export const MarketingPlansActionBar = ({
   search = '',
   onSearchChange,
   isAdmin = true, // Default to true to maintain backward compatibility
+  downloadCompanyId = null,
+  downloadTermId = null,
 }) => {
   const handleClearSearch = () => {
     if (onSearchChange) {
@@ -70,7 +73,7 @@ export const MarketingPlansActionBar = ({
           )}
         </div>
 
-        {/* Filters */}
+        {/* Filters + page-level actions */}
         <div className="flex items-center gap-3 ml-auto flex-wrap">
           {/* Only show company filter if user is admin */}
           {isAdmin && (
@@ -91,6 +94,11 @@ export const MarketingPlansActionBar = ({
             onSelect={termFilter.onChange}
             onClear={termFilter.onClear}
             clearLabel="All terms"
+          />
+
+          <PlanMediaDownloadButton
+            companyId={downloadCompanyId}
+            termId={downloadTermId}
           />
         </div>
       </div>
