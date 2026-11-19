@@ -37,8 +37,13 @@ export const announcementsService = {
     const payload = {
       title: data.title,
       description: data.description,
-      for_all: data.for_all,
     };
+    if (data.for_all != null) {
+      payload.for_all = data.for_all;
+    }
+    if (data.is_admin != null) {
+      payload.is_admin = data.is_admin;
+    }
     if (data.company_id != null) {
       payload.company_id = data.company_id;
     }
@@ -50,8 +55,13 @@ export const announcementsService = {
       announcement_id: data.announcement_id,
       title: data.title,
       description: data.description,
-      for_all: data.for_all,
     };
+    if (data.for_all != null) {
+      payload.for_all = data.for_all;
+    }
+    if (data.is_admin != null) {
+      payload.is_admin = data.is_admin;
+    }
     if (data.company_id != null) {
       payload.company_id = data.company_id;
     }

@@ -6,6 +6,19 @@ import { Input } from '@/components/ui/Input';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import { useCreateAnnouncement, useUpdateAnnouncement } from '@/hooks/api/useAnnouncements';
 
+/** Audience select values. "All users" sends `is_admin: 1` instead of `for_all`/`company_id`. */
+const AUDIENCE = {
+  ALL_DEALERS: 'all_dealers',
+  COMPANY: 'company',
+  ALL_USERS: 'all_users',
+};
+
+const getInitialAudience = (editData) => {
+  if (!editData) return AUDIENCE.ALL_DEALERS;
+  if (Number(editData.is_admin) === 1) return AUDIENCE.ALL_USERS;
+  return String(editData.for_all) === '0' ? AUDIENCE.COMPANY : AUDIENCE.ALL_DEALERS;
+};
+
 const announcementSchema = Yup.object({
   title: Yup.string()
     .required('Title is required')
@@ -14,9 +27,9 @@ const announcementSchema = Yup.object({
   description: Yup.string()
     .required('Description is required')
     .max(1000, 'Description must be less than 1000 characters'),
-  for_all: Yup.string().oneOf(['0', '1']).required(),
-  company_id: Yup.string().when('for_all', {
-    is: '0',
+  audience: Yup.string().oneOf(Object.values(AUDIENCE)).required(),
+  company_id: Yup.string().when('audience', {
+    is: AUDIENCE.COMPANY,
     then: (schema) => schema.required('Company is required'),
     otherwise: (schema) => schema.notRequired(),
   }),
@@ -40,7 +53,7 @@ export const AddEditAnnouncementModal = ({ isOpen, onClose, editData = null, com
     initialValues: {
       title: editData?.title || '',
       description: editData?.description || '',
-      for_all: editData ? String(editData.for_all) : '1',
+      audience: getInitialAudience(editData),
       company_id: editData?.company_id != null ? String(editData.company_id) : '',
     },
     validationSchema: announcementSchema,
@@ -53,9 +66,15 @@ export const AddEditAnnouncementModal = ({ isOpen, onClose, editData = null, com
       const payload = {
         title: values.title.trim(),
         description: values.description.trim(),
-        for_all: Number(values.for_all),
-        ...(values.for_all === '0' ? { company_id: Number(values.company_id) } : {}),
       };
+      if (values.audience === AUDIENCE.ALL_USERS) {
+        payload.is_admin = 1;
+      } else if (values.audience === AUDIENCE.COMPANY) {
+        payload.for_all = 0;
+        payload.company_id = Number(values.company_id);
+      } else {
+        payload.for_all = 1;
+      }
       if (isEditMode) {
         payload.announcement_id = editData.id;
       }
@@ -71,8 +90,8 @@ export const AddEditAnnouncementModal = ({ isOpen, onClose, editData = null, com
 
   const handleAudienceChange = (e) => {
     const value = e.target.value;
-    formik.setFieldValue('for_all', value);
-    if (value === '1') {
+    formik.setFieldValue('audience', value);
+    if (value !== AUDIENCE.COMPANY) {
       formik.setFieldValue('company_id', '');
     }
   };
@@ -150,19 +169,20 @@ export const AddEditAnnouncementModal = ({ isOpen, onClose, editData = null, com
                 Audience
               </label>
               <select
-                name="for_all"
-                value={formik.values.for_all}
+                name="audience"
+                value={formik.values.audience}
                 onChange={handleAudienceChange}
                 onBlur={formik.handleBlur}
                 disabled={isLoading}
                 className={selectClass(false)}
               >
-                <option value="1">All dealers</option>
-                <option value="0">Specific company</option>
+                <option value={AUDIENCE.ALL_DEALERS}>All dealers</option>
+                <option value={AUDIENCE.COMPANY}>Specific company</option>
+                <option value={AUDIENCE.ALL_USERS}>All users</option>
               </select>
             </div>
 
-            {formik.values.for_all === '0' && (
+            {formik.values.audience === AUDIENCE.COMPANY && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Company
