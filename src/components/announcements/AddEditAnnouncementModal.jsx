@@ -69,6 +69,7 @@ export const AddEditAnnouncementModal = ({ isOpen, onClose, editData = null, com
       };
       if (values.audience === AUDIENCE.ALL_USERS) {
         payload.is_admin = 1;
+        payload.for_all = 1;
       } else if (values.audience === AUDIENCE.COMPANY) {
         payload.for_all = 0;
         payload.company_id = Number(values.company_id);
