@@ -11,7 +11,7 @@ export const createActivitySchema = (planStartDate, planEndDate, isEditMode = fa
       .min(3, 'Activity name must be at least 3 characters')
       .max(100, 'Activity name must be less than 100 characters'),
     companyId: isEditMode ? Yup.string() : Yup.string().required('Dealer is required'),
-    termId: isEditMode ? Yup.string() : Yup.string().required('Term is required'),
+    termId: Yup.string(),
     startsAt: Yup.string()
       .required('Start date is required')
       .test('valid-date', 'Please enter a valid date', function(value) {

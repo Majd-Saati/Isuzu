@@ -61,11 +61,10 @@ export const prepareFormPayload = (values, isEditMode, initialActivity) => {
     };
   }
   
-  // Create mode: send all fields
+  // Create mode: term comes from the plan row for date limits only — do not send term_id
   return {
     name: values.activityName,
     company_id: values.companyId,
-    term_id: values.termId,
     starts_at: values.startsAt,
     ends_at: values.endsAt,
   };

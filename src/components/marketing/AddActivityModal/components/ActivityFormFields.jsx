@@ -1,7 +1,6 @@
 import React from 'react';
 import { Input } from '@/components/ui/Input';
 import { CompanyDropdown } from './CompanyDropdown';
-import { TermDropdown } from './TermDropdown';
 import { DateInput } from './DateInput';
 import { PlanTermInfo } from './PlanTermInfo';
 
@@ -12,17 +11,12 @@ export const ActivityFormFields = ({
   isSubmitting,
   formikIsSubmitting,
   companies,
-  terms,
   planStartDate,
   planEndDate,
   showCompanyDropdown,
   setShowCompanyDropdown,
-  showTermDropdown,
-  setShowTermDropdown,
   selectedCompanyName,
-  selectedTermName,
   handleCompanySelect,
-  handleTermSelect,
 }) => {
   return (
     <div className="p-6 space-y-2">
@@ -56,21 +50,7 @@ export const ActivityFormFields = ({
         />
       )}
 
-      {/* Term Dropdown - Only show in create mode */}
-      {!isEditMode && (
-        <TermDropdown
-          terms={terms}
-          selectedTermName={selectedTermName}
-          showTermDropdown={showTermDropdown}
-          setShowTermDropdown={setShowTermDropdown}
-          formik={formik}
-          isSubmitting={isSubmitting}
-          formikIsSubmitting={formikIsSubmitting}
-          onTermSelect={handleTermSelect}
-        />
-      )}
-
-      {/* Plan Term Info */}
+      {/* Plan Term Info — dates constrained by plan term from the table row */}
       <PlanTermInfo planStartDate={planStartDate} planEndDate={planEndDate} />
 
       {/* Dates */}

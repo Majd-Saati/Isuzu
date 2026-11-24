@@ -24,16 +24,11 @@ export const AddActivityModal = ({
 }) => {
   const {
     isEditMode,
-    isSubmitting: hookIsSubmitting,
     showCompanyDropdown,
     setShowCompanyDropdown,
-    showTermDropdown,
-    setShowTermDropdown,
     selectedCompanyName,
-    selectedTermName,
     formik,
     handleCompanySelect,
-    handleTermSelect,
   } = useAddActivityModal({
     isOpen,
     onClose,
@@ -76,17 +71,12 @@ export const AddActivityModal = ({
             isSubmitting={isSubmitting}
             formikIsSubmitting={formik.isSubmitting}
             companies={companies}
-            terms={terms}
             planStartDate={planStartDate}
             planEndDate={planEndDate}
             showCompanyDropdown={showCompanyDropdown}
             setShowCompanyDropdown={setShowCompanyDropdown}
-            showTermDropdown={showTermDropdown}
-            setShowTermDropdown={setShowTermDropdown}
             selectedCompanyName={selectedCompanyName}
-            selectedTermName={selectedTermName}
             handleCompanySelect={handleCompanySelect}
-            handleTermSelect={handleTermSelect}
           />
 
           {/* Modal Footer */}
