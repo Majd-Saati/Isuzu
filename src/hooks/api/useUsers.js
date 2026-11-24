@@ -1,10 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usersService } from '@/lib/api/services/usersService';
 
-export const useUsers = (params = {}) => {
+export const useUsers = (params = {}, options = {}) => {
+  const { enabled = true } = options;
+
   return useQuery({
     queryKey: ['users', params],
     queryFn: () => usersService.getUsers(params),
+    enabled: Boolean(enabled),
     select: (data) => ({
       users: data?.body?.users || [],
       pagination: data?.body?.pagination || {

@@ -47,6 +47,9 @@ export const announcementsService = {
     if (data.company_id != null) {
       payload.company_id = data.company_id;
     }
+    if (Array.isArray(data.users_list) && data.users_list.length > 0) {
+      payload.users_list = data.users_list;
+    }
     return apiClient.post('/announcement_add', payload);
   },
 
@@ -64,6 +67,9 @@ export const announcementsService = {
     }
     if (data.company_id != null) {
       payload.company_id = data.company_id;
+    }
+    if (Array.isArray(data.users_list) && data.users_list.length > 0) {
+      payload.users_list = data.users_list;
     }
     return apiClient.post('/announcement_update', payload);
   },
