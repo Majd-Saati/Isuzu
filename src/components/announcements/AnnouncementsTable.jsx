@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as Popover from '@radix-ui/react-popover';
 import { Megaphone, Building2, Users, CalendarClock, Pencil, Trash2, MailOpen, Loader2, Eye } from 'lucide-react';
 import { CustomPagination } from '@/components/ui/CustomPagination';
@@ -27,17 +27,45 @@ const PREVIEW_CONTENT_CLASS =
 const HoverClickPopover = ({ content, children, align = 'start' }) => {
   const lacksHover = useLacksHover();
   const [open, setOpen] = useState(false);
+  const closeTimerRef = useRef(null);
+
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current != null) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const openFromHover = () => {
+    if (lacksHover) return;
+    clearCloseTimer();
+    setOpen(true);
+  };
+
+  // Delay close so the pointer can move from trigger → content without dismissing.
+  const scheduleCloseFromHover = () => {
+    if (lacksHover) return;
+    clearCloseTimer();
+    closeTimerRef.current = window.setTimeout(() => {
+      setOpen(false);
+      closeTimerRef.current = null;
+    }, 180);
+  };
+
+  useEffect(() => () => clearCloseTimer(), []);
 
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
+    <Popover.Root
+      open={open}
+      onOpenChange={(next) => {
+        clearCloseTimer();
+        setOpen(next);
+      }}
+    >
       <Popover.Trigger
         asChild
-        onMouseEnter={() => {
-          if (!lacksHover) setOpen(true);
-        }}
-        onMouseLeave={() => {
-          if (!lacksHover) setOpen(false);
-        }}
+        onMouseEnter={openFromHover}
+        onMouseLeave={scheduleCloseFromHover}
       >
         {children}
       </Popover.Trigger>
@@ -50,12 +78,8 @@ const HoverClickPopover = ({ content, children, align = 'start' }) => {
           className={PREVIEW_CONTENT_CLASS}
           onOpenAutoFocus={(e) => e.preventDefault()}
           onCloseAutoFocus={(e) => e.preventDefault()}
-          onMouseEnter={() => {
-            if (!lacksHover) setOpen(true);
-          }}
-          onMouseLeave={() => {
-            if (!lacksHover) setOpen(false);
-          }}
+          onMouseEnter={openFromHover}
+          onMouseLeave={scheduleCloseFromHover}
         >
           {content}
           <Popover.Arrow className="fill-white dark:fill-gray-800" width={10} height={5} />
