@@ -52,8 +52,8 @@ export function MonthlyBreakdownSection({
       {showMonthsBreakdown && (
         <div className="bg-white dark:bg-gray-900 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-3 space-y-3">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Allocate the budget across each month of the activity period. Total must not
-            exceed {formatMoneyFromContext(valueNum)}.
+            Allocate the budget across each month of the activity period. Total must equal{' '}
+            {formatMoneyFromContext(valueNum)}.
           </p>
 
           <div className="grid grid-cols-2 gap-2">
@@ -66,7 +66,12 @@ export function MonthlyBreakdownSection({
                   </label>
                   <input
                     type="number"
-                    value={monthsBreakdown[month.key] || ''}
+                    value={
+                      monthsBreakdown[month.key] === undefined ||
+                      monthsBreakdown[month.key] === null
+                        ? ''
+                        : monthsBreakdown[month.key]
+                    }
                     onChange={(e) =>
                       onMonthValueChange(month.key, e.target.value)
                     }

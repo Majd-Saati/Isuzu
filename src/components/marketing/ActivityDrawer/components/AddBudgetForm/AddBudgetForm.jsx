@@ -46,6 +46,7 @@ export function AddBudgetForm({
     termMonths,
     breakdownTotal,
     breakdownValidation,
+    needsMonthlyBreakdown,
     typeOptions,
     hasTermMonths,
     selectedType,
@@ -74,7 +75,8 @@ export function AddBudgetForm({
     createBudgetMutation.isPending ||
     !value ||
     !description ||
-    (isMediaRequired && media.length === 0);
+    (isMediaRequired && media.length === 0) ||
+    (needsMonthlyBreakdown && !breakdownValidation.isValid);
 
   return (
     <form onSubmit={handleSubmit} className={FORM_CLASS}>

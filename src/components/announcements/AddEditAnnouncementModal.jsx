@@ -7,7 +7,7 @@ import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import { useCreateAnnouncement, useUpdateAnnouncement } from '@/hooks/api/useAnnouncements';
 import { useUsers } from '@/hooks/api/useUsers';
 
-/** Audience select values. "All users" sends `is_admin: 1` instead of `for_all`/`company_id`. */
+/** Audience select values. "IIF users" sends `is_admin: 1` instead of `for_all`/`company_id`. */
 const AUDIENCE = {
   ALL_DEALERS: 'all_dealers',
   COMPANY: 'company',
@@ -379,7 +379,7 @@ export const AddEditAnnouncementModal = ({ isOpen, onClose, editData = null, com
               >
                 <option value={AUDIENCE.ALL_DEALERS}>All dealers</option>
                 <option value={AUDIENCE.COMPANY}>Specific company</option>
-                <option value={AUDIENCE.ALL_USERS}>All users</option>
+                <option value={AUDIENCE.ALL_USERS}>IIF users</option>
               </select>
             </div>
 

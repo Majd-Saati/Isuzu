@@ -3,7 +3,6 @@ import { useCreateActivityBudget } from '@/hooks/api/useActivities';
 import { getAvailableBudgetTypes, canAddBudgetType } from '../../utils/budgetValidation';
 import { getTermMonths } from './utils';
 import { getAddBudgetSchema, isMediaRequiredForBudgetType } from './addBudgetSchema';
-import { formatMoneyFromContext } from '@/lib/dashboardMoney';
 
 export function useAddBudgetForm({
   activityId,
@@ -53,42 +52,39 @@ export function useAddBudgetForm({
     }, 0);
   }, [monthsBreakdown]);
 
-  // Clear breakdown errors when user has filled all months and sum matches budget value
+  // Clear breakdown errors when monthly sum matches budget (blank months count as 0)
   useEffect(() => {
     if (termMonths.length === 0) return;
     const totalValue = parseFloat(value) || 0;
     if (totalValue <= 0) return;
-    const allFilled = termMonths.every((m) => {
-      const v = monthsBreakdown[m.key];
-      const num = Number(v);
-      return v !== '' && v != null && !Number.isNaN(num) && num >= 0;
-    });
     const sum = termMonths.reduce(
       (s, m) => s + (parseFloat(monthsBreakdown[m.key]) || 0),
       0
     );
-    if (allFilled && Math.abs(sum - totalValue) < 0.01) {
+    if (Math.abs(sum - totalValue) < 0.01) {
       setBreakdownErrors({});
     }
   }, [termMonths, value, monthsBreakdown]);
 
+  const needsMonthlyBreakdown = termMonths.length > 0 && (parseFloat(value) || 0) > 0;
+
   const breakdownValidation = useMemo(() => {
     const totalValue = parseFloat(value) || 0;
-    if (totalValue === 0) return { isValid: true, message: '' };
+    if (!needsMonthlyBreakdown) return { isValid: true, message: '' };
+    if (Math.abs(breakdownTotal - totalValue) < 0.01) {
+      return { isValid: true, message: '' };
+    }
     if (breakdownTotal > totalValue) {
       return {
         isValid: false,
-        message: `Monthly values total (${formatMoneyFromContext(breakdownTotal)}) exceeds budget value (${formatMoneyFromContext(totalValue)})`,
+        message: 'Monthly total exceeds budget value',
       };
     }
-    if (showMonthsBreakdown && breakdownTotal < totalValue) {
-      return {
-        isValid: true,
-        warning: `Monthly total: ${formatMoneyFromContext(breakdownTotal)} of ${formatMoneyFromContext(totalValue)}`,
-      };
-    }
-    return { isValid: true, message: '' };
-  }, [value, breakdownTotal, showMonthsBreakdown]);
+    return {
+      isValid: false,
+      message: 'Monthly total must equal budget value',
+    };
+  }, [value, breakdownTotal, needsMonthlyBreakdown]);
 
   const typeOptions = useMemo(
     () => getAvailableBudgetTypes(existingBudgets, { isAdmin }),
@@ -200,14 +196,13 @@ export function useAddBudgetForm({
     setMediaError('');
     setBreakdownErrors({});
 
-    const hasBreakdownValues = Object.values(monthsBreakdown).some(
-      (v) => parseFloat(v) > 0
-    );
     const cleanedBreakdown = {};
-    if (showMonthsBreakdown && hasBreakdownValues) {
-      Object.entries(monthsBreakdown).forEach(([key, val]) => {
-        const numVal = parseFloat(val) || 0;
-        if (numVal > 0) cleanedBreakdown[key] = numVal;
+    if (needsBreakdown) {
+      termMonths.forEach((month) => {
+        const raw = monthsBreakdown[month.key];
+        const numVal =
+          raw === '' || raw == null ? 0 : parseFloat(raw);
+        cleanedBreakdown[month.key] = Number.isNaN(numVal) ? 0 : numVal;
       });
     }
 
@@ -220,8 +215,7 @@ export function useAddBudgetForm({
         value,
         description,
         media,
-        months_breakdown:
-          hasBreakdownValues && showMonthsBreakdown ? cleanedBreakdown : undefined,
+        months_breakdown: needsBreakdown ? cleanedBreakdown : undefined,
       },
       {
         onSuccess: () => {
@@ -277,6 +271,7 @@ export function useAddBudgetForm({
     termMonths,
     breakdownTotal,
     breakdownValidation,
+    needsMonthlyBreakdown,
     typeOptions,
     defaultType,
     hasTermMonths: termMonths.length > 0,

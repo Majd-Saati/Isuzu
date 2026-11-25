@@ -10,7 +10,7 @@ export function isMediaRequiredForBudgetType(budgetType) {
 /**
  * Build Yup schema for Add Budget form.
  * When termMonths exist and budget value > 0, monthly breakdown is required:
- * each month must have a value and the sum must equal the budget value.
+ * blank months count as 0; the sum must equal the budget value.
  * Pass `context.budgetType` at validate time; media is required only for estimated/actual cost.
  * @param {{ key: string, label: string }[]} termMonths
  * @returns {Yup.ObjectSchema}
@@ -19,10 +19,14 @@ export function getAddBudgetSchema(termMonths) {
   const breakdownShape = {};
   if (termMonths && termMonths.length > 0) {
     termMonths.forEach((m) => {
+      // Blank fields count as 0 so unused months can stay empty / zero.
       breakdownShape[m.key] = Yup.number()
-        .transform((v) => (v === '' || v == null ? undefined : Number(v)))
-        .typeError(`${m.label} is required`)
-        .required(`${m.label} is required`)
+        .transform((value, originalValue) => {
+          if (originalValue === '' || originalValue == null) return 0;
+          const n = Number(originalValue);
+          return Number.isNaN(n) ? value : n;
+        })
+        .typeError(`${m.label} must be a number`)
         .min(0, `${m.label} must be 0 or more`);
     });
   }
