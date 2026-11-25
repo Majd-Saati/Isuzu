@@ -1,7 +1,69 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import * as Popover from '@radix-ui/react-popover';
 import { Megaphone, Building2, Users, CalendarClock, Pencil, Trash2, MailOpen, Loader2, Eye } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 import { CustomPagination } from '@/components/ui/CustomPagination';
+
+/** True when the device has no reliable hover (phones/tablets). */
+const useLacksHover = () => {
+  const [lacksHover, setLacksHover] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(hover: none)').matches : false
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: none)');
+    const sync = () => setLacksHover(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  return lacksHover;
+};
+
+const PREVIEW_CONTENT_CLASS =
+  'z-[11000] max-w-[min(24rem,calc(100vw-1.5rem))] rounded-lg border border-gray-200 bg-white px-3.5 py-3 text-xs font-medium leading-snug text-gray-900 shadow-lg outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100';
+
+/** Hover on desktop, click/tap on touch — Popover so the first tap always opens. */
+const HoverClickPopover = ({ content, children, align = 'start' }) => {
+  const lacksHover = useLacksHover();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger
+        asChild
+        onMouseEnter={() => {
+          if (!lacksHover) setOpen(true);
+        }}
+        onMouseLeave={() => {
+          if (!lacksHover) setOpen(false);
+        }}
+      >
+        {children}
+      </Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Content
+          side="top"
+          align={align}
+          sideOffset={6}
+          collisionPadding={12}
+          className={PREVIEW_CONTENT_CLASS}
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          onCloseAutoFocus={(e) => e.preventDefault()}
+          onMouseEnter={() => {
+            if (!lacksHover) setOpen(true);
+          }}
+          onMouseLeave={() => {
+            if (!lacksHover) setOpen(false);
+          }}
+        >
+          {content}
+          <Popover.Arrow className="fill-white dark:fill-gray-800" width={10} height={5} />
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+};
 
 const formatDate = (dateString) => {
   if (!dateString) return '—';
@@ -34,30 +96,102 @@ const AnnouncementTooltipBody = ({ announcement }) => {
 };
 
 const AnnouncementFullTooltip = ({ announcement, children }) => (
-  <Tooltip delayDuration={200}>
-    <TooltipTrigger asChild>{children}</TooltipTrigger>
-    <TooltipContent
-      side="top"
-      align="start"
-      collisionPadding={12}
-      className="max-w-[min(24rem,calc(100vw-1.5rem))] px-3.5 py-3"
-    >
-      <AnnouncementTooltipBody announcement={announcement} />
-    </TooltipContent>
-  </Tooltip>
+  <HoverClickPopover content={<AnnouncementTooltipBody announcement={announcement} />}>
+    {children}
+  </HoverClickPopover>
 );
 
-const AudienceBadge = ({ audienceType, companyName }) =>
-  audienceType === 'all' ? (
-    <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400">
-      All dealers
-    </span>
-  ) : (
+const AudienceBadge = ({ audienceType, companyName, isAdminAudience }) => {
+  if (Number(isAdminAudience) === 1) {
+    return (
+      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400">
+        IIF users
+      </span>
+    );
+  }
+  if (audienceType === 'all') {
+    return (
+      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400">
+        All dealers
+      </span>
+    );
+  }
+  return (
     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
       <Building2 className="w-3 h-3" />
       {companyName || '—'}
     </span>
   );
+};
+
+const RecipientsListContent = ({ users }) => (
+  <div className="space-y-1.5 text-left">
+    <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">
+      Recipients ({users.length})
+    </p>
+    <ul className="space-y-1.5 max-h-[40vh] overflow-y-auto">
+      {users.map((user) => (
+        <li
+          key={user.user_id ?? user.id}
+          className="text-xs text-gray-600 dark:text-gray-300 break-words [overflow-wrap:anywhere]"
+        >
+          <span className="font-medium text-gray-800 dark:text-gray-100">
+            {user.name?.trim() || 'Unknown'}
+          </span>
+          {user.email?.trim() ? (
+            <span className="block text-gray-500 dark:text-gray-400">{user.email.trim()}</span>
+          ) : null}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+const RecipientsCell = ({ announcement }) => {
+  const users = Array.isArray(announcement.users_list) ? announcement.users_list : [];
+  const count = announcement.recipient_count ?? users.length ?? 0;
+
+  if (users.length === 0) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+        <Users className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+        {count}
+      </div>
+    );
+  }
+
+  const preview = users.slice(0, 2);
+  const remaining = users.length - preview.length;
+
+  return (
+    <HoverClickPopover content={<RecipientsListContent users={users} />}>
+      <button
+        type="button"
+        className="max-w-[240px] text-left rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E60012]/40"
+        aria-label={`View ${users.length} recipients`}
+      >
+        <div className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+          <Users className="w-4 h-4 text-gray-400 dark:text-gray-500 mt-0.5 flex-shrink-0" />
+          <div className="min-w-0 space-y-0.5">
+            {preview.map((user) => (
+              <span
+                key={user.user_id ?? user.id}
+                className="block truncate text-xs text-gray-800 dark:text-gray-200"
+              >
+                {user.name?.trim() || user.email || '—'}
+              </span>
+            ))}
+            {remaining > 0 && (
+              <span className="inline-flex items-center rounded-md bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 text-[11px] font-medium text-gray-600 dark:text-gray-300">
+                +{remaining} more · {users.length} total
+              </span>
+            )}
+          </div>
+        </div>
+      </button>
+    </HoverClickPopover>
+  );
+};
 
 /**
  * Table of announcements returned by the announcements_list API, with pagination.
@@ -128,14 +262,12 @@ export const AnnouncementsTable = ({
                 <AudienceBadge
                   audienceType={announcement.audience_type}
                   companyName={announcement.company_name}
+                  isAdminAudience={announcement.is_admin}
                 />
               </td>
               {isAdmin && (
                 <td className="px-6 py-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                    <Users className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-                    {announcement.recipient_count ?? 0}
-                  </div>
+                  <RecipientsCell announcement={announcement} />
                 </td>
               )}
               {isAdmin && (
