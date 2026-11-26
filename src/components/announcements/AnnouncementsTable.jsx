@@ -56,6 +56,9 @@ const HoverClickPopover = ({ content, children, align = 'start' }) => {
 
   return (
     <Popover.Root
+      // Non-modal: default modal=true sets pointer-events:none on <body>,
+      // which breaks native <select> and other controls (esp. after hover).
+      modal={false}
       open={open}
       onOpenChange={(next) => {
         clearCloseTimer();
@@ -75,7 +78,7 @@ const HoverClickPopover = ({ content, children, align = 'start' }) => {
           align={align}
           sideOffset={6}
           collisionPadding={12}
-          className={PREVIEW_CONTENT_CLASS}
+          className={`${PREVIEW_CONTENT_CLASS} pointer-events-auto`}
           onOpenAutoFocus={(e) => e.preventDefault()}
           onCloseAutoFocus={(e) => e.preventDefault()}
           onMouseEnter={openFromHover}
